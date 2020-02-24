@@ -1,19 +1,22 @@
 package com.wire.bots.polls
 
-import io.ktor.application.call
-import io.ktor.http.ContentType
-import io.ktor.response.respondText
-import io.ktor.routing.get
+import com.wire.bots.polls.routing.registerRoutes
+import com.wire.bots.polls.setup.installFrameworks
+import com.wire.bots.polls.setup.setupKodein
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 
-fun main(args: Array<String>) {
+data class A(val b: String, val c: Int)
+
+fun main() {
+
     val server = embeddedServer(Netty, 8080) {
+        installFrameworks()
+        setupKodein()
+
         routing {
-            get("/") {
-                call.respondText("Hello, world!", ContentType.Text.Html)
-            }
+            registerRoutes()
         }
     }
     server.start(wait = true)
