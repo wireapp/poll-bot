@@ -22,7 +22,7 @@ fun Routing.registerRoutes() {
         val poll = pollService.createPoll(usersMessage)
 
         if (poll != null) {
-            call.respond(poll)
+            call.respond("OK")
         } else {
             call.respond(HttpStatusCode.BadRequest, "It was not possible to create poll.")
         }
