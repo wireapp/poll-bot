@@ -1,6 +1,5 @@
 package com.wire.bots.polls.routing
 
-import com.wire.bots.polls.A
 import com.wire.bots.polls.dto.messages.UsersMessage
 import com.wire.bots.polls.services.PollService
 import io.ktor.application.call
@@ -18,7 +17,6 @@ fun Routing.registerRoutes() {
     val kodein by kodein()
     val pollService by kodein.instance<PollService>()
 
-
     post("/messages") {
         val usersMessage = call.receive<UsersMessage>()
         val poll = pollService.createPoll(usersMessage)
@@ -31,6 +29,6 @@ fun Routing.registerRoutes() {
     }
 
     get("/") {
-        call.respond(A("hello", 3))
+        call.respond("Hello from the bot.")
     }
 }
