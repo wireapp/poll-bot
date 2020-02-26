@@ -16,6 +16,7 @@ internal val jsonLogger = KLogging().logger("JsonExtensions")
  * Standard [ObjectMapper] configured in a way the platform operates.
  */
 fun jacksonMapper(): ObjectMapper = jacksonObjectMapper().apply {
+    configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false)
     configure(DeserializationFeature.ACCEPT_FLOAT_AS_INT, false)
 }
 

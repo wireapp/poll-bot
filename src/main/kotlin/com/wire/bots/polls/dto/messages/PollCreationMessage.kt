@@ -1,11 +1,13 @@
 package com.wire.bots.polls.dto.messages
 
 data class PollCreationMessage(
-    val type: String,
-    val poll: PollMessage
-)
+    val poll: Poll,
+    override val type: String = "poll.new"
+) : BotMessage {
 
-data class PollMessage(
-    val body: String,
-    val buttons: List<String>
-)
+    data class Poll(
+        val id: String,
+        val body: String,
+        val buttons: List<String>
+    )
+}

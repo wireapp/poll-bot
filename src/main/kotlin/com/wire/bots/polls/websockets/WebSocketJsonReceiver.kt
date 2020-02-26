@@ -18,12 +18,12 @@ open class WebSocketJsonReceiver<T : Any>(
 
     private companion object : KLogging()
 
-    override suspend fun DefaultClientWebSocketSession.onFrameReceive(frame: Frame) {
+    override suspend fun DefaultClientWebSocketSession.onFrameReceived(frame: Frame) {
         when (frame) {
             is Frame.Text -> {
                 logger.debug { "Text frame received." }
                 val text = frame.readText()
-
+                logger.info { "Received text:\n$text" }
                 @Suppress("BlockingMethodInNonBlockingContext")
                 jacksonMapper().readValue<T>(text, clazz.java)
                     .whenNull { logger.error { "It was not possible to parse incoming message!" } }

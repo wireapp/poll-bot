@@ -1,13 +1,15 @@
 package com.wire.bots.polls.services
 
-import com.wire.bots.polls.dto.messages.PollCreationMessage
+import com.wire.bots.polls.dto.messages.BotMessage
+import com.wire.bots.polls.dto.messages.ProxyResponseMessage
+import com.wire.bots.polls.utils.createJson
 import io.ktor.client.HttpClient
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.url
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import mu.KLogging
-
-data class ProxyConfiguration(val baseUrl: String)
 
 class ProxySenderService(private val client: HttpClient, config: ProxyConfiguration) {
 
@@ -17,11 +19,18 @@ class ProxySenderService(private val client: HttpClient, config: ProxyConfigurat
 
     private val conversationEndpoint = config.baseUrl + conversationPath
 
-    suspend fun sendPoll(token: String, message: PollCreationMessage) {
-        val response = client.post<String>(body = message) {
+    suspend fun send(token: String, message: BotMessage): ProxyResponseMessage {
+        logger.info { "Sending\n:${createJson(message)}" }
+        val response = client.post<ProxyResponseMessage>(body = message) {
             url(conversationEndpoint)
-            header("Authorization", "Bearer: $token")
+            contentType(ContentType.Application.Json)
+            header("Authorization", "Bearer $token")
         }
-        logger.info { "Poll sent, response: $response" }
+
+        logger.info { "Message sent, response: $response" }
+
+        return response
     }
 }
+
+data class ProxyConfiguration(val baseUrl: String)
