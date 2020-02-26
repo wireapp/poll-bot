@@ -12,6 +12,12 @@ fun MainBuilder.bindConfiguration() {
     // TODO replace this with DB fetch
     bind<String>("proxy-auth") with singleton { "token" }
 
+    // TODO load this from the configuration file
+    bind<String>("app-key-websocket") with singleton {
+        "eyJhbGciOiJIUzM4NCJ9.eyJpc3MiOiJodHRwczovL3dpcmUuY29tIiwic3ViIjoi" +
+                "ZDFlNTJmYTAtNDZiYy00NmZhLWFjYzEtOTViZDkxNzM1ZGUxIn0.VBwZv" +
+                "q_utIubQKnPp7IJCQmieUafPFzrTeViLDwcvak3c9bAg5jpka1htRQTWdLu"
+    }
 
 //    bind<WebSocketConfig>() with singleton {
 //        WebSocketConfig(host = "127.0.0.1", port = 1234, path = "")
