@@ -16,6 +16,8 @@ import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.websocket.WebSockets
 import io.ktor.util.KtorExperimentalAPI
+import mu.KLogger
+import mu.KLogging
 import org.kodein.di.Kodein.MainBuilder
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
@@ -61,4 +63,6 @@ fun MainBuilder.configureContainer() {
     bind<MessagesHandlingService>() with singleton { MessagesHandlingService(instance(), instance()) }
 
     bind<AuthProvider>() with singleton { AuthProvider(instance("proxy-auth")) }
+
+    bind<KLogger>("routing-logger") with singleton { KLogging().logger("RoutingLogger") }
 }

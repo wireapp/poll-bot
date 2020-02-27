@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Message(
     val botId: String,
-    val userId: String,
+    val userId: String?,
     // this is basically enum, waiting for resolving top TODO
     val type: String,
     val messageId: String?,
