@@ -3,9 +3,10 @@ package com.wire.bots.polls.services
 import com.wire.bots.polls.dto.PollAction
 import com.wire.bots.polls.dto.UsersInput
 import com.wire.bots.polls.dto.messages.Message
+import com.wire.bots.polls.dto.messages.TextMessage
 import mu.KLogging
 
-class MessagesHandlingService(private val pollService: PollService) {
+class MessagesHandlingService(private val pollService: PollService, private val proxySenderService: ProxySenderService) {
 
     private companion object : KLogging()
 
@@ -15,7 +16,15 @@ class MessagesHandlingService(private val pollService: PollService) {
         when (message.type) {
             "conversation.bot_request" -> logger.info { "Bot was added to conversation." }
             // TODO store token to the db
-            "conversation.init" -> logger.info { "Init message received." }
+            "conversation.init" -> {
+                proxySenderService.send(
+                    requireNotNull(message.token),
+                    TextMessage(
+                        text = "To create poll please text: /poll \"Question\" \"Option 1\" \"Option 2\""
+                    )
+                )
+                logger.info { "Init message received." }
+            }
             "conversation.new_text" -> handleText(requireNotNull(message.token), message)
             "conversation.new_image" -> logger.info { "New image posted to conversation, ignoring." }
             // TODO add better error handling

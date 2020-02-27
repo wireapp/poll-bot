@@ -5,7 +5,7 @@ import com.wire.bots.polls.dto.PollAction
 import com.wire.bots.polls.dto.PollDto
 import com.wire.bots.polls.dto.UsersInput
 import com.wire.bots.polls.dto.messages.PollActionConfirmationMessage
-import com.wire.bots.polls.dto.messages.PollStatsMessage
+import com.wire.bots.polls.dto.messages.TextMessage
 import com.wire.bots.polls.dto.toProxyMessage
 import com.wire.bots.polls.parser.PollFactory
 import mu.KLogging
@@ -42,6 +42,6 @@ class PollService(private val factory: PollFactory, private val proxySenderServi
 
     suspend fun sendStats(token: String, usersInput: UsersInput) {
         // TODO fetch stats from db
-        proxySenderService.send(token, PollStatsMessage("no stats yet"))
+        proxySenderService.send(token, TextMessage("no stats yet"))
     }
 }
