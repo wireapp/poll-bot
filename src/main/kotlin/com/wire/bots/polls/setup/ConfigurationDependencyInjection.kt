@@ -9,7 +9,7 @@ import org.kodein.di.generic.singleton
 
 fun MainBuilder.bindConfiguration() {
 
-    // TODO replace this with DB fetch
+    // TODO replace this with DB fetch : service_token
     bind<String>("proxy-auth") with singleton { "token" }
 
     // TODO load this from the configuration file
@@ -23,6 +23,7 @@ fun MainBuilder.bindConfiguration() {
 //        WebSocketConfig(host = "127.0.0.1", port = 1234, path = "")
 //    }
 
+    // TODO proxy_domain
     bind<WebSocketConfig>() with singleton {
         val appKey = instance<String>("app-key-websocket")
         WebSocketConfig(host = "proxy.services.zinfra.io", path = "/await/$appKey")

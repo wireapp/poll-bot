@@ -1,13 +1,14 @@
 plugins {
     kotlin("jvm") version "1.3.61"
     application
+    distribution
 }
 
 group = "com.wire.bots.polls"
-version = "1.0-SNAPSHOT"
+version = "0.1"
 
 application {
-    mainClassName = "com.wire.bots.polls.MainKt"
+    mainClassName = "com.wire.bots.polls.PollBotKt"
 }
 
 repositories {
@@ -37,7 +38,6 @@ dependencies {
 
     implementation("org.kodein.di:kodein-di-generic-jvm:6.5.0")
     implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:6.5.0")
-
 }
 
 tasks {

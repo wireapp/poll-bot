@@ -6,9 +6,11 @@ import io.ktor.routing.Routing
 import io.ktor.routing.get
 
 fun Routing.registerRoutes() {
+
     get("/") {
-        call.respond("Hello from the bot.")
+        call.respond("This is the Wire Poll Bot.")
     }
 
+    healthStatus()
     messages()
 }
