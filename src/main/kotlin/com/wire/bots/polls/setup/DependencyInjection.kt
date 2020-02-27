@@ -58,7 +58,7 @@ fun MainBuilder.configureContainer() {
 
     bind<PollService>() with singleton { PollService(instance(), instance()) }
 
-    bind<MessagesHandlingService>() with singleton { MessagesHandlingService(instance()) }
+    bind<MessagesHandlingService>() with singleton { MessagesHandlingService(instance(), instance()) }
 
     bind<AuthProvider>() with singleton { AuthProvider(instance("proxy-auth")) }
 }
