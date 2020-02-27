@@ -35,16 +35,17 @@ fun Application.installFrameworks() {
             enable(SerializationFeature.INDENT_OUTPUT)
             dateFormat = DateFormat.getDateTimeInstance()
         }
-
-        // Install Ktor features
-        install(DefaultHeaders)
-        install(CallLogging)
-
-        install(WebSockets) {
-            pingPeriod = Duration.ofSeconds(60) // Disabled (null) by default
-            timeout = Duration.ofSeconds(15)
-            maxFrameSize = Long.MAX_VALUE // Disabled (max value). The connection will be closed if surpassed this length.
-            masking = false
-        }
     }
+
+    // Install Ktor features
+    install(DefaultHeaders)
+    install(CallLogging)
+
+    install(WebSockets) {
+        pingPeriod = Duration.ofSeconds(60) // Disabled (null) by default
+        timeout = Duration.ofSeconds(15)
+        maxFrameSize = Long.MAX_VALUE // Disabled (max value). The connection will be closed if surpassed this length.
+        masking = false
+    }
+
 }

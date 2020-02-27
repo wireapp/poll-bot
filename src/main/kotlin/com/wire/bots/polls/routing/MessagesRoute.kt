@@ -12,15 +12,21 @@ import org.kodein.di.generic.instance
 import org.kodein.di.ktor.kodein
 
 fun Routing.messages() {
-    val handler by kodein().instance<MessagesHandlingService>()
+    val k by kodein()
+    val handler by k.instance<MessagesHandlingService>()
+    val authProvider by k.instance<AuthProvider>()
 
     post("/messages") {
-        val message = call.receive<Message>()
-        runCatching {
-            handler.handle(message)
-            call.respond(HttpStatusCode.OK)
-        }.onFailure {
-            call.respond(HttpStatusCode.BadRequest, "Bot did not understand the message.")
+        if (authProvider.isTokenValid { call.request.headers }) {
+            val message = call.receive<Message>()
+            runCatching {
+                handler.handle(message)
+                call.respond(HttpStatusCode.OK)
+            }.onFailure {
+                call.respond(HttpStatusCode.BadRequest, "Bot did not understand the message.")
+            }
+        } else {
+            call.respond(HttpStatusCode.Unauthorized, "Please provide Authorization header.")
         }
     }
 }

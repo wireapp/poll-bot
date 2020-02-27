@@ -12,21 +12,22 @@ abstract class WebSocketBase(protected val client: HttpClient, protected val con
     private companion object : KLogging()
 
     suspend fun subscribe() {
-        // TODO websocket reconnect
-        client.ws(
-            host = config.host,
-            port = config.port ?: DEFAULT_PORT,
-            path = config.path
-        ) {
-            for (frame in incoming) {
-                logger.info { "received" }
-                runCatching { onFrameReceived(frame) }
-                    .onFailure { logger.error(it) { "Exception occurred during handling onFrameReceived." } }
+        // TODO websocket reconnect - use better solution than dummy while true
+        while (true) {
+            client.ws(
+                host = config.host,
+                port = config.port ?: DEFAULT_PORT,
+                path = config.path
+            ) {
+                for (frame in incoming) {
+                    logger.info { "received" }
+                    runCatching { onFrameReceived(frame) }
+                        .onFailure { logger.error(it) { "Exception occurred during handling onFrameReceived." } }
 
+                }
+                logger.info { "Closing the socket" }
             }
-            logger.info { "Closing the socket" }
         }
-
     }
 
     abstract suspend fun DefaultClientWebSocketSession.onFrameReceived(frame: Frame)

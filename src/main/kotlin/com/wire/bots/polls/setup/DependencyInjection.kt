@@ -5,6 +5,7 @@ import com.wire.bots.polls.parser.InputParser
 import com.wire.bots.polls.parser.InputValidation
 import com.wire.bots.polls.parser.PollFactory
 import com.wire.bots.polls.parser.PollValidation
+import com.wire.bots.polls.routing.AuthProvider
 import com.wire.bots.polls.services.MessagesHandlingService
 import com.wire.bots.polls.services.PollService
 import com.wire.bots.polls.services.ProxySenderService
@@ -58,4 +59,6 @@ fun MainBuilder.configureContainer() {
     bind<PollService>() with singleton { PollService(instance(), instance()) }
 
     bind<MessagesHandlingService>() with singleton { MessagesHandlingService(instance()) }
+
+    bind<AuthProvider>() with singleton { AuthProvider(instance("proxy-auth")) }
 }
