@@ -14,18 +14,27 @@ import io.ktor.jackson.jackson
 import io.ktor.routing.routing
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.websocket.WebSockets
+import org.kodein.di.generic.instance
+import org.kodein.di.ktor.kodein
 import java.text.DateFormat
 import java.time.Duration
 
 @KtorExperimentalAPI
 fun Application.init() {
     setupKodein()
-    installFrameworks()
 
-    subscribeToWebSockets()
+    val k by kodein()
+
+    installFrameworks()
 
     routing {
         registerRoutes()
+    }
+
+    val useWebSockets by k.instance<Boolean>("use-websocket")
+
+    if (useWebSockets) {
+        subscribeToWebSockets()
     }
 }
 

@@ -24,4 +24,4 @@ RUN tar -xvf polls-*.tar --strip-components=1 -C $APP_ROOT/run
 
 EXPOSE 8080
 
-CMD $APP_ROOT/run/bin/polls
+ENTRYPOINT ["/bin/sh", "-c", "/app/run/bin/polls"]
