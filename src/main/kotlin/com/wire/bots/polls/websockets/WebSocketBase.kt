@@ -12,6 +12,7 @@ abstract class WebSocketBase(protected val client: HttpClient, protected val con
     private companion object : KLogging()
 
     suspend fun subscribe() {
+        // TODO websocket reconnect
         client.ws(
             host = config.host,
             port = config.port ?: DEFAULT_PORT,

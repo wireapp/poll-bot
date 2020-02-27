@@ -1,9 +1,14 @@
 plugins {
     kotlin("jvm") version "1.3.61"
+    application
 }
 
-group = "org.example"
+group = "com.wire.bots.polls"
 version = "1.0-SNAPSHOT"
+
+application {
+    mainClassName = "com.wire.bots.polls.MainKt"
+}
 
 repositories {
     jcenter()
