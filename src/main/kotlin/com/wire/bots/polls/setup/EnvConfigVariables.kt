@@ -14,10 +14,6 @@ object EnvConfigVariables {
      */
     const val DB_CONNECTION_STRING = "DB_CONNECTION_STRING"
     /**
-     * Id of the current bot.
-     */
-    const val SERVICE_CODE = "SERVICE_CODE"
-    /**
      * Token which is used for the auth of proxy.
      */
     const val SERVICE_TOKEN = "SERVICE_TOKEN"

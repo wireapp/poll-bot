@@ -6,7 +6,6 @@ import com.wire.bots.polls.setup.EnvConfigVariables.DB_CONNECTION_STRING
 import com.wire.bots.polls.setup.EnvConfigVariables.PROXY_DOMAIN
 import com.wire.bots.polls.setup.EnvConfigVariables.PROXY_WS_HOST
 import com.wire.bots.polls.setup.EnvConfigVariables.PROXY_WS_PATH
-import com.wire.bots.polls.setup.EnvConfigVariables.SERVICE_CODE
 import com.wire.bots.polls.setup.EnvConfigVariables.SERVICE_TOKEN
 import com.wire.bots.polls.setup.EnvConfigVariables.USE_WEB_SOCKETS
 import com.wire.bots.polls.websockets.WebSocketConfig
@@ -23,10 +22,6 @@ fun MainBuilder.bindConfiguration() {
 
     bind<String>("db-connection-string") with singleton {
         System.getenv(DB_CONNECTION_STRING) ?: ""
-    }
-
-    bind<String>("poll-bot-id") with singleton {
-        System.getenv(SERVICE_CODE) ?: ""
     }
 
     bind<String>("proxy-auth") with singleton {
