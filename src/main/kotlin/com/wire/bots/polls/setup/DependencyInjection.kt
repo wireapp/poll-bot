@@ -65,5 +65,6 @@ fun MainBuilder.configureContainer() {
         AuthService(proxyToken = instance("proxy-auth"))
     }
 
-    bind<KLogger>("routing-logger") with singleton { KLogging().logger("RoutingLogger") }
+    bind<KLogger>("routing-logger") with singleton { KLogging().logger("Routing") }
+    bind<KLogger>("install-logger") with singleton { KLogging().logger("KtorStartup") }
 }

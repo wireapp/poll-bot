@@ -14,6 +14,8 @@ import io.ktor.jackson.jackson
 import io.ktor.routing.routing
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.websocket.WebSockets
+import mu.KLogger
+import org.jetbrains.exposed.sql.Database
 import org.kodein.di.generic.instance
 import org.kodein.di.ktor.kodein
 import java.text.DateFormat
@@ -27,16 +29,25 @@ fun Application.init() {
     setupKodein()
     // now kodein is running and can be used
     val k by kodein()
+    val logger by k.instance<KLogger>("install-logger")
+    logger.debug { "DI container started." }
 
+    // connect to the database
+    logger.debug { "Connecting to the DB" }
+    val connectionString by k.instance<String>("db-connection-string")
+    Database.connect(connectionString, driver = "org.postgresql.Driver")
+    logger.debug { "DB connected." }
+
+    // configure Ktor
     installFrameworks()
 
+    // register routing
     routing {
         registerRoutes()
     }
 
     // determine whether should bot connect to the proxy web socket
     val useWebSockets by k.instance<Boolean>("use-websocket")
-
     if (useWebSockets) {
         subscribeToWebSockets()
     }

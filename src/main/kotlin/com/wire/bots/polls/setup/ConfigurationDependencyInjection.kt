@@ -2,6 +2,7 @@ package com.wire.bots.polls.setup
 
 import com.wire.bots.polls.services.ProxyConfiguration
 import com.wire.bots.polls.setup.EnvConfigVariables.APP_KEY
+import com.wire.bots.polls.setup.EnvConfigVariables.DB_CONNECTION_STRING
 import com.wire.bots.polls.setup.EnvConfigVariables.PROXY_DOMAIN
 import com.wire.bots.polls.setup.EnvConfigVariables.PROXY_WS_HOST
 import com.wire.bots.polls.setup.EnvConfigVariables.PROXY_WS_PATH
@@ -19,6 +20,10 @@ import org.kodein.di.generic.singleton
  */
 // TODO load all config from the file and then allow the replacement with env variables
 fun MainBuilder.bindConfiguration() {
+
+    bind<String>("db-connection-string") with singleton {
+        System.getenv(DB_CONNECTION_STRING) ?: ""
+    }
 
     bind<String>("poll-bot-id") with singleton {
         System.getenv(SERVICE_CODE) ?: ""

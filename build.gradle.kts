@@ -24,13 +24,13 @@ dependencies {
     // extension functions
     implementation("ai.blindspot.ktoolz:ktoolz:$ktoolzVersion")
 
-    // KTor server dependencies
+    // Ktor server dependencies
     implementation("io.ktor:ktor-server-core:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("io.ktor:ktor-websockets:$ktorVersion")
 
-    // KTor client dependencies
+    // Ktor client dependencies
     implementation("io.ktor:ktor-client-json:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-websockets:$ktorVersion")
@@ -43,6 +43,12 @@ dependencies {
     // DI
     implementation("org.kodein.di:kodein-di-generic-jvm:6.5.0")
     implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:6.5.0")
+
+    // database
+    implementation("org.postgresql", "postgresql", "42.2.2")
+    implementation("org.jetbrains.exposed", "exposed-core", "0.20.1")
+    implementation("org.jetbrains.exposed", "exposed-dao", "0.20.1")
+    implementation("org.jetbrains.exposed", "exposed-jdbc", "0.20.1")
 }
 
 tasks {

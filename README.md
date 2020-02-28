@@ -25,6 +25,10 @@ Configuration is currently being loaded from the environment variables.
 
 ```kotlin
     /**
+     * Connection string for the database that includes username and password.
+     */
+    const val DB_CONNECTION_STRING = "DB_CONNECTION_STRING"
+    /**
      * Id of the current bot.
      */
     const val SERVICE_CODE = "SERVICE_CODE"
@@ -55,3 +59,23 @@ Configuration is currently being loaded from the environment variables.
 ```
 
 Via the system variables - see [complete list](src/main/kotlin/com/wire/bots/polls/setup/EnvConfigVariables.kt).
+
+## Docker Compose
+To run bot inside docker compose environment with default PostgreSQL database,
+please create `.env` file in the root directory with the following variables:
+```bash
+# database
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+POSTGRES_DB=
+
+# application
+DB_CONNECTION_STRING=
+SERVICE_CODE=
+SERVICE_TOKEN=
+APP_KEY=
+USE_WEB_SOCKETS=
+PROXY_WS_HOST=
+PROXY_WS_PATH=
+PROXY_DOMAIN=
+```

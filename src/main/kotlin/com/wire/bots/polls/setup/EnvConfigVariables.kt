@@ -5,6 +5,10 @@ package com.wire.bots.polls.setup
  */
 object EnvConfigVariables {
     /**
+     * Connection string for the database that includes username and password.
+     */
+    const val DB_CONNECTION_STRING = "DB_CONNECTION_STRING"
+    /**
      * Id of the current bot.
      */
     const val SERVICE_CODE = "SERVICE_CODE"
