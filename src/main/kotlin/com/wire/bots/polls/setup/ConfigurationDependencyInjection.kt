@@ -6,6 +6,7 @@ import com.wire.bots.polls.setup.EnvConfigVariables.PROXY_DOMAIN
 import com.wire.bots.polls.setup.EnvConfigVariables.PROXY_WS_HOST
 import com.wire.bots.polls.setup.EnvConfigVariables.PROXY_WS_PATH
 import com.wire.bots.polls.setup.EnvConfigVariables.SERVICE_TOKEN
+import com.wire.bots.polls.setup.EnvConfigVariables.USE_WEB_SOCKETS
 import com.wire.bots.polls.websockets.WebSocketConfig
 import org.kodein.di.Kodein.MainBuilder
 import org.kodein.di.generic.bind
@@ -26,7 +27,7 @@ fun MainBuilder.bindConfiguration() {
         System.getenv(APP_KEY) ?: ""
     }
 
-    bind<Boolean>("use-websocket") with singleton { false }
+    bind<Boolean>("use-websocket") with singleton { System.getenv(USE_WEB_SOCKETS)?.toBoolean() ?: false }
 
     bind<WebSocketConfig>() with singleton {
         val appKey = instance<String>("app-key-websocket")

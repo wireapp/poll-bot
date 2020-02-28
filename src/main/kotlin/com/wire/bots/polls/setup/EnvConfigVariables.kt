@@ -13,11 +13,15 @@ object EnvConfigVariables {
      */
     const val APP_KEY = "APP_KEY"
     /**
+     * Determines whether to use web sockets for connection to proxy or not eg. true
+     */
+    const val USE_WEB_SOCKETS = "USE_WEB_SOCKETS"
+    /**
      * Host name for the connection to web socket eg."proxy.services.zinfra.io"
      */
     const val PROXY_WS_HOST = "PROXY_WS_HOST"
     /**
-     * Path to web socket at proxy .eg. "/await"
+     * Path to web socket at proxy eg. "/await"
      */
     const val PROXY_WS_PATH = "PROXY_WS_PATH"
     /**
