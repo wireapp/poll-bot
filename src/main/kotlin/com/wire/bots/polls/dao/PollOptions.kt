@@ -11,7 +11,7 @@ object PollOptions : IntIdTable("poll_option") {
     /**
      * Id of the poll this option is for. UUID.
      */
-    val pollId: Column<String> = varchar("poll_id", 36)
+    val pollId: Column<String> = varchar("poll_id", 36) references Polls.id
 
     /**
      * Option order or option id.

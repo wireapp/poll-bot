@@ -7,10 +7,14 @@ package com.wire.bots.polls.dto
  */
 data class UsersInput(
     /**
+     * Id of the user who wrote this.
+     */
+    val userId: String,
+    /**
      * User's text, not logged.
      */
     val input: String
 ) {
     //TODO modify this in the future - because we do not want to print decrypted users text to the log
-    override fun toString(): String = input
+    override fun toString(): String = "User: $userId wrote $input"
 }

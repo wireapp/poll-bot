@@ -10,7 +10,7 @@ object Votes : Table("votes") {
     /**
      * Id of the option.
      */
-    val pollOption: Column<Int> = integer("poll_option")
+    val pollOption: Column<Int> = integer("poll_option").references(PollOptions.id)
 
     /**
      * User who voted for this option.

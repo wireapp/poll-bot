@@ -1,7 +1,6 @@
 create table polls
 (
     id              varchar(36) unique not null,
-    conversation_id varchar(36)        not null,
     owner_id        varchar(36)        not null,
     is_active       boolean            not null,
     body            text               not null,

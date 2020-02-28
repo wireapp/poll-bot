@@ -11,10 +11,6 @@ object Polls : Table("polls") {
      * Id of the poll. UUID.
      */
     val id: Column<String> = varchar("id", 36).uniqueIndex()
-    /**
-     * Id of the conversation this poll was created in. UUID.
-     */
-    val conversationId: Column<String> = varchar("conversation_id", 36)
 
     /**
      * Id of the user who created this poll. UUID.
