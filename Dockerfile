@@ -5,10 +5,17 @@ LABEL project="wire-bots:polls"
 ENV PROJECT_ROOT /src
 WORKDIR $PROJECT_ROOT
 
-COPY . $PROJECT_ROOT
-
+# Copy gradle settings
+COPY build.gradle.kts settings.gradle.kts gradle.properties gradlew $PROJECT_ROOT/
+# Make sure gradlew is executable
 RUN chmod +x gradlew
+# Copy gradle specification
+COPY gradle $PROJECT_ROOT/gradle
+# Download gradle
+RUN ./gradlew --version
 
+# Copy project and build
+COPY . $PROJECT_ROOT
 RUN ./gradlew distTar --no-daemon
 
 # Runtime
@@ -17,8 +24,10 @@ FROM adoptopenjdk/openjdk11:jre-11.0.6_10-alpine
 ENV APP_ROOT /app
 WORKDIR $APP_ROOT
 
+# Obtain built from the base
 COPY --from=build /src/build/distributions/polls-*.tar $APP_ROOT/
 
+# Extract executables
 RUN mkdir $APP_ROOT/run
 RUN tar -xvf polls-*.tar --strip-components=1 -C $APP_ROOT/run
 
