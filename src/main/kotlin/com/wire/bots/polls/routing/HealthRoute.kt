@@ -1,5 +1,6 @@
 package com.wire.bots.polls.routing
 
+import com.wire.bots.polls.dao.DatabaseSetup
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
@@ -21,7 +22,10 @@ fun Routing.healthStatus() {
      * More complex API for indication of all resources.
      */
     get("/status/health") {
-        // TODO implement some kind of health check for DB
-        call.respond("healthy")
+        if (DatabaseSetup.isConnected()) {
+            call.respond("healthy")
+        } else {
+            call.respond(HttpStatusCode.ServiceUnavailable, "DB connection is not working")
+        }
     }
 }

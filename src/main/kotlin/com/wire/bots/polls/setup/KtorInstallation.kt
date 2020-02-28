@@ -1,6 +1,7 @@
 package com.wire.bots.polls.setup
 
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.wire.bots.polls.dao.DatabaseSetup
 import com.wire.bots.polls.routing.registerRoutes
 import com.wire.bots.polls.websockets.subscribeToWebSockets
 import io.ktor.application.Application
@@ -15,7 +16,7 @@ import io.ktor.routing.routing
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.websocket.WebSockets
 import mu.KLogger
-import org.jetbrains.exposed.sql.Database
+import org.kodein.di.LazyKodein
 import org.kodein.di.generic.instance
 import org.kodein.di.ktor.kodein
 import java.text.DateFormat
@@ -33,10 +34,7 @@ fun Application.init() {
     logger.debug { "DI container started." }
 
     // connect to the database
-    logger.debug { "Connecting to the DB" }
-    val connectionString by k.instance<String>("db-connection-string")
-    Database.connect(connectionString, driver = "org.postgresql.Driver")
-    logger.debug { "DB connected." }
+    connectDatabase(logger, k)
 
     // configure Ktor
     installFrameworks()
@@ -50,6 +48,23 @@ fun Application.init() {
     val useWebSockets by k.instance<Boolean>("use-websocket")
     if (useWebSockets) {
         subscribeToWebSockets()
+    }
+}
+
+/**
+ * Connect bot to the database.
+ */
+fun connectDatabase(logger: KLogger, k: LazyKodein) {
+    logger.info { "Connecting to the DB" }
+    val connectionString by k.instance<String>("db-connection-string")
+
+    DatabaseSetup.connect(connectionString)
+    val isConnected = DatabaseSetup.isConnected()
+    if (isConnected) {
+        logger.info { "DB connected." }
+    } else {
+        // TODO verify handling, maybe exit the App?
+        logger.error { "It was not possible to connect to db database! The application will start but it won't work." }
     }
 }
 
