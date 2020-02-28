@@ -5,6 +5,9 @@ import io.ktor.response.respond
 import io.ktor.routing.Routing
 import io.ktor.routing.get
 
+/**
+ * Register routes to the KTor.
+ */
 fun Routing.registerRoutes() {
 
     get("/") {

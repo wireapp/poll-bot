@@ -11,10 +11,16 @@ import com.wire.bots.polls.parser.PollFactory
 import mu.KLogging
 import java.util.UUID
 
+/**
+ * Service handling the polls. It communicates with the proxy via [proxySenderService].
+ */
 class PollService(private val factory: PollFactory, private val proxySenderService: ProxySenderService) {
 
     private companion object : KLogging()
 
+    /**
+     * Create poll.
+     */
     suspend fun createPoll(token: String, usersInput: UsersInput): PollDto? {
         val poll = factory.forUserInput(usersInput)
             .whenNull { logger.warn { "It was not possible to create poll." } } ?: return null
@@ -26,10 +32,14 @@ class PollService(private val factory: PollFactory, private val proxySenderServi
         return poll
     }
 
+    /**
+     * Record that the user voted.
+     */
     suspend fun pollAction(token: String, pollAction: PollAction) {
         logger.info { "User voted" }
         val response = proxySenderService.send(
-            token, PollActionConfirmationMessage(
+            token = token,
+            message = PollActionConfirmationMessage(
                 poll = PollActionConfirmationMessage.Poll(
                     id = pollAction.pollId,
                     offset = pollAction.optionId,
@@ -40,7 +50,10 @@ class PollService(private val factory: PollFactory, private val proxySenderServi
         logger.info { "Proxy received confirmation for vote under id: ${response.messageId}" }
     }
 
-    suspend fun sendStats(token: String, usersInput: UsersInput) {
+    /**
+     * Sends statistics about the poll to the proxy.
+     */
+    suspend fun sendStats(token: String, @Suppress("UNUSED_PARAMETER") usersInput: UsersInput) {
         // TODO fetch stats from db
         proxySenderService.send(token, TextMessage("no stats yet"))
     }

@@ -7,21 +7,54 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
  *
  * TODO generate that from the swagger automatically
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true) // to continue working even though the JSON changed
 data class Message(
+    /**
+     * ID of the bot = the bot should accept the message only when the ID matches.
+     */
     val botId: String,
+    /**
+     * User who sent a message.
+     */
     val userId: String?,
-    // this is basically enum, waiting for resolving top TODO
+    /**
+     * Type of the message.
+     */
+    // TODO this is basically enum, waiting for resolving top todo
     val type: String,
+    /**
+     * Message ID.
+     */
     val messageId: String?,
+    /**
+     * Token that should be used for the reply.
+     */
     val token: String?,
+    /**
+     * Text of the message.
+     */
     val text: String?,
+    /**
+     * Image in the message.
+     */
     val image: String?,
+    /**
+     * Username who initiated conversation.
+     */
     val handle: String?,
+    /**
+     * Language of the user.
+     */
     val locale: String?,
+    /**
+     * Poll object.
+     */
     val poll: PollObjectMessage?
 )
 
+/**
+ * Poll representation for the proxy.
+ */
 data class PollObjectMessage(
     /**
      * Id of the poll.

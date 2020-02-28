@@ -4,24 +4,14 @@ import com.wire.bots.polls.dto.PollDto
 import com.wire.bots.polls.dto.UsersInput
 import mu.KLogging
 
-class InputParser(private val validation: InputValidation) {
+class InputParser {
 
     private companion object : KLogging()
 
     fun parsePoll(userInput: UsersInput): PollDto? {
-        if (!validation.shouldAccept(userInput)) {
-            logger.info { "Input string $userInput wont be processed because it does not contain poll starting sequence /poll." }
-            return null
-        }
-
-        logger.debug { "/poll input found, creating poll" }
-        return createPoll(userInput)
-    }
-
-    private fun createPoll(userInput: UsersInput): PollDto? {
         //TODO currently not supporting char " in the strings
         val inputs = userInput.input
-            .substringAfter("/poll")
+            .substringAfter("/poll", "")
             .split("\"")
             .filter { it.isNotBlank() }
             .map { it.trim() }

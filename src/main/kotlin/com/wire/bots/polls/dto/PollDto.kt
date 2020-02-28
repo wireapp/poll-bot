@@ -11,6 +11,9 @@ data class PollDto(
     val options: List<Option>
 )
 
+/**
+ * Converts poll to the message for the proxy.
+ */
 fun PollDto.toProxyMessage(id: UUID) = PollCreationMessage(
     poll = PollCreationMessage.Poll(
         id = id.toString(),

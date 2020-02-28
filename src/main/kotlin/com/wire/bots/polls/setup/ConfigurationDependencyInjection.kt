@@ -7,6 +7,9 @@ import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 
+/**
+ * Loads the DI container with configuration from the system environment.
+ */
 fun MainBuilder.bindConfiguration() {
 
     // TODO replace this with DB fetch : service_token

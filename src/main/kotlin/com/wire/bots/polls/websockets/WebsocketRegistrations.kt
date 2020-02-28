@@ -7,11 +7,14 @@ import kotlinx.coroutines.launch
 import org.kodein.di.generic.instance
 import org.kodein.di.ktor.kodein
 
+/**
+ * Start listening the preconfigured web sockets.
+ */
 fun Application.subscribeToWebSockets() {
-    val kodein by kodein()
+    val k by kodein()
 
     GlobalScope.launch(Dispatchers.IO) {
-        val pollWebSocket by kodein.instance<PollWebSocket>()
+        val pollWebSocket by k.instance<PollWebSocket>()
         pollWebSocket.run()
     }
 }

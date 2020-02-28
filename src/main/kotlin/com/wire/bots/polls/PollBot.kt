@@ -8,5 +8,6 @@ import io.ktor.util.KtorExperimentalAPI
 
 @KtorExperimentalAPI
 fun main(args: Array<String>) {
+    // TODO add clickt for command handling
     embeddedServer(Netty, 8080, module = Application::init).start()
 }

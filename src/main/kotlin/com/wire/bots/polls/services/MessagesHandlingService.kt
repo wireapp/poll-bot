@@ -3,36 +3,36 @@ package com.wire.bots.polls.services
 import com.wire.bots.polls.dto.PollAction
 import com.wire.bots.polls.dto.UsersInput
 import com.wire.bots.polls.dto.messages.Message
-import com.wire.bots.polls.dto.messages.TextMessage
 import mu.KLogging
 
-class MessagesHandlingService(private val pollService: PollService, private val proxySenderService: ProxySenderService) {
+class MessagesHandlingService(
+    private val pollService: PollService,
+    private val greetingsService: GreetingsService
+) {
 
     private companion object : KLogging()
 
     suspend fun handle(message: Message) {
-        logger.info { "Handling message." }
+        logger.debug { "Handling message." }
 
         when (message.type) {
             "conversation.bot_request" -> logger.info { "Bot was added to conversation." }
-            // TODO store token to the db
             "conversation.init" -> {
-                proxySenderService.send(
-                    requireNotNull(message.token),
-                    TextMessage(
-                        text = "To create poll please text: /poll \"Question\" \"Option 1\" \"Option 2\""
-                    )
-                )
-                logger.info { "Init message received." }
+                logger.debug { "Init message received." }
+                greetingsService.sayHello(message)
             }
-            "conversation.new_text" -> handleText(requireNotNull(message.token), message)
-            "conversation.new_image" -> logger.info { "New image posted to conversation, ignoring." }
+            "conversation.new_text" -> {
+                logger.debug { "New text message received." }
+                handleText(requireNotNull(message.token) { "Token must not be null!" }, message)
+            }
+            "conversation.new_image" -> logger.debug { "New image posted to conversation, ignoring." }
             // TODO add better error handling
             "conversation.poll.action" -> {
-                val poll = requireNotNull(message.poll)
+                val poll = requireNotNull(message.poll) { "Reaction to a poll, poll object must be set!" }
 
                 pollService.pollAction(
-                    requireNotNull(message.token), PollAction(
+                    requireNotNull(message.token) { "Token must not be null!" },
+                    PollAction(
                         pollId = poll.id,
                         optionId = requireNotNull(poll.offset),
                         userId = requireNotNull(poll.userId)
@@ -41,19 +41,16 @@ class MessagesHandlingService(private val pollService: PollService, private val 
             }
             else -> logger.warn { "Unknown message type of ${message.type}. Ignoring." }
         }
-        logger.info { "Message handled." }
+
+        logger.debug { "Message handled." }
     }
 
     private suspend fun handleText(token: String, message: Message) {
-        val userInput = UsersInput(requireNotNull(message.text))
+        val userInput = UsersInput(requireNotNull(message.text) { "Text message received, text field can not be null!" })
         with(userInput.input) {
             when {
-                startsWith("/poll") -> {
-                    pollService.createPoll(token, userInput)
-                }
-                startsWith("/stats") -> {
-                    pollService.sendStats(token, userInput)
-                }
+                startsWith("/poll") -> pollService.createPoll(token, userInput)
+                startsWith("/stats") -> pollService.sendStats(token, userInput)
                 else -> logger.info { "Ignoring text, unrecognized command: $userInput" }
             }
         }

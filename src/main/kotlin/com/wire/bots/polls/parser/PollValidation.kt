@@ -5,10 +5,13 @@ import com.wire.bots.polls.dto.PollDto
 import com.wire.bots.polls.dto.Question
 import mu.KLogging
 
-typealias QuestionRule = (Question) -> String?
-typealias OptionRule = (Option) -> String?
-typealias PollRule = (PollDto) -> String?
+private typealias QuestionRule = (Question) -> String?
+private typealias OptionRule = (Option) -> String?
+private typealias PollRule = (PollDto) -> String?
 
+/**
+ * Class validating the polls.
+ */
 class PollValidation {
 
     private companion object : KLogging()

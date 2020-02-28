@@ -1,16 +1,22 @@
-package com.wire.bots.polls.routing
+package com.wire.bots.polls.services
 
 import ai.blindspot.ktoolz.extensions.whenNull
 import io.ktor.http.Headers
 import mu.KLogging
 
-class AuthProvider(private val proxyToken: String) {
+/**
+ * Authentication service.
+ */
+class AuthService(private val proxyToken: String) {
 
     private companion object : KLogging() {
         const val authHeader = "Authorization"
         const val bearerPrefix = "Bearer "
     }
 
+    /**
+     * Validates token.
+     */
     fun isTokenValid(headersGet: () -> Headers) = isTokenValid(headersGet())
 
     private fun isTokenValid(headers: Headers): Boolean {

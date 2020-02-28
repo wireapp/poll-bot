@@ -1,11 +1,10 @@
 package com.wire.bots.polls.setup
 
-import com.wire.bots.polls.filters.TypeFilter
 import com.wire.bots.polls.parser.InputParser
-import com.wire.bots.polls.parser.InputValidation
 import com.wire.bots.polls.parser.PollFactory
 import com.wire.bots.polls.parser.PollValidation
-import com.wire.bots.polls.routing.AuthProvider
+import com.wire.bots.polls.services.AuthService
+import com.wire.bots.polls.services.GreetingsService
 import com.wire.bots.polls.services.MessagesHandlingService
 import com.wire.bots.polls.services.PollService
 import com.wire.bots.polls.services.ProxySenderService
@@ -25,9 +24,7 @@ import org.kodein.di.generic.singleton
 
 @KtorExperimentalAPI
 fun MainBuilder.configureContainer() {
-    bind<TypeFilter>() with singleton { TypeFilter() }
 
-    bind<InputValidation>() with singleton { InputValidation() }
     bind<PollValidation>() with singleton { PollValidation() }
 
     bind<HttpClient>() with singleton {
@@ -41,28 +38,32 @@ fun MainBuilder.configureContainer() {
 
     bind<PollWebSocket>() with singleton {
         PollWebSocket(
-            instance(),
-            instance(),
-            instance()
+            client = instance(),
+            config = instance(),
+            handler = instance()
         )
     }
 
     bind<ProxySenderService>() with singleton {
         ProxySenderService(
-            instance(),
-            instance()
+            client = instance(),
+            config = instance()
         )
     }
 
-    bind<InputParser>() with singleton { InputParser(instance()) }
+    bind<InputParser>() with singleton { InputParser() }
 
     bind<PollFactory>() with singleton { PollFactory(instance(), instance()) }
 
     bind<PollService>() with singleton { PollService(instance(), instance()) }
 
+    bind<GreetingsService>() with singleton { GreetingsService(instance()) }
+
     bind<MessagesHandlingService>() with singleton { MessagesHandlingService(instance(), instance()) }
 
-    bind<AuthProvider>() with singleton { AuthProvider(instance("proxy-auth")) }
+    bind<AuthService>() with singleton {
+        AuthService(proxyToken = instance("proxy-auth"))
+    }
 
     bind<KLogger>("routing-logger") with singleton { KLogging().logger("RoutingLogger") }
 }

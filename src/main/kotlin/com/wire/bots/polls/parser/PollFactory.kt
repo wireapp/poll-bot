@@ -5,12 +5,18 @@ import com.wire.bots.polls.dto.PollDto
 import com.wire.bots.polls.dto.UsersInput
 import mu.KLogging
 
+/**
+ * Class used for creating the polls from the text. Parsing and creating the poll objects.
+ */
 class PollFactory(private val inputParser: InputParser, private val pollValidation: PollValidation) {
 
     private companion object : KLogging()
 
-    // TODO create better error handling and return probably Either
+    /**
+     * Parse and create poll for the [usersInput].
+     */
     fun forUserInput(usersInput: UsersInput): PollDto? {
+        // TODO create better error handling and return probably Either
         val poll = inputParser.parsePoll(usersInput).whenNull {
             logger.warn { "It was not possible to create poll for user input $usersInput." }
         } ?: return null

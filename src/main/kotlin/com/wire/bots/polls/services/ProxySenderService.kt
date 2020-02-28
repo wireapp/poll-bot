@@ -11,6 +11,9 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import mu.KLogging
 
+/**
+ * Service responsible for sending requests to the proxy service Roman.
+ */
 class ProxySenderService(private val client: HttpClient, config: ProxyConfiguration) {
 
     private companion object : KLogging() {
@@ -19,18 +22,25 @@ class ProxySenderService(private val client: HttpClient, config: ProxyConfigurat
 
     private val conversationEndpoint = config.baseUrl + conversationPath
 
+    /**
+     * Send given message with provided token.
+     */
     suspend fun send(token: String, message: BotMessage): ProxyResponseMessage {
-        logger.info { "Sending\n:${createJson(message)}" }
+        logger.debug { "Sending\n:${createJson(message)}" }
+
         val response = client.post<ProxyResponseMessage>(body = message) {
             url(conversationEndpoint)
             contentType(ContentType.Application.Json)
             header("Authorization", "Bearer $token")
         }
 
-        logger.info { "Message sent, response: $response" }
+        logger.debug { "Message sent, response: $response" }
 
         return response
     }
 }
 
+/**
+ * Configuration used to connect to the proxy.
+ */
 data class ProxyConfiguration(val baseUrl: String)

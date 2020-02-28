@@ -19,10 +19,13 @@ import org.kodein.di.ktor.kodein
 import java.text.DateFormat
 import java.time.Duration
 
+/**
+ * Loads the application.
+ */
 @KtorExperimentalAPI
 fun Application.init() {
     setupKodein()
-
+    // now kodein is running and can be used
     val k by kodein()
 
     installFrameworks()
@@ -31,6 +34,7 @@ fun Application.init() {
         registerRoutes()
     }
 
+    // determine whether should bot connect to the proxy web socket
     val useWebSockets by k.instance<Boolean>("use-websocket")
 
     if (useWebSockets) {
@@ -38,22 +42,27 @@ fun Application.init() {
     }
 }
 
+/**
+ * Configure Ktor and install necessary extensions.
+ */
 fun Application.installFrameworks() {
     install(ContentNegotiation) {
         jackson {
+            // enable pretty print for JSONs
             enable(SerializationFeature.INDENT_OUTPUT)
             dateFormat = DateFormat.getDateTimeInstance()
         }
     }
 
-    // Install Ktor features
     install(DefaultHeaders)
     install(CallLogging)
 
     install(WebSockets) {
-        pingPeriod = Duration.ofSeconds(60) // Disabled (null) by default
+        // enable ping - to keep the connection alive
+        pingPeriod = Duration.ofSeconds(30)
         timeout = Duration.ofSeconds(15)
-        maxFrameSize = Long.MAX_VALUE // Disabled (max value). The connection will be closed if surpassed this length.
+        // disabled (max value) - the connection will be closed if surpassed this length.
+        maxFrameSize = Long.MAX_VALUE
         masking = false
     }
 

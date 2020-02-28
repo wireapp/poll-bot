@@ -7,28 +7,42 @@ import io.ktor.http.DEFAULT_PORT
 import io.ktor.http.cio.websocket.Frame
 import mu.KLogging
 
+/**
+ * Base class for web socket connections.
+ */
 abstract class WebSocketBase(protected val client: HttpClient, protected val config: WebSocketConfig) {
 
     private companion object : KLogging()
 
-    suspend fun subscribe() {
+    /**
+     * Opens web socket and starts receiving connections. [keepAlive] determines whether the app should try to reconnect when the
+     * connection is closed.
+     */
+    tailrec suspend fun subscribe(keepAlive: Boolean = true) {
         // TODO websocket reconnect - use better solution than dummy while true
-        while (true) {
+        runCatching {
             client.ws(
                 host = config.host,
                 port = config.port ?: DEFAULT_PORT,
                 path = config.path
             ) {
                 for (frame in incoming) {
-                    logger.info { "received" }
+                    logger.debug { "WS frame received." }
                     runCatching { onFrameReceived(frame) }
                         .onFailure { logger.error(it) { "Exception occurred during handling onFrameReceived." } }
 
                 }
                 logger.info { "Closing the socket" }
             }
+        }.onFailure {
+            logger.error(it) { "Exception occurred while receiving web sockets. Keep Alive - $keepAlive" }
         }
+        // use tail recursion if the bot should keep the connection opened
+        if (keepAlive) subscribe(keepAlive)
     }
 
+    /**
+     * Method called when frame is received.
+     */
     abstract suspend fun DefaultClientWebSocketSession.onFrameReceived(frame: Frame)
 }
