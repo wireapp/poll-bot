@@ -26,6 +26,11 @@ Configuration is currently being loaded from the environment variables.
 ```kotlin
     /**
      * Connection string for the database that includes username and password.
+     *
+     * Must be in the format with user and password:
+     * `jdbc:postgresql://<address>:<port>/<db-name>?user=<username>&password=<password>`
+     * For example:
+     * `jdbc:postgresql://localhost:5432/bot-database?user=cool-user&password=super-secret-db-password`
      */
     const val DB_CONNECTION_STRING = "DB_CONNECTION_STRING"
     /**
