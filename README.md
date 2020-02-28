@@ -16,7 +16,7 @@ For more details see [Makefile](Makefile).
 
 ## Docker Hub
 Poll Bot has docker image available on [Docker Hub](https://hub.docker.com/r/lukaswire/polls).
-```kotlin
+```bash
 docker pull lukaswire/polls:<version>
 ```
 
