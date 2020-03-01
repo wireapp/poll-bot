@@ -15,40 +15,41 @@ repositories {
     jcenter()
 }
 
-val ktorVersion: String by project
-val ktoolzVersion: String by project
-
 dependencies {
     // stdlib
     implementation(kotlin("stdlib-jdk8"))
     // extension functions
-    implementation("ai.blindspot.ktoolz:ktoolz:$ktoolzVersion")
+    implementation("ai.blindspot.ktoolz", "ktoolz", "1.0.3")
 
     // Ktor server dependencies
-    implementation("io.ktor:ktor-server-core:$ktorVersion")
-    implementation("io.ktor:ktor-server-netty:$ktorVersion")
-    implementation("io.ktor:ktor-jackson:$ktorVersion")
-    implementation("io.ktor:ktor-websockets:$ktorVersion")
+    val ktorVersion = "1.3.0"
+    implementation("io.ktor", "ktor-server-core", ktorVersion)
+    implementation("io.ktor", "ktor-server-netty", ktorVersion)
+    implementation("io.ktor", "ktor-jackson", ktorVersion)
+    implementation("io.ktor", "ktor-websockets", ktorVersion)
 
     // Ktor client dependencies
-    implementation("io.ktor:ktor-client-json:$ktorVersion")
-    implementation("io.ktor:ktor-client-jackson:$ktorVersion")
-    implementation("io.ktor:ktor-client-websockets:$ktorVersion")
-    implementation("io.ktor:ktor-client-cio:$ktorVersion")
+    implementation("io.ktor", "ktor-client-json", ktorVersion)
+    implementation("io.ktor", "ktor-client-jackson", ktorVersion)
+    implementation("io.ktor", "ktor-client-websockets", ktorVersion)
+    implementation("io.ktor", "ktor-client-cio", ktorVersion)
 
     // logging
-    implementation("io.github.microutils:kotlin-logging:1.7.8")
-    implementation("org.slf4j:slf4j-simple:1.6.1")
+    implementation("io.github.microutils", "kotlin-logging", "1.7.8")
+    implementation("org.slf4j", "slf4j-simple", "1.6.1")
 
     // DI
-    implementation("org.kodein.di:kodein-di-generic-jvm:6.5.0")
-    implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:6.5.0")
+    val kodeinVersion = "6.5.0"
+    implementation("org.kodein.di", "kodein-di-generic-jvm", kodeinVersion)
+    implementation("org.kodein.di", "kodein-di-framework-ktor-server-jvm", kodeinVersion)
 
     // database
     implementation("org.postgresql", "postgresql", "42.2.2")
-    implementation("org.jetbrains.exposed", "exposed-core", "0.20.1")
-    implementation("org.jetbrains.exposed", "exposed-dao", "0.20.1")
-    implementation("org.jetbrains.exposed", "exposed-jdbc", "0.20.1")
+
+    val exposedVersion = "0.20.1"
+    implementation("org.jetbrains.exposed", "exposed-core", exposedVersion)
+    implementation("org.jetbrains.exposed", "exposed-dao", exposedVersion)
+    implementation("org.jetbrains.exposed", "exposed-jdbc", exposedVersion)
 }
 
 tasks {

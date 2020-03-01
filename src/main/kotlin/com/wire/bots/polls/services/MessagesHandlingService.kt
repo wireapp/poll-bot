@@ -46,7 +46,10 @@ class MessagesHandlingService(
     }
 
     private suspend fun handleText(token: String, message: Message) {
-        val userInput = UsersInput(requireNotNull(message.text) { "Text message received, text field can not be null!" })
+        val userInput = UsersInput(
+            userId = requireNotNull(message.userId) { "User ID must be specified for the text message." },
+            input = requireNotNull(message.text) { "Text message received, text field can not be null!" }
+        )
         with(userInput.input) {
             when {
                 startsWith("/poll") -> pollService.createPoll(token, userInput)
