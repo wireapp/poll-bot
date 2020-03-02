@@ -7,8 +7,10 @@ plugins {
 group = "com.wire.bots.polls"
 version = "0.1"
 
+val mainClass = "com.wire.bots.polls.PollBotKt"
+
 application {
-    mainClassName = "com.wire.bots.polls.PollBotKt"
+    mainClassName = mainClass
 }
 
 repositories {
@@ -58,5 +60,15 @@ tasks {
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
+    }
+
+    register<Jar>("fatJar") {
+        manifest {
+            attributes["Main-Class"] = mainClass
+        }
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        archiveFileName.set("polls.jar")
+        from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+        from(sourceSets.main.get().output)
     }
 }

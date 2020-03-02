@@ -64,18 +64,12 @@ class MessagesHandlingService(
             when {
                 userId == null -> throw IllegalArgumentException("UserId must be set for text messages.")
                 // it is a reply on something
-                refMessageId != null -> when {
-                    // like of the message, maybe the poll -> send stats if the poll exist
-                    reaction != null -> pollService.sendStats(token, refMessageId)
-                    // it contains text
-                    text != null -> when {
-                        // request for stats
-                        text.trim().startsWith("/stats") -> pollService.sendStats(token, refMessageId)
-                        // integer vote where the text contains offset
-                        text.trim().toIntOrNull() != null -> vote(token, userId, refMessageId, text)
-                        else -> logger.info { "Ignoring the message as it is reply unrelated to the bot" }
-                    }
-                    else -> logger.info { "Ignoring the message as it has set refMessageId but both text and reaction are null." }
+                refMessageId != null && text != null -> when {
+                    // request for stats
+                    text.trim().startsWith("/stats") -> pollService.sendStats(token, refMessageId)
+                    // integer vote where the text contains offset
+                    text.trim().toIntOrNull() != null -> vote(token, userId, refMessageId, text)
+                    else -> logger.info { "Ignoring the message as it is reply unrelated to the bot" }
                 }
                 // text message with just text
                 text != null -> {
