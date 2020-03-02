@@ -70,11 +70,13 @@ class PollService(
     /**
      * Sends statistics about the poll to the proxy.
      */
-    suspend fun sendStats(token: String, @Suppress("UNUSED_PARAMETER") usersInput: UsersInput) {
-        // TODO get the poll id sent by proxy
-        val pollId = "<some id>"
-
+    suspend fun sendStats(token: String, pollId: String) {
         val result = repository.stats(pollId)
+
+        if (result.isEmpty()) {
+            logger.info { "There are no data for given pollId." }
+            return
+        }
 
         val text = result.map { (optionId, votingUsers) ->
             "$optionId - ${votingUsers.joinToString(", ")}"

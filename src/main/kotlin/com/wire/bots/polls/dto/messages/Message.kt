@@ -35,6 +35,15 @@ data class Message(
      */
     val text: String?,
     /**
+     * Id of the quoted message, when the user replies on something, this is id of something.
+     */
+    val refMessageId: String?,
+    /**
+     * When this and [refMessageId] is filled, the user liked the message with id [refMessageId].
+     */
+    // TODO replace with final name
+    val reaction: String?,
+    /**
      * Image in the message.
      */
     val image: String?,
