@@ -2,6 +2,7 @@ package com.wire.bots.polls.setup
 
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.wire.bots.polls.dao.DatabaseSetup
+import com.wire.bots.polls.dto.messages.DatabaseConfiguration
 import com.wire.bots.polls.routing.registerRoutes
 import com.wire.bots.polls.websockets.subscribeToWebSockets
 import io.ktor.application.Application
@@ -16,11 +17,13 @@ import io.ktor.routing.routing
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.websocket.WebSockets
 import mu.KLogger
+import org.flywaydb.core.Flyway
 import org.kodein.di.LazyKodein
 import org.kodein.di.generic.instance
 import org.kodein.di.ktor.kodein
 import java.text.DateFormat
 import java.time.Duration
+
 
 /**
  * Loads the application.
@@ -56,16 +59,30 @@ fun Application.init() {
  */
 fun connectDatabase(logger: KLogger, k: LazyKodein) {
     logger.info { "Connecting to the DB" }
-    val connectionString by k.instance<String>("db-connection-string")
+    val dbConfig by k.instance<DatabaseConfiguration>()
+    DatabaseSetup.connect(dbConfig)
 
-    DatabaseSetup.connect(connectionString)
-    val isConnected = DatabaseSetup.isConnected()
-    if (isConnected) {
+    if (DatabaseSetup.isConnected()) {
         logger.info { "DB connected." }
+        migrateDatabase(logger, dbConfig)
     } else {
         // TODO verify handling, maybe exit the App?
         logger.error { "It was not possible to connect to db database! The application will start but it won't work." }
     }
+}
+
+/**
+ * Migrate database using flyway.
+ */
+fun migrateDatabase(logger: KLogger, dbConfig: DatabaseConfiguration) {
+    logger.info { "Migrating database." }
+    val migrationsCount = Flyway
+        .configure()
+        .dataSource(dbConfig.url, dbConfig.userName, dbConfig.password)
+        .load()
+        .migrate()
+
+    logger.info { if (migrationsCount == 0) "No migrations necessary." else "Applied $migrationsCount migrations." }
 }
 
 /**

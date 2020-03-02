@@ -52,6 +52,9 @@ dependencies {
     implementation("org.jetbrains.exposed", "exposed-core", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-dao", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-jdbc", exposedVersion)
+
+    // database migrations from the code
+    implementation("org.flywaydb", "flyway-core", "6.2.4")
 }
 
 tasks {

@@ -1,5 +1,6 @@
 package com.wire.bots.polls.dao
 
+import com.wire.bots.polls.dto.messages.DatabaseConfiguration
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -7,13 +8,19 @@ import org.jetbrains.exposed.sql.transactions.transaction
  * Object with methods for managing the database.
  */
 object DatabaseSetup {
-
+    
     /**
-     * Connect bot to the database via provided connection string.
+     * Connect bot to the database via provided credentials.
      *
      * This method does not check whether it is possible to connect to the database, use [isConnected] for that.
      */
-    fun connect(connectionString: String) = Database.connect(connectionString, driver = "org.postgresql.Driver")
+    fun connect(dbConfiguration: DatabaseConfiguration) =
+        Database.connect(
+            url = dbConfiguration.url,
+            user = dbConfiguration.userName,
+            password = dbConfiguration.password,
+            driver = "org.postgresql.Driver"
+        )
 
     /**
      * Returns true if the bot is connected to database
