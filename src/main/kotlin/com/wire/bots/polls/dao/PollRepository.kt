@@ -70,7 +70,13 @@ class PollRepository {
         (PollOptions leftJoin Votes)
             .slice(PollOptions.optionOrder, Votes.userId)
             .select {
-                (PollOptions.pollId eq pollId) and Votes.userId.isNotNull()
-            }.groupBy({ it[PollOptions.optionOrder] }, { it[Votes.userId] })
+                PollOptions.pollId eq pollId
+            }
+            .groupBy({ it[PollOptions.optionOrder] }, { it[Votes.userId] })
+            .mapValues { (_, votingUsers) ->
+                // this is not true as exposed is not completely safe -> as this is left join, userIds can be nulls
+                @Suppress("UselessCallOnCollection")
+                votingUsers.filterNotNull()
+            }
     }
 }

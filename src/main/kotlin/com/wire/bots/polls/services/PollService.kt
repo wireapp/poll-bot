@@ -79,7 +79,7 @@ class PollService(
         }
 
         val text = result.map { (optionId, votingUsers) ->
-            "$optionId - ${votingUsers.size} votes"
+            "$optionId - ${votingUsers.size} ${if (votingUsers.size == 1) "vote" else "votes"}"
         }.joinToString(newLine)
 
         GlobalScope.launch {
