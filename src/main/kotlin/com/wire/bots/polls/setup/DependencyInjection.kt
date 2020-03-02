@@ -1,5 +1,6 @@
 package com.wire.bots.polls.setup
 
+import com.wire.bots.polls.dao.PollRepository
 import com.wire.bots.polls.parser.InputParser
 import com.wire.bots.polls.parser.PollFactory
 import com.wire.bots.polls.parser.PollValidation
@@ -55,7 +56,9 @@ fun MainBuilder.configureContainer() {
 
     bind<PollFactory>() with singleton { PollFactory(instance(), instance()) }
 
-    bind<PollService>() with singleton { PollService(instance(), instance()) }
+    bind<PollRepository>() with singleton { PollRepository() }
+
+    bind<PollService>() with singleton { PollService(instance(), instance(), instance()) }
 
     bind<GreetingsService>() with singleton { GreetingsService(instance()) }
 

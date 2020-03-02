@@ -35,7 +35,7 @@ class MessagesHandlingService(
                     PollAction(
                         pollId = poll.id,
                         optionId = requireNotNull(poll.offset),
-                        userId = requireNotNull(poll.userId)
+                        userId = requireNotNull(message.userId)
                     )
                 )
             }

@@ -73,12 +73,7 @@ data class PollObjectMessage(
     /**
      * Id of the button when it was clicked on.
      */
-    val offset: Int?,
-
-    /**
-     * Id of the user who clicked button.
-     */
-    val userId: String?
+    val offset: Int?
 )
 
 /* JSON from the swagger

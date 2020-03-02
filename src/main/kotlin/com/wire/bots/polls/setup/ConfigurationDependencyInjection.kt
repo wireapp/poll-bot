@@ -22,11 +22,11 @@ import org.kodein.di.generic.singleton
 fun MainBuilder.bindConfiguration() {
 
     bind<String>("db-connection-string") with singleton {
-        getEnv(DB_CONNECTION_STRING) ?: ""
+        getEnv(DB_CONNECTION_STRING) ?: "jdbc:postgresql://localhost:5432/poll-bot?user=wire-poll-bot&password=super-secret-wire-pwd"
     }
 
     bind<String>("proxy-auth") with singleton {
-        getEnv(SERVICE_TOKEN) ?: ""
+        getEnv(SERVICE_TOKEN) ?: "d6jPd5vetW867Vsu01dz2cOT"
     }
 
     bind<String>("app-key-websocket") with singleton {
