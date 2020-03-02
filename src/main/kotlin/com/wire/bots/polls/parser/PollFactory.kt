@@ -1,5 +1,6 @@
 package com.wire.bots.polls.parser
 
+import ai.blindspot.ktoolz.extensions.newLine
 import ai.blindspot.ktoolz.extensions.whenNull
 import com.wire.bots.polls.dto.PollDto
 import com.wire.bots.polls.dto.UsersInput
@@ -28,7 +29,7 @@ class PollFactory(private val inputParser: InputParser, private val pollValidati
         } else {
             logger.warn {
                 "It was not possible to create poll for user input: $usersInput due to errors listed bellow:" +
-                        "${System.lineSeparator()}${errors.joinToString(System.lineSeparator())}"
+                        "$newLine${errors.joinToString(newLine)}"
             }
             null
         }

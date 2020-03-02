@@ -1,5 +1,6 @@
 package com.wire.bots.polls.setup
 
+import ai.blindspot.ktoolz.extensions.getEnv
 import com.wire.bots.polls.services.ProxyConfiguration
 import com.wire.bots.polls.setup.EnvConfigVariables.APP_KEY
 import com.wire.bots.polls.setup.EnvConfigVariables.DB_CONNECTION_STRING
@@ -21,29 +22,29 @@ import org.kodein.di.generic.singleton
 fun MainBuilder.bindConfiguration() {
 
     bind<String>("db-connection-string") with singleton {
-        System.getenv(DB_CONNECTION_STRING) ?: ""
+        getEnv(DB_CONNECTION_STRING) ?: ""
     }
 
     bind<String>("proxy-auth") with singleton {
-        System.getenv(SERVICE_TOKEN) ?: ""
+        getEnv(SERVICE_TOKEN) ?: ""
     }
 
     bind<String>("app-key-websocket") with singleton {
-        System.getenv(APP_KEY) ?: ""
+        getEnv(APP_KEY) ?: ""
     }
 
-    bind<Boolean>("use-websocket") with singleton { System.getenv(USE_WEB_SOCKETS)?.toBoolean() ?: false }
+    bind<Boolean>("use-websocket") with singleton { getEnv(USE_WEB_SOCKETS)?.toBoolean() ?: false }
 
     bind<WebSocketConfig>() with singleton {
         val appKey = instance<String>("app-key-websocket")
 
-        val host = System.getenv(PROXY_WS_HOST) ?: "proxy.services.zinfra.io"
-        val path = System.getenv(PROXY_WS_PATH) ?: "/await"
+        val host = getEnv(PROXY_WS_HOST) ?: "proxy.services.zinfra.io"
+        val path = getEnv(PROXY_WS_PATH) ?: "/await"
 
         WebSocketConfig(host = host, path = "$path/$appKey")
     }
 
     bind<ProxyConfiguration>() with singleton {
-        ProxyConfiguration(System.getenv(PROXY_DOMAIN) ?: "https://proxy.services.zinfra.io")
+        ProxyConfiguration(getEnv(PROXY_DOMAIN) ?: "https://proxy.services.zinfra.io")
     }
 }

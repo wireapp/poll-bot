@@ -1,5 +1,6 @@
 package com.wire.bots.polls.services
 
+import ai.blindspot.ktoolz.extensions.newLine
 import ai.blindspot.ktoolz.extensions.whenNull
 import com.wire.bots.polls.dao.PollOptions
 import com.wire.bots.polls.dao.Polls
@@ -110,7 +111,7 @@ class PollService(private val factory: PollFactory, private val proxySenderServi
 
         val text = result.map { (optionId, votingUsers) ->
             "$optionId - ${votingUsers.joinToString(", ")}"
-        }.joinToString(System.lineSeparator())
+        }.joinToString(newLine)
 
         proxySenderService.send(
             token, TextMessage(

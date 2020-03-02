@@ -1,5 +1,6 @@
 package com.wire.bots.polls.utils
 
+import ai.blindspot.ktoolz.extensions.newLine
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -25,7 +26,7 @@ fun jacksonMapper(): ObjectMapper = jacksonObjectMapper().apply {
  */
 inline fun <reified T> parseJson(json: String): T? =
     runCatching { jacksonMapper().readValue<T>(json) }
-        .onFailure { jsonLogger.warn(it) { "Exception raised during JSON parsing:${System.lineSeparator()}$json" } }
+        .onFailure { jsonLogger.warn(it) { "Exception raised during JSON parsing:$newLine$json" } }
         .getOrNull()
 
 /**
@@ -33,7 +34,7 @@ inline fun <reified T> parseJson(json: String): T? =
  */
 inline fun <reified T> parseJson(json: ByteArray): T? =
     runCatching { jacksonMapper().readValue<T>(json) }
-        .onFailure { jsonLogger.warn(it) { "Exception raised during JSON parsing:${System.lineSeparator()}$json" } }
+        .onFailure { jsonLogger.warn(it) { "Exception raised during JSON parsing:$newLine$json" } }
         .getOrNull()
 
 /**
