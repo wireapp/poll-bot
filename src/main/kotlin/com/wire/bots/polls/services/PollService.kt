@@ -79,16 +79,13 @@ class PollService(
         }
 
         val text = result.map { (optionId, votingUsers) ->
-            "$optionId - ${votingUsers.joinToString(", ")}"
+            "$optionId - ${votingUsers.size} votes"
         }.joinToString(newLine)
 
         GlobalScope.launch {
             proxySenderService.send(
                 token, TextMessage(
-                    """
-                    Results for pollId: $pollId
-                    $text
-                """.trimIndent()
+                    "Results for pollId: `$pollId`$newLine```$newLine$text$newLine```"
                 )
             )
         }
