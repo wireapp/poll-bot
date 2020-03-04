@@ -44,6 +44,11 @@ dependencies {
     val kodeinVersion = "6.5.0"
     implementation("org.kodein.di", "kodein-di-generic-jvm", kodeinVersion)
     implementation("org.kodein.di", "kodein-di-framework-ktor-server-jvm", kodeinVersion)
+
+    // unit testing
+    testImplementation(kotlin("test"))
+    testImplementation(kotlin("test-junit5"))
+    testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.6.0")
 }
 
 tasks {
@@ -52,6 +57,10 @@ tasks {
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
+    }
+
+    test {
+        useJUnitPlatform()
     }
 
     register<Jar>("fatJar") {
