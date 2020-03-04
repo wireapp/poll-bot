@@ -1,5 +1,6 @@
 package com.wire.bots.polls.integration_tests
 
+import ai.blindspot.ktoolz.extensions.newLine
 import com.wire.bots.polls.integration_tests.dto.PollConfirmation
 import com.wire.bots.polls.integration_tests.dto.PollCreation
 import com.wire.bots.polls.integration_tests.dto.ProxyMessage
@@ -7,6 +8,7 @@ import com.wire.bots.polls.integration_tests.dto.botRequest
 import com.wire.bots.polls.integration_tests.dto.init
 import com.wire.bots.polls.integration_tests.dto.newText
 import com.wire.bots.polls.integration_tests.dto.pollConfirmationMessage
+import com.wire.bots.polls.integration_tests.dto.reaction
 import com.wire.bots.polls.integration_tests.dto.textMessage
 import com.wire.bots.polls.integration_tests.dto.toCreateString
 import com.wire.bots.polls.integration_tests.dto.voteUsingObject
@@ -107,13 +109,55 @@ class FlowTest {
         val option = 1
         val votingUser = randomStringUUID()
 
-
         vote(token, createdPoll.id, votingUser, option) {
             voteUsingObject(
                 userId = votingUser,
                 botId = randomStringUUID(),
                 token = token,
                 pollId = createdPoll.id,
+                option = option
+            )
+        }
+    }
+
+    @Test
+    fun `test vote and get results`() {
+        val createdPoll = createPoll()
+        val option = 1
+        val votingUser = randomStringUUID()
+        vote(createdPoll.id, votingUser, option)
+
+        val token = randomStringUUID()
+
+        val reactionMessage = reaction(
+            userId = votingUser,
+            botId = randomStringUUID(),
+            token = token,
+            refMessageId = createdPoll.id
+        )
+
+        val usersVoting = "0 - 0 votes${newLine}1 - 1 vote${newLine}2 - 0 votes"
+        val expected = textMessage(
+            "Results for pollId: `${createdPoll.id}`$newLine```$newLine$usersVoting$newLine```"
+        )
+
+        runBlocking {
+            Application.botService.send(reactionMessage)
+            delay(TIMEOUT)
+        }
+
+        assertEquals(expected, tokenStorage[token])
+    }
+
+    private fun vote(pollId: String, votingUserId: String, option: Int) {
+        val token = randomStringUUID()
+
+        vote(token, pollId, votingUserId, option) {
+            voteUsingObject(
+                userId = votingUserId,
+                botId = randomStringUUID(),
+                token = token,
+                pollId = pollId,
                 option = option
             )
         }
@@ -169,5 +213,4 @@ class FlowTest {
 
         return requireNotNull(receivedMessage.poll as? PollCreation) { "Poll in received message was not poll creation. This is weird." }
     }
-
 }
