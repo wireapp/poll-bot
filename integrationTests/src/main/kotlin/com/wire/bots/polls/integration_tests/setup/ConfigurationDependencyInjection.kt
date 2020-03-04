@@ -3,10 +3,8 @@ package com.wire.bots.polls.integration_tests.setup
 import ai.blindspot.ktoolz.extensions.getEnv
 import ai.blindspot.ktoolz.extensions.whenNull
 import com.wire.bots.polls.integration_tests.dto.BotApiConfiguration
-import com.wire.bots.polls.integration_tests.setup.EnvConfigVariables.APP_KEY
 import com.wire.bots.polls.integration_tests.setup.EnvConfigVariables.BOT_API
 import com.wire.bots.polls.integration_tests.setup.EnvConfigVariables.SERVICE_TOKEN
-import com.wire.bots.polls.integration_tests.setup.EnvConfigVariables.USE_WEB_SOCKETS
 import mu.KLogging
 import org.kodein.di.Kodein.MainBuilder
 import org.kodein.di.generic.bind
@@ -37,13 +35,5 @@ fun MainBuilder.bindConfiguration() {
 
     bind<String>("proxy-auth") with singleton {
         getEnvOrLogDefault(SERVICE_TOKEN, "local-token")
-    }
-
-    bind<String>("app-key-websocket") with singleton {
-        getEnvOrLogDefault(APP_KEY, "")
-    }
-
-    bind<Boolean>("use-websocket") with singleton {
-        getEnvOrLogDefault(USE_WEB_SOCKETS, "false").toBoolean()
     }
 }

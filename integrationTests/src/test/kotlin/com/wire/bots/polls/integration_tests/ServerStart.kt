@@ -10,7 +10,7 @@ import java.util.UUID
  * Starts the Ktor api
  */
 @Suppress("EXPERIMENTAL_API_USAGE") // because we don't want to propagate that further
-fun startServer() = embeddedServer(Netty, port = 8081, host = "localhost", module = Application::init).start()
+fun startServer() = embeddedServer(Netty, port = 8081, module = Application::init).start()
 
 
 /**

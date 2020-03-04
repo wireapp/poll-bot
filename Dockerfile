@@ -16,7 +16,7 @@ RUN ./gradlew --version
 
 # Copy project and build
 COPY . $PROJECT_ROOT
-RUN ./gradlew distTar --no-daemon
+RUN ./gradlew distTar --info --no-daemon
 
 # Runtime
 FROM adoptopenjdk/openjdk11:jre-11.0.6_10-alpine
