@@ -1,5 +1,6 @@
 package com.wire.bots.polls.integration_tests.setup
 
+import com.wire.bots.polls.integration_tests.services.BotApiService
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.features.json.JacksonSerializer
@@ -10,6 +11,7 @@ import mu.KLogger
 import mu.KLogging
 import org.kodein.di.Kodein.MainBuilder
 import org.kodein.di.generic.bind
+import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 
 @KtorExperimentalAPI
@@ -26,4 +28,6 @@ fun MainBuilder.configureContainer() {
 
     bind<KLogger>("routing-logger") with singleton { KLogging().logger("Routing") }
     bind<KLogger>("install-logger") with singleton { KLogging().logger("KtorStartup") }
+
+    bind<BotApiService>() with singleton { BotApiService(instance(), instance()) }
 }
