@@ -64,6 +64,6 @@ fun MainBuilder.bindConfiguration() {
     }
 
     bind<ProxyConfiguration>() with singleton {
-        ProxyConfiguration(getEnvOrLogDefault(PROXY_DOMAIN, "https://proxy.services.zinfra.io"))
+        ProxyConfiguration(getEnvOrLogDefault(PROXY_DOMAIN, "http://localhost:8081"))
     }
 }

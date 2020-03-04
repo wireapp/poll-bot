@@ -8,5 +8,5 @@ import io.ktor.util.KtorExperimentalAPI
 
 @KtorExperimentalAPI
 fun main(args: Array<String>) {
-    embeddedServer(Netty, 8081, module = Application::init).start()
+    embeddedServer(Netty, port = 8081, module = Application::init).start()
 }
