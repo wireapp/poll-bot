@@ -1,5 +1,6 @@
 package com.wire.bots.polls.dao
 
+import ai.blindspot.ktoolz.extensions.mapToSet
 import ai.blindspot.ktoolz.extensions.whenNull
 import com.wire.bots.polls.dto.PollAction
 import com.wire.bots.polls.dto.PollDto
@@ -46,8 +47,8 @@ class PollRepository {
      */
     suspend fun vote(pollAction: PollAction) = newSuspendedTransaction {
         val voteId = PollOptions.select {
-            (PollOptions.pollId eq pollAction.pollId) and (PollOptions.optionOrder eq pollAction.optionId)
-        }.singleOrNull()
+                (PollOptions.pollId eq pollAction.pollId) and (PollOptions.optionOrder eq pollAction.optionId)
+            }.singleOrNull()
             ?.getOrNull(PollOptions.id)
             ?.value
             .whenNull {
@@ -76,5 +77,17 @@ class PollRepository {
             .mapValues { (_, votingUsers) ->
                 votingUsers.filterNotNull()
             }
+    }
+
+    /**
+     * Returns set of user ids that voted in the poll with given pollId.
+     */
+    suspend fun votingUsers(pollId: String) = newSuspendedTransaction {
+        (PollOptions rightJoin Votes)
+            .slice(Votes.userId)
+            .select {
+                PollOptions.pollId eq pollId
+            }
+            .mapToSet { it[Votes.userId] }
     }
 }
