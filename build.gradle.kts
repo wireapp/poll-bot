@@ -24,7 +24,7 @@ dependencies {
     implementation("ai.blindspot.ktoolz", "ktoolz", "1.0.3")
 
     // Ktor server dependencies
-    val ktorVersion = "1.3.0"
+    val ktorVersion = "1.3.1"
     implementation("io.ktor", "ktor-server-core", ktorVersion)
     implementation("io.ktor", "ktor-server-netty", ktorVersion)
     implementation("io.ktor", "ktor-jackson", ktorVersion)
@@ -48,7 +48,7 @@ dependencies {
     // database
     implementation("org.postgresql", "postgresql", "42.2.2")
 
-    val exposedVersion = "0.20.1"
+    val exposedVersion = "0.21.1"
     implementation("org.jetbrains.exposed", "exposed-core", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-dao", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-jdbc", exposedVersion)
