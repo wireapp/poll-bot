@@ -32,7 +32,7 @@ fun MainBuilder.bindConfiguration() {
     }
 
     bind<String>("bot-api-url") with singleton {
-        getEnvOrLogDefault(BOT_API, "localhost:8080")
+        getEnvOrLogDefault(BOT_API, "http://localhost:8080")
     }
 
     bind<String>("proxy-auth") with singleton {
