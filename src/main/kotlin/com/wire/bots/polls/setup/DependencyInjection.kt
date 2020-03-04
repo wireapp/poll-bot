@@ -5,6 +5,7 @@ import com.wire.bots.polls.parser.InputParser
 import com.wire.bots.polls.parser.PollFactory
 import com.wire.bots.polls.parser.PollValidation
 import com.wire.bots.polls.services.AuthService
+import com.wire.bots.polls.services.ConversationService
 import com.wire.bots.polls.services.GreetingsService
 import com.wire.bots.polls.services.MessagesHandlingService
 import com.wire.bots.polls.services.PollService
@@ -58,9 +59,11 @@ fun MainBuilder.configureContainer() {
 
     bind<PollRepository>() with singleton { PollRepository() }
 
-    bind<PollService>() with singleton { PollService(instance(), instance(), instance()) }
+    bind<PollService>() with singleton { PollService(instance(), instance(), instance(), instance()) }
 
     bind<GreetingsService>() with singleton { GreetingsService(instance()) }
+
+    bind<ConversationService>() with singleton { ConversationService(instance(), instance()) }
 
     bind<MessagesHandlingService>() with singleton { MessagesHandlingService(instance(), instance()) }
 

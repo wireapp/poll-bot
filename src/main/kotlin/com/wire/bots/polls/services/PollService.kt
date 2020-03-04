@@ -20,7 +20,8 @@ import java.util.UUID
 class PollService(
     private val factory: PollFactory,
     private val proxySenderService: ProxySenderService,
-    private val repository: PollRepository
+    private val repository: PollRepository,
+    private val conversationService: ConversationService
 ) {
 
     private companion object : KLogging()
@@ -64,6 +65,22 @@ class PollService(
                 )
             )
             logger.info { "Proxy received confirmation for vote under id: ${response.messageId}" }
+
+            sendStatsIfAllVoted(token, pollAction.pollId)
+        }
+    }
+
+    private suspend fun sendStatsIfAllVoted(token: String, pollId: String) {
+        val conversationMembersCount = conversationService.getNumberOfConversationMembers(token)
+            .whenNull { logger.warn { "It was not possible to determine number of conversation members!" } } ?: return
+
+        val votedSize = repository.votingUsers(pollId).size
+
+        if (votedSize == conversationMembersCount) {
+            logger.info { "All users voted, sending statistics to the conversation." }
+            sendStats(token, pollId)
+        } else {
+            logger.info { "Users voted: $votedSize, members of conversation: $conversationMembersCount" }
         }
     }
 
