@@ -36,8 +36,19 @@ data class ProxyMessage(
     /**
      * When this and [refMessageId] is filled, the user liked the message with id [refMessageId].
      */
-    val reaction: String? = null
-)
+    val reaction: String? = null,
+
+    /**
+     * For votes.
+     */
+    val poll: Poll? = null
+) {
+    data class Poll(
+        val id: String,
+        val offset: Int
+    )
+}
+
 
 /**
  * To send bot request request.
@@ -69,6 +80,34 @@ fun newText(userId: String, botId: String, token: String, text: String) = ProxyM
     token = token,
     text = text
 )
+
+
+/**
+ * To send vote.
+ */
+fun voteUsingText(userId: String, botId: String, token: String, pollId: String, option: Int) = ProxyMessage(
+    botId = botId,
+    userId = userId,
+    type = "conversation.new_text",
+    refMessageId = pollId,
+    text = option.toString(),
+    token = token
+)
+
+/**
+ * To send vote.
+ */
+fun voteUsingObject(userId: String, botId: String, token: String, pollId: String, option: Int) = ProxyMessage(
+    botId = botId,
+    userId = userId,
+    type = "conversation.poll.action",
+    token = token,
+    poll = ProxyMessage.Poll(
+        id = pollId,
+        offset = option
+    )
+)
+
 
 /**
  * To send reaction.
