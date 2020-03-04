@@ -1,8 +1,12 @@
 # Wire Poll Bot Integration tests
-[Wire](https://wire.com/) bot for the polls - integration test.
+[Wire](https://wire.com/) bot for the polls - integration test. 
+The black box tests use REST API of the bot and are emulating the Roman proxy. 
 
-This test structure assumes that the bot is running somewhere and hooks are pointed to this API.
+This test structure assumes that the bot is running somewhere 
+and hooks are pointed to this API.
 
+## Execution
+For execution inside `docker-compose` environment please run `make integration-tests-pipeline`.
 
 ## Environment
 ```kotlin
