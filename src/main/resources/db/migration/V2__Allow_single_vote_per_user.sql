@@ -1,11 +1,11 @@
+-- it is much easier to delete and create again as we are dropping primary keys columns
+drop table votes;
+drop table poll_option;
+
 -- clear poll table, we don't care right now about data
 -- noinspection SqlWithoutWhere
 delete
 from polls;
-
--- it is much easier to delete and create again as we are dropping primary keys columns
-drop table votes;
-drop table poll_option;
 
 create table poll_option
 (
