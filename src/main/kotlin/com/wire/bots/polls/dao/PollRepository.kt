@@ -9,6 +9,7 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.update
 import java.util.UUID
 
 /**
@@ -46,18 +47,22 @@ class PollRepository {
      * [IllegalArgumentException] is thrown.
      */
     suspend fun vote(pollAction: PollAction) = newSuspendedTransaction {
-        val voteId = PollOptions.select {
-                (PollOptions.pollId eq pollAction.pollId) and (PollOptions.optionOrder eq pollAction.optionId)
-            }.singleOrNull()
-            ?.getOrNull(PollOptions.id)
-            ?.value
+        PollOptions.select {
+            (PollOptions.pollId eq pollAction.pollId) and (PollOptions.optionOrder eq pollAction.optionId)
+        }.singleOrNull()
             .whenNull {
                 logger.error { "There is no poll which has id ${pollAction.pollId} or no option with order ${pollAction.optionId}" }
             } ?: throw IllegalArgumentException("No poll or option found for the received vote!")
 
-
-        Votes.insert {
-            it[pollOption] = voteId
+        // unfortunately Exposed does not support upsert,
+        // so try to update the vote and if nothing is updated, insert new value
+        Votes.update(
+            { (Votes.pollId eq pollAction.pollId) and (Votes.userId eq pollAction.userId) }
+        ) {
+            it[pollOption] = pollAction.optionId
+        }.takeUnless { it == 0 } ?: Votes.insert {
+            it[pollId] = pollAction.pollId
+            it[pollOption] = pollAction.optionId
             it[userId] = pollAction.userId
         }
     }

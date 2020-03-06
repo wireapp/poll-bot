@@ -1,12 +1,12 @@
 package com.wire.bots.polls.dao
 
-import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
+import org.jetbrains.exposed.sql.Table
 
 /**
  * Poll options.
  */
-object PollOptions : IntIdTable("poll_option") {
+object PollOptions : Table("poll_option") {
 
     /**
      * Id of the poll this option is for. UUID.
@@ -22,4 +22,7 @@ object PollOptions : IntIdTable("poll_option") {
      * Option content, the text inside the button/choice.
      */
     val optionContent: Column<String> = varchar("option_content", 256)
+
+    override val primaryKey: PrimaryKey?
+        get() = PrimaryKey(pollId, optionOrder)
 }
