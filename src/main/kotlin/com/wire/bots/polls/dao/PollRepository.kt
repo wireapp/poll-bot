@@ -1,15 +1,14 @@
 package com.wire.bots.polls.dao
 
 import ai.blindspot.ktoolz.extensions.mapToSet
-import ai.blindspot.ktoolz.extensions.whenNull
 import com.wire.bots.polls.dto.PollAction
 import com.wire.bots.polls.dto.PollDto
 import mu.KLogging
+import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.update
 import java.util.UUID
 
 /**
@@ -44,23 +43,10 @@ class PollRepository {
 
     /**
      * Register new vote to the poll. If the poll with provided pollId does not exist,
-     * [IllegalArgumentException] is thrown.
+     * database contains foreign key to an option and poll so the SQL exception is thrown.
      */
     suspend fun vote(pollAction: PollAction) = newSuspendedTransaction {
-        PollOptions.select {
-            (PollOptions.pollId eq pollAction.pollId) and (PollOptions.optionOrder eq pollAction.optionId)
-        }.singleOrNull()
-            .whenNull {
-                logger.error { "There is no poll which has id ${pollAction.pollId} or no option with order ${pollAction.optionId}" }
-            } ?: throw IllegalArgumentException("No poll or option found for the received vote!")
-
-        // unfortunately Exposed does not support upsert,
-        // so try to update the vote and if nothing is updated, insert new value
-        Votes.update(
-            { (Votes.pollId eq pollAction.pollId) and (Votes.userId eq pollAction.userId) }
-        ) {
-            it[pollOption] = pollAction.optionId
-        }.takeUnless { it == 0 } ?: Votes.insert {
+        Votes.insertOrUpdate(Votes.pollId, Votes.userId) {
             it[pollId] = pollAction.pollId
             it[pollOption] = pollAction.optionId
             it[userId] = pollAction.userId
@@ -73,8 +59,11 @@ class PollRepository {
      * Offset/option id/button as keys and user ids as values.
      */
     suspend fun stats(pollId: String) = newSuspendedTransaction {
-        (PollOptions leftJoin Votes)
-            .slice(PollOptions.optionOrder, Votes.userId)
+        PollOptions.join(Votes, JoinType.LEFT,
+            additionalConstraint = {
+                (Votes.pollId eq PollOptions.pollId) and (Votes.pollOption eq PollOptions.optionOrder)
+            }
+        ).slice(PollOptions.optionOrder, Votes.userId)
             .select {
                 PollOptions.pollId eq pollId
             }
@@ -88,10 +77,10 @@ class PollRepository {
      * Returns set of user ids that voted in the poll with given pollId.
      */
     suspend fun votingUsers(pollId: String) = newSuspendedTransaction {
-        (PollOptions rightJoin Votes)
+        Votes
             .slice(Votes.userId)
             .select {
-                PollOptions.pollId eq pollId
+                Votes.pollId eq pollId
             }
             .mapToSet { it[Votes.userId] }
     }
