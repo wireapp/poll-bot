@@ -113,6 +113,16 @@ class FlowTest {
     }
 
     @Test
+    fun `test create poll and vote twice`() {
+        val createdPoll = createPoll()
+
+        val votingUser = randomStringUUID()
+
+        vote(createdPoll.id, votingUser, 0)
+        vote(createdPoll.id, votingUser, 1)
+    }
+
+    @Test
     fun `test vote and get results`() {
         val createdPoll = createPoll()
         val option = 1
@@ -139,5 +149,57 @@ class FlowTest {
         }
 
         assertEquals(expected, tokenStorage[token])
+    }
+
+    @Test
+    fun `test change vote and get results`() {
+        val createdPoll = createPoll()
+        val votingUser = randomStringUUID()
+
+        vote(createdPoll.id, votingUser, 1)
+
+        val token = randomStringUUID()
+        val reactionMessage = reaction(
+            userId = votingUser,
+            botId = randomStringUUID(),
+            token = token,
+            refMessageId = createdPoll.id
+        )
+
+        val usersVoting = "0 - 0 votes${newLine}1 - 1 vote${newLine}2 - 0 votes"
+        val expected = textMessage(
+            "Results for pollId: `${createdPoll.id}`$newLine```$newLine$usersVoting$newLine```"
+        )
+
+        runBlocking {
+            Application.botService.send(reactionMessage)
+            delay(TIMEOUT)
+        }
+
+        assertEquals(expected, tokenStorage[token])
+
+        // now change the vote
+        vote(createdPoll.id, votingUser, 0)
+
+        val tokenWithChanged = randomStringUUID()
+        val reactionMessageWithChangedVote = reaction(
+            userId = votingUser,
+            botId = randomStringUUID(),
+            token = tokenWithChanged,
+            refMessageId = createdPoll.id
+        )
+
+        val usersVotingWithChangedVote = "0 - 1 vote${newLine}1 - 0 votes${newLine}2 - 0 votes"
+        val expectedWithChangedVote = textMessage(
+            "Results for pollId: `${createdPoll.id}`$newLine```$newLine$usersVotingWithChangedVote$newLine```"
+        )
+
+        runBlocking {
+            Application.botService.send(reactionMessageWithChangedVote)
+            delay(TIMEOUT)
+        }
+
+        assertEquals(expectedWithChangedVote, tokenStorage[tokenWithChanged])
+
     }
 }

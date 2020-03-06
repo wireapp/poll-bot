@@ -25,13 +25,20 @@ fun Routing.registerRoutes() {
 
     post("/conversation") {
         val conversation = call.receive<Conversation>()
-        val token = call.request.header("Authorization")?.substringAfter("Bearer ")?.whenNull {
-            call.respond(HttpStatusCode.Unauthorized, "Missing header Authorization")
-        } ?: return@post
+        val token = call.request
+            .header("Authorization")
+            ?.substringAfter("Bearer ")
+            .whenNull {
+                call.respond(HttpStatusCode.Unauthorized, "Missing header Authorization")
+            } ?: return@post
 
         // store the received payload under the token id
-        tokenStorage[token] = conversation
-
+        if(tokenStorage.containsKey(token)) {
+            // if it's second time sending under the same token, it's stats when all users voted
+            tokenStorage["$token-stats"]
+        } else {
+            tokenStorage[token] = conversation
+        }
         // just generate random id, because bot does not read that
         call.respond(ProxyResponseMessage(UUID.randomUUID().toString()))
     }
