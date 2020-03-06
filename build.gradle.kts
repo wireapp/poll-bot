@@ -38,7 +38,7 @@ dependencies {
 
     // logging
     implementation("io.github.microutils", "kotlin-logging", "1.7.8")
-    implementation("org.slf4j", "slf4j-simple", "1.6.1")
+    implementation("ch.qos.logback", "logback-classic", "1.2.3")
 
     // DI
     val kodeinVersion = "6.5.0"
