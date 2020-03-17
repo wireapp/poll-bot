@@ -1,3 +1,3 @@
 package com.wire.bots.polls.dto.bot
 
-typealias Stats = TextMessage
+internal typealias Stats = TextMessage

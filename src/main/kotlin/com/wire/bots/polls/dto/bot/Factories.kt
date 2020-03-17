@@ -3,6 +3,9 @@ package com.wire.bots.polls.dto.bot
 import com.wire.bots.polls.dto.common.Mention
 import com.wire.bots.polls.dto.common.Text
 
+/**
+ * Creates message which greets the users in the conversation.
+ */
 fun greeting(text: String, mentions: List<Mention> = emptyList()): BotMessage = Greeting(
     text = Text(
         data = text,
@@ -10,6 +13,9 @@ fun greeting(text: String, mentions: List<Mention> = emptyList()): BotMessage = 
     )
 )
 
+/**
+ * Creates message for poll.
+ */
 fun newPoll(id: String, body: String, buttons: List<String>, mentions: List<Mention> = emptyList()): BotMessage = NewPoll(
     text = Text(body, mentions),
     poll = NewPoll.Poll(
@@ -18,6 +24,9 @@ fun newPoll(id: String, body: String, buttons: List<String>, mentions: List<Ment
     )
 )
 
+/**
+ * Creates message for vote confirmation.
+ */
 fun confirmVote(pollId: String, userId: String, offset: Int): BotMessage = PollVote(
     poll = PollVote.Poll(
         id = pollId,
@@ -26,6 +35,9 @@ fun confirmVote(pollId: String, userId: String, offset: Int): BotMessage = PollV
     )
 )
 
+/**
+ * Creates stats (result of the poll) message.
+ */
 fun statsMessage(text: String, mentions: List<Mention> = emptyList()): BotMessage = Stats(
     text = Text(
         data = text,
