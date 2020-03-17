@@ -10,6 +10,7 @@ data class TextMessage(
     val text: Text,
     override val type: String = "text"
 ) : BotMessage {
+
     constructor(text: String) : this(Text(text, emptyList()))
 
     data class Text(

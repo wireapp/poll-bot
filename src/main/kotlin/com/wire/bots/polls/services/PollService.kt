@@ -5,8 +5,8 @@ import ai.blindspot.ktoolz.extensions.whenNull
 import com.wire.bots.polls.dao.PollRepository
 import com.wire.bots.polls.dto.PollAction
 import com.wire.bots.polls.dto.UsersInput
-import com.wire.bots.polls.dto.messages.PollActionConfirmationMessage
 import com.wire.bots.polls.dto.messages.TextMessage
+import com.wire.bots.polls.dto.messages.confirmVote
 import com.wire.bots.polls.dto.toProxyMessage
 import com.wire.bots.polls.parser.PollFactory
 import kotlinx.coroutines.GlobalScope
@@ -56,12 +56,10 @@ class PollService(
         GlobalScope.launch {
             val response = proxySenderService.send(
                 token = token,
-                message = PollActionConfirmationMessage(
-                    poll = PollActionConfirmationMessage.Poll(
-                        id = pollAction.pollId,
-                        offset = pollAction.optionId,
-                        userId = pollAction.userId
-                    )
+                message = confirmVote(
+                    pollId = pollAction.pollId,
+                    offset = pollAction.optionId,
+                    userId = pollAction.userId
                 )
             )
             logger.info { "Proxy received confirmation for vote under id: ${response.messageId}" }

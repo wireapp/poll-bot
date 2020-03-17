@@ -17,7 +17,7 @@ class AuthService(private val proxyToken: String) {
     /**
      * Validates token.
      */
-    fun isTokenValid(headersGet: () -> Headers) = isTokenValid(headersGet())
+    fun isTokenValid(headersGet: () -> Headers) = runCatching { isTokenValid(headersGet()) }.getOrNull() ?: false
 
     private fun isTokenValid(headers: Headers): Boolean {
         val header = headers[authHeader].whenNull {
