@@ -2,7 +2,7 @@ package com.wire.bots.polls.services
 
 import com.wire.bots.polls.dto.PollAction
 import com.wire.bots.polls.dto.UsersInput
-import com.wire.bots.polls.dto.messages.Message
+import com.wire.bots.polls.dto.roman.Message
 import mu.KLogging
 
 class MessagesHandlingService(

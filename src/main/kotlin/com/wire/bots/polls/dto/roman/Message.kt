@@ -1,6 +1,7 @@
-package com.wire.bots.polls.dto.messages
+package com.wire.bots.polls.dto.roman
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.wire.bots.polls.dto.common.Mention
 
 /**
  * Message received by the bot from the proxy.
@@ -20,7 +21,6 @@ data class Message(
     /**
      * Type of the message.
      */
-    // TODO this is basically enum, waiting for resolving top todo
     val type: String,
     /**
      * Message ID.
@@ -41,7 +41,6 @@ data class Message(
     /**
      * When this and [refMessageId] is filled, the user liked the message with id [refMessageId].
      */
-    // TODO replace with final name
     val reaction: String?,
     /**
      * Image in the message.
@@ -58,52 +57,73 @@ data class Message(
     /**
      * Poll object.
      */
-    val poll: PollObjectMessage?
-)
-
-/**
- * Poll representation for the proxy.
- */
-data class PollObjectMessage(
-    /**
-     * Id of the poll.
-     */
-    val id: String,
-    /**
-     * Body of the poll - the question.
-     */
-    val body: String?,
+    val poll: PollObjectMessage?,
 
     /**
-     * Ordered list of buttons. Position in the list is the ID / offset.
+     * Type of the file
      */
-    val buttons: List<String>?,
+    val mimeType: String?,
 
     /**
-     * Id of the button when it was clicked on.
+     * Mentions in the code
      */
-    val offset: Int?
-)
+    val mentions: List<Mention>?
+) {
+    /**
+     * Poll representation for the proxy.
+     */
+    data class PollObjectMessage(
+        /**
+         * Id of the poll.
+         */
+        val id: String,
+        /**
+         * Body of the poll - the question.
+         */
+        val body: String?,
+
+        /**
+         * Ordered list of buttons. Position in the list is the ID / offset.
+         */
+        val buttons: List<String>?,
+
+        /**
+         * Id of the button when it was clicked on.
+         */
+        val offset: Int?
+    )
+}
 
 /* JSON from the swagger
 {
   "botId": "string",
+  "type": "string",
   "userId": "string",
   "messageId": "string",
-  "type": "string",
+  "conversationId": "string",
   "token": "string",
   "text": "string",
   "image": "string",
+  "attachment": "string",
   "handle": "string",
   "locale": "string",
   "poll": {
     "id": "string",
-    "body": "string",
+    "type": "string",
     "buttons": [
       "string"
     ],
-    "offset": "string",
+    "offset": 0,
     "userId": "string"
-  }
+  },
+  "refMessageId": "string",
+  "mimeType": "string",
+  "mentions": [
+    {
+      "userId": "string",
+      "offset": 0,
+      "length": 0
+    }
+  ]
 }
  */

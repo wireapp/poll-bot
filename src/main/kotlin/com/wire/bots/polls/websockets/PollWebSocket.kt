@@ -1,6 +1,6 @@
 package com.wire.bots.polls.websockets
 
-import com.wire.bots.polls.dto.messages.Message
+import com.wire.bots.polls.dto.roman.Message
 import com.wire.bots.polls.services.MessagesHandlingService
 import io.ktor.client.HttpClient
 import mu.KLogging

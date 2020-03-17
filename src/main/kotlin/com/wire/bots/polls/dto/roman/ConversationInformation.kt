@@ -1,4 +1,4 @@
-package com.wire.bots.polls.dto.messages
+package com.wire.bots.polls.dto.roman
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 

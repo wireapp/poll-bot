@@ -1,6 +1,6 @@
 package com.wire.bots.polls.services
 
-import com.wire.bots.polls.dto.messages.ConversationInformation
+import com.wire.bots.polls.dto.roman.ConversationInformation
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header

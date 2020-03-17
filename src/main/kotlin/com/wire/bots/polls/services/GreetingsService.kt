@@ -1,7 +1,7 @@
 package com.wire.bots.polls.services
 
 import com.wire.bots.polls.dto.bot.greeting
-import com.wire.bots.polls.dto.messages.Message
+import com.wire.bots.polls.dto.roman.Message
 
 /**
  * Service used for handling init message.

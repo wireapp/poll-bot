@@ -1,4 +1,4 @@
-package com.wire.bots.polls.dto.messages
+package com.wire.bots.polls.dto.roman
 
 /**
  * Respond received from the proxy to every message from the bot.
