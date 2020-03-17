@@ -1,4 +1,4 @@
-package com.wire.bots.polls.dto.messages
+package com.wire.bots.polls.dto.common
 
 data class Mention(
     val userId: String,

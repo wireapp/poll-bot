@@ -2,7 +2,7 @@ package com.wire.bots.polls.setup
 
 import ai.blindspot.ktoolz.extensions.getEnv
 import ai.blindspot.ktoolz.extensions.whenNull
-import com.wire.bots.polls.dto.messages.DatabaseConfiguration
+import com.wire.bots.polls.dto.DatabaseConfiguration
 import com.wire.bots.polls.services.ProxyConfiguration
 import com.wire.bots.polls.setup.EnvConfigVariables.APP_KEY
 import com.wire.bots.polls.setup.EnvConfigVariables.DB_PASSWORD

@@ -1,4 +1,4 @@
-package com.wire.bots.polls.dto.messages
+package com.wire.bots.polls.dto.bot
 
 /**
  * Common interface for the messages sent to proxy from the bot.
@@ -9,3 +9,4 @@ interface BotMessage {
      */
     val type: String
 }
+

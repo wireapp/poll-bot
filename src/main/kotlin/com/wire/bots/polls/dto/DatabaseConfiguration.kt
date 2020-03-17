@@ -1,4 +1,4 @@
-package com.wire.bots.polls.dto.messages
+package com.wire.bots.polls.dto
 
 /**
  * Simple configuration for the database connection.

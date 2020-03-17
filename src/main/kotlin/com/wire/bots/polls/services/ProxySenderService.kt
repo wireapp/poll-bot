@@ -1,6 +1,6 @@
 package com.wire.bots.polls.services
 
-import com.wire.bots.polls.dto.messages.BotMessage
+import com.wire.bots.polls.dto.bot.BotMessage
 import com.wire.bots.polls.dto.messages.ProxyResponseMessage
 import com.wire.bots.polls.utils.createJson
 import io.ktor.client.HttpClient

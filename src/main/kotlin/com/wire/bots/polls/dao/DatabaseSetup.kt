@@ -1,6 +1,6 @@
 package com.wire.bots.polls.dao
 
-import com.wire.bots.polls.dto.messages.DatabaseConfiguration
+import com.wire.bots.polls.dto.DatabaseConfiguration
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
  * Object with methods for managing the database.
  */
 object DatabaseSetup {
-    
+
     /**
      * Connect bot to the database via provided credentials.
      *

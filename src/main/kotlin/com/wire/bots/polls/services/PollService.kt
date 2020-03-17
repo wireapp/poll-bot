@@ -5,9 +5,9 @@ import ai.blindspot.ktoolz.extensions.whenNull
 import com.wire.bots.polls.dao.PollRepository
 import com.wire.bots.polls.dto.PollAction
 import com.wire.bots.polls.dto.UsersInput
-import com.wire.bots.polls.dto.messages.TextMessage
-import com.wire.bots.polls.dto.messages.confirmVote
-import com.wire.bots.polls.dto.toProxyMessage
+import com.wire.bots.polls.dto.bot.confirmVote
+import com.wire.bots.polls.dto.bot.newPoll
+import com.wire.bots.polls.dto.bot.statsMessage
 import com.wire.bots.polls.parser.PollFactory
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -38,7 +38,14 @@ class PollService(
 
         // send response with async way
         GlobalScope.launch {
-            val response = proxySenderService.send(token, poll.toProxyMessage(pollId))
+            val response = proxySenderService.send(
+                token,
+                message = newPoll(
+                    id = pollId.toString(),
+                    body = poll.question,
+                    buttons = poll.options
+                )
+            )
             logger.info { "Poll successfully created with id: ${response.messageId}" }
         }
 
@@ -99,8 +106,8 @@ class PollService(
 
         GlobalScope.launch {
             proxySenderService.send(
-                token, TextMessage(
-                    "Results for pollId: `$pollId`$newLine```$newLine$text$newLine```"
+                token, statsMessage(
+                    text = "Results for pollId: `$pollId`$newLine```$newLine$text$newLine```"
                 )
             )
         }
