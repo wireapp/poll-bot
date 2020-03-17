@@ -1,7 +1,7 @@
 package com.wire.bots.polls.services
 
 import com.wire.bots.polls.dto.bot.BotMessage
-import com.wire.bots.polls.dto.roman.ProxyResponseMessage
+import com.wire.bots.polls.dto.roman.Response
 import com.wire.bots.polls.utils.createJson
 import io.ktor.client.HttpClient
 import io.ktor.client.request.header
@@ -25,10 +25,10 @@ class ProxySenderService(private val client: HttpClient, config: ProxyConfigurat
     /**
      * Send given message with provided token.
      */
-    suspend fun send(token: String, message: BotMessage): ProxyResponseMessage {
+    suspend fun send(token: String, message: BotMessage): Response {
         logger.debug { "Sending\n:${createJson(message)}" }
 
-        val response = client.post<ProxyResponseMessage>(body = message) {
+        val response = client.post<Response>(body = message) {
             url(conversationEndpoint)
             contentType(ContentType.Application.Json)
             header("Authorization", "Bearer $token")
