@@ -7,6 +7,13 @@ data class TextMessage(
     /**
      * Bot's text.
      */
-    val text: String,
+    val text: Text,
     override val type: String = "text"
-) : BotMessage
+) : BotMessage {
+    constructor(text: String) : this(Text(text, emptyList()))
+
+    data class Text(
+        val data: String,
+        val mentions: List<Mention>
+    )
+}
