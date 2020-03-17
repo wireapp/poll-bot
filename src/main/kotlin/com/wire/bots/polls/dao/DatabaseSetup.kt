@@ -1,6 +1,6 @@
 package com.wire.bots.polls.dao
 
-import com.wire.bots.polls.dto.DatabaseConfiguration
+import com.wire.bots.polls.dto.conf.DatabaseConfiguration
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 

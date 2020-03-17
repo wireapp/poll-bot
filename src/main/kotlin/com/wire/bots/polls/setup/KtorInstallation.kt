@@ -2,7 +2,7 @@ package com.wire.bots.polls.setup
 
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.wire.bots.polls.dao.DatabaseSetup
-import com.wire.bots.polls.dto.DatabaseConfiguration
+import com.wire.bots.polls.dto.conf.DatabaseConfiguration
 import com.wire.bots.polls.routing.registerRoutes
 import com.wire.bots.polls.websockets.subscribeToWebSockets
 import io.ktor.application.Application

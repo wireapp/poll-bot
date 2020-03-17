@@ -8,6 +8,7 @@ import com.wire.bots.polls.dto.UsersInput
 import com.wire.bots.polls.dto.bot.confirmVote
 import com.wire.bots.polls.dto.bot.newPoll
 import com.wire.bots.polls.dto.bot.statsMessage
+import com.wire.bots.polls.dto.common.Mention
 import com.wire.bots.polls.parser.PollFactory
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -43,13 +44,26 @@ class PollService(
                 message = newPoll(
                     id = pollId.toString(),
                     body = poll.question,
-                    buttons = poll.options
+                    buttons = poll.options,
+                    mentions = shiftMentions(usersInput)
                 )
             )
             logger.info { "Poll successfully created with id: ${response.messageId}" }
         }
 
         return pollId
+    }
+
+    private fun shiftMentions(usersInput: UsersInput): List<Mention> {
+        val questionBeginningIdx = usersInput.input.indexOfFirst { it == '"' }
+        val emptyCharsInQuestion = usersInput.input.substringAfter('"')
+            .takeWhile { it == ' ' }
+            .count()
+
+        val offsetChange = questionBeginningIdx + emptyCharsInQuestion
+        return usersInput.mentions.map { mention ->
+            mention.copy(offset = mention.offset - offsetChange)
+        }
     }
 
     /**

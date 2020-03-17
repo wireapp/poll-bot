@@ -1,5 +1,7 @@
 package com.wire.bots.polls.dto
 
+import com.wire.bots.polls.dto.common.Mention
+
 /**
  * Wrapper for the text received by this bot. Should be used as a container for all user texts in the bot.
  *
@@ -13,7 +15,11 @@ data class UsersInput(
     /**
      * User's text, not logged.
      */
-    val input: String
+    val input: String,
+    /**
+     * Mentions
+     */
+    val mentions: List<Mention>
 ) {
     //TODO modify this in the future - because we do not want to print decrypted users text to the log
     override fun toString(): String = "User: $userId wrote $input"
