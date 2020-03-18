@@ -55,7 +55,7 @@ class PollService(
     }
 
     private fun shiftMentions(usersInput: UsersInput): List<Mention> {
-        val questionBeginningIdx = usersInput.input.indexOfFirst { it == '"' }
+        val questionBeginningIdx = usersInput.input.indexOfFirst { it == '"' } + 1
         val emptyCharsInQuestion = usersInput.input.substringAfter('"')
             .takeWhile { it == ' ' }
             .count()
