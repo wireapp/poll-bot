@@ -12,7 +12,7 @@ class InputParser {
         //TODO currently not supporting char " in the strings
         val inputs = userInput.input
             .substringAfter("/poll", "")
-            .split("\"")
+            .split("\"", "“")
             .filter { it.isNotBlank() }
             .map { it.trim() }
 
