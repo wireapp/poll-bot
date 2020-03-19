@@ -2,6 +2,7 @@ package com.wire.bots.polls.services
 
 import ai.blindspot.ktoolz.extensions.newLine
 import ai.blindspot.ktoolz.extensions.whenNull
+import ai.blindspot.ktoolz.extensions.whenTrue
 import com.wire.bots.polls.dao.PollRepository
 import com.wire.bots.polls.dto.PollAction
 import com.wire.bots.polls.dto.UsersInput
@@ -22,7 +23,8 @@ class PollService(
     private val factory: PollFactory,
     private val proxySenderService: ProxySenderService,
     private val repository: PollRepository,
-    private val conversationService: ConversationService
+    private val conversationService: ConversationService,
+    private val userCommunicationService: UserCommunicationService
 ) {
 
     private companion object : KLogging()
@@ -32,7 +34,10 @@ class PollService(
      */
     suspend fun createPoll(token: String, usersInput: UsersInput): UUID? {
         val poll = factory.forUserInput(usersInput)
-            .whenNull { logger.warn { "It was not possible to create poll." } } ?: return null
+            .whenNull {
+                logger.warn { "It was not possible to create poll." }
+                pollNotParsedFallback(token, usersInput)
+            } ?: return null
 
         val pollId = repository.savePoll(poll, pollId = UUID.randomUUID(), userId = usersInput.userId)
         logger.info { "Poll successfully created with id: $pollId" }
@@ -64,6 +69,16 @@ class PollService(
         return usersInput.mentions.map { mention ->
             mention.copy(offset = mention.offset - offsetChange)
         }
+    }
+
+    private suspend fun pollNotParsedFallback(token: String, usersInput: UsersInput) {
+        usersInput.input.startsWith("/poll").whenTrue {
+            GlobalScope.launch {
+                logger.info { "Command started with /poll, sending usage to user." }
+                userCommunicationService.reactionToWrongCommand(token)
+            }
+        }
+
     }
 
     /**

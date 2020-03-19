@@ -44,3 +44,13 @@ fun statsMessage(text: String, mentions: List<Mention> = emptyList()): BotMessag
         mentions = mentions
     )
 )
+
+/**
+ * Creates message notifying user about wrongly used command.
+ */
+fun fallBackMessage(text: String, mentions: List<Mention> = emptyList()): BotMessage = FallbackMessage(
+    text = Text(
+        data = text,
+        mentions = mentions
+    )
+)

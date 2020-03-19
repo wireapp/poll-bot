@@ -6,10 +6,10 @@ import com.wire.bots.polls.parser.PollFactory
 import com.wire.bots.polls.parser.PollValidation
 import com.wire.bots.polls.services.AuthService
 import com.wire.bots.polls.services.ConversationService
-import com.wire.bots.polls.services.GreetingsService
 import com.wire.bots.polls.services.MessagesHandlingService
 import com.wire.bots.polls.services.PollService
 import com.wire.bots.polls.services.ProxySenderService
+import com.wire.bots.polls.services.UserCommunicationService
 import com.wire.bots.polls.websockets.PollWebSocket
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
@@ -59,9 +59,9 @@ fun MainBuilder.configureContainer() {
 
     bind<PollRepository>() with singleton { PollRepository() }
 
-    bind<PollService>() with singleton { PollService(instance(), instance(), instance(), instance()) }
+    bind<PollService>() with singleton { PollService(instance(), instance(), instance(), instance(), instance()) }
 
-    bind<GreetingsService>() with singleton { GreetingsService(instance()) }
+    bind<UserCommunicationService>() with singleton { UserCommunicationService(instance()) }
 
     bind<ConversationService>() with singleton { ConversationService(instance(), instance()) }
 

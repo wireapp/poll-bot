@@ -7,7 +7,7 @@ import mu.KLogging
 
 class MessagesHandlingService(
     private val pollService: PollService,
-    private val greetingsService: GreetingsService
+    private val userCommunicationService: UserCommunicationService
 ) {
 
     private companion object : KLogging()
@@ -30,7 +30,7 @@ class MessagesHandlingService(
         when (message.type) {
             "conversation.init" -> {
                 logger.debug { "Init message received." }
-                greetingsService.sayHello(message)
+                userCommunicationService.sayHello(message)
             }
             "conversation.new_text" -> {
                 logger.debug { "New text message received." }
