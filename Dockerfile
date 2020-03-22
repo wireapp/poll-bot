@@ -25,11 +25,11 @@ ENV APP_ROOT /app
 WORKDIR $APP_ROOT
 
 # Obtain built from the base
-COPY --from=build /src/build/distributions/polls-*.tar $APP_ROOT/
+COPY --from=build /src/build/distributions/polls*.tar $APP_ROOT/
 
 # Extract executables
 RUN mkdir $APP_ROOT/run
-RUN tar -xvf polls-*.tar --strip-components=1 -C $APP_ROOT/run
+RUN tar -xvf polls*.tar --strip-components=1 -C $APP_ROOT/run
 
 EXPOSE 8080
 
