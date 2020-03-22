@@ -2,10 +2,11 @@ plugins {
     kotlin("jvm") version "1.3.70"
     application
     distribution
+    id("net.nemerosa.versioning") version "2.8.2"
 }
 
 group = "com.wire.bots.polls"
-version = "0.1"
+version = versioning.info.lastTag
 
 val mainClass = "com.wire.bots.polls.PollBotKt"
 
