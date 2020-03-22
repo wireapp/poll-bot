@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.wire.bots.polls"
-version = versioning.info?.lastTag ?: "1.0"
+version = versioning.info?.tag ?: versioning.info?.lastTag ?: "0.0"
 
 val mainClass = "com.wire.bots.polls.PollBotKt"
 
