@@ -1,4 +1,6 @@
 # Wire Poll Bot
+![Publish Docker Image](https://github.com/wireapp/poll-bot/workflows/Publish%20Docker%20Image/badge.svg)
+
 [Wire](https://wire.com/) bot for the polls.
 
 ## Dev Stack
