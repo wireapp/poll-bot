@@ -1,4 +1,4 @@
-name: Gradle Test and Docker build
+name: CI/CD
 
 on: [push, pull_request]
 
