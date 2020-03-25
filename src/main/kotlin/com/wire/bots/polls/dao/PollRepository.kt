@@ -113,9 +113,7 @@ class PollRepository {
     suspend fun votingUsers(pollId: String) = newSuspendedTransaction {
         Votes
             .slice(Votes.userId)
-            .select {
-                Votes.pollId eq pollId
-            }
+            .select { Votes.pollId eq pollId }
             .mapToSet { it[Votes.userId] }
     }
 
@@ -124,12 +122,13 @@ class PollRepository {
      */
     suspend fun getLatestForBot(botId: String) = newSuspendedTransaction {
         Polls.slice(Polls.id)
+            // it must be for single bot
             .select { Polls.botId eq botId }
+            // such as latest is on top
             .orderBy(Polls.created to SortOrder.DESC)
+            // select just one
             .limit(1)
             .singleOrNull()
             ?.get(Polls.id)
     }
-
-
 }
