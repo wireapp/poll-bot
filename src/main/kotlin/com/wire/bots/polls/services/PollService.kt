@@ -1,6 +1,5 @@
 package com.wire.bots.polls.services
 
-import ai.blindspot.ktoolz.extensions.newLine
 import ai.blindspot.ktoolz.extensions.whenNull
 import ai.blindspot.ktoolz.extensions.whenTrue
 import com.wire.bots.polls.dao.PollRepository
@@ -8,7 +7,6 @@ import com.wire.bots.polls.dto.PollAction
 import com.wire.bots.polls.dto.UsersInput
 import com.wire.bots.polls.dto.bot.confirmVote
 import com.wire.bots.polls.dto.bot.newPoll
-import com.wire.bots.polls.dto.bot.statsMessage
 import com.wire.bots.polls.parser.PollFactory
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -23,7 +21,8 @@ class PollService(
     private val proxySenderService: ProxySenderService,
     private val repository: PollRepository,
     private val conversationService: ConversationService,
-    private val userCommunicationService: UserCommunicationService
+    private val userCommunicationService: UserCommunicationService,
+    private val statsFormattingService: StatsFormattingService
 ) {
 
     private companion object : KLogging()
@@ -115,35 +114,7 @@ class PollService(
      * Sends statistics about the poll to the proxy.
      */
     suspend fun sendStats(token: String, pollId: String) {
-        val pollQuestion = repository.getPollQuestion(pollId).whenNull {
-            logger.warn { "No poll $pollId exists." }
-        } ?: return
-
-        val result = repository.stats(pollId)
-        if (result.isEmpty()) {
-            logger.info { "There are no data for given pollId." }
-            return
-        }
-
-        // we can use assert as the result size is checked
-        val maxVotes = result.values.max()!!
-
-        val optionFormattedText = result
-            .map { (option, votingUsers) ->
-                val textType = if (votingUsers == maxVotes) "**" else "*"
-                "$textType$option$textType - $votingUsers ${if (votingUsers == 1) "vote" else "votes"}"
-            }.joinToString(newLine)
-
-        val titlePrefix = "**Results:** *"
-        val title = "$titlePrefix${pollQuestion.body}*"
-
-        GlobalScope.launch {
-            proxySenderService.send(
-                token, statsMessage(
-                    text = "$title$newLine$optionFormattedText",
-                    mentions = pollQuestion.mentions.map { it.copy(offset = it.offset + titlePrefix.length) }
-                )
-            )
-        }
+        val stats = statsFormattingService.formatStats(pollId) ?: return
+        GlobalScope.launch { proxySenderService.send(token, stats) }
     }
 }

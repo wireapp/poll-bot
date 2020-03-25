@@ -9,13 +9,13 @@ import com.wire.bots.polls.services.ConversationService
 import com.wire.bots.polls.services.MessagesHandlingService
 import com.wire.bots.polls.services.PollService
 import com.wire.bots.polls.services.ProxySenderService
+import com.wire.bots.polls.services.StatsFormattingService
 import com.wire.bots.polls.services.UserCommunicationService
 import com.wire.bots.polls.websockets.PollWebSocket
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.features.logging.DEFAULT
 import io.ktor.client.features.logging.LogLevel
 import io.ktor.client.features.logging.Logger
 import io.ktor.client.features.logging.Logging
@@ -42,7 +42,8 @@ fun MainBuilder.configureContainer() {
             }
 
             install(Logging) {
-                logger = Logger.DEFAULT
+                this.level
+                logger = Logger.DEBUG
                 level = LogLevel.ALL
             }
         }
@@ -69,7 +70,7 @@ fun MainBuilder.configureContainer() {
 
     bind<PollRepository>() with singleton { PollRepository() }
 
-    bind<PollService>() with singleton { PollService(instance(), instance(), instance(), instance(), instance()) }
+    bind<PollService>() with singleton { PollService(instance(), instance(), instance(), instance(), instance(), instance()) }
 
     bind<UserCommunicationService>() with singleton { UserCommunicationService(instance()) }
 
@@ -80,6 +81,8 @@ fun MainBuilder.configureContainer() {
     bind<AuthService>() with singleton {
         AuthService(proxyToken = instance("proxy-auth"))
     }
+
+    bind<StatsFormattingService>() with singleton { StatsFormattingService(instance()) }
 
     bind<KLogger>("routing-logger") with singleton { KLogging().logger("Routing") }
     bind<KLogger>("install-logger") with singleton { KLogging().logger("KtorStartup") }
