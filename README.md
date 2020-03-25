@@ -1,6 +1,6 @@
 # Wire Poll Bot
-![Gradle Test and Docker build](https://github.com/wireapp/poll-bot/workflows/Gradle%20Test%20and%20Docker%20build/badge.svg)
-![Publish Docker Image](https://github.com/wireapp/poll-bot/workflows/Publish%20Docker%20Image/badge.svg)
+![CI/CD](https://github.com/wireapp/poll-bot/workflows/CI/CD/badge.svg)
+![Release Pipeline](https://github.com/wireapp/poll-bot/workflows/Release%20Pipeline/badge.svg)
 
 [Wire](https://wire.com/) bot for the polls.
 
