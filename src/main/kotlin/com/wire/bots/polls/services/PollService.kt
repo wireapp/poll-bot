@@ -30,14 +30,14 @@ class PollService(
     /**
      * Create poll.
      */
-    suspend fun createPoll(token: String, usersInput: UsersInput): String? {
+    suspend fun createPoll(token: String, usersInput: UsersInput, botId: String): String? {
         val poll = factory.forUserInput(usersInput)
             .whenNull {
                 logger.warn { "It was not possible to create poll." }
                 pollNotParsedFallback(token, usersInput)
             } ?: return null
 
-        val pollId = repository.savePoll(poll, pollId = UUID.randomUUID().toString(), userId = usersInput.userId)
+        val pollId = repository.savePoll(poll, pollId = UUID.randomUUID().toString(), userId = usersInput.userId, botSelfId = botId)
         logger.info { "Poll successfully created with id: $pollId" }
 
         // send response with async way
@@ -121,9 +121,9 @@ class PollService(
     /**
      * Sends stats for latest poll.
      */
-    suspend fun sendStatsForLatest(token: String) {
-        val latest = repository.getNewestPoll().whenNull {
-            logger.warn { "No polls found!" }
+    suspend fun sendStatsForLatest(token: String, botId: String) {
+        val latest = repository.getLatestForBot(botId).whenNull {
+            logger.info { "No polls found for bot $botId" }
         } ?: return
 
         sendStats(token, latest)

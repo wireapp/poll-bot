@@ -58,7 +58,7 @@ fun fallBackMessage(text: String, mentions: List<Mention> = emptyList()): BotMes
 /**
  * Creates good bot message.
  */
-fun goodBotMessage(text: String = "\uD83D\uDE07", mentions: List<Mention> = emptyList()): BotMessage = TextMessage(
+fun goodBotMessage(text: String, mentions: List<Mention> = emptyList()): BotMessage = TextMessage(
     text = Text(
         data = text,
         mentions = mentions

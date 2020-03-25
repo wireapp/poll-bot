@@ -12,7 +12,6 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import pw.forst.exposed.insertOrUpdate
 
@@ -27,10 +26,11 @@ class PollRepository {
      * Saves given poll to database and returns its id (same as the [pollId] parameter,
      * but this design supports fluent style in the services.
      */
-    suspend fun savePoll(poll: PollDto, pollId: String, userId: String) = newSuspendedTransaction {
+    suspend fun savePoll(poll: PollDto, pollId: String, userId: String, botSelfId: String) = newSuspendedTransaction {
         Polls.insert {
             it[id] = pollId
             it[ownerId] = userId
+            it[botId] = botSelfId
             it[isActive] = true
             it[body] = poll.question.body
         }
@@ -122,9 +122,9 @@ class PollRepository {
     /**
      * Returns set of user ids that voted in the poll with given pollId.
      */
-    suspend fun getNewestPoll() = newSuspendedTransaction {
+    suspend fun getLatestForBot(botId: String) = newSuspendedTransaction {
         Polls.slice(Polls.id)
-            .selectAll()
+            .select { Polls.botId eq botId }
             .orderBy(Polls.created to SortOrder.DESC)
             .limit(1)
             .singleOrNull()

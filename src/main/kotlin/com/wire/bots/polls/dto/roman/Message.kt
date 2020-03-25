@@ -18,6 +18,12 @@ data class Message(
      * User who sent a message.
      */
     val userId: String?,
+
+    /**
+     * Id of the conversation.
+     */
+    val conversationId: String?,
+
     /**
      * Type of the message.
      */

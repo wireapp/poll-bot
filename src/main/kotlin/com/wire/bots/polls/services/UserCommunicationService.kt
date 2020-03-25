@@ -45,7 +45,7 @@ class UserCommunicationService(private val proxySenderService: ProxySenderServic
     suspend fun goodBot(token: String) {
         proxySenderService.send(
             token,
-            message = goodBotMessage()
+            message = goodBotMessage("\uD83D\uDE07")
         )
     }
 
