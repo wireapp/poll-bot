@@ -134,13 +134,13 @@ class PollService(
                 "$textType$option$textType - $votingUsers ${if (votingUsers == 1) "vote" else "votes"}"
             }.joinToString(newLine)
 
-        val titlePrefix = "**Results for poll** *"
+        val titlePrefix = "**Results:** *"
         val title = "$titlePrefix${pollQuestion.body}*"
 
         GlobalScope.launch {
             proxySenderService.send(
                 token, statsMessage(
-                    text = "$title$newLine```$newLine$optionFormattedText$newLine```",
+                    text = "$title$newLine$optionFormattedText",
                     mentions = pollQuestion.mentions.map { it.copy(offset = it.offset + titlePrefix.length) }
                 )
             )

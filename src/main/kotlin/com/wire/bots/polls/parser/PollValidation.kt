@@ -17,9 +17,9 @@ class PollValidation {
     private companion object : KLogging()
 
     private val questionRules =
-        listOf<QuestionRule> { question -> if (question.body.isBlank()) null else "The question must not be empty!" }
+        listOf<QuestionRule> { question -> if (question.body.isNotBlank()) null else "The question must not be empty!" }
 
-    private val optionRules = listOf<OptionRule> { option -> if (option.isBlank()) null else "The option must not be empty!" }
+    private val optionRules = listOf<OptionRule> { option -> if (option.isNotBlank()) null else "The option must not be empty!" }
 
     private val pollRules =
         listOf<PollRule> { poll -> if (poll.options.isNotEmpty()) null else "There must be at least one option for answering the poll." }
