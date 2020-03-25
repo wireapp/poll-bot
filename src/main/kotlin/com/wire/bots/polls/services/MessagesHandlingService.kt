@@ -75,10 +75,10 @@ class MessagesHandlingService(
                 text != null -> {
                     when {
                         // poll request
-                        text.trim().startsWith("/poll") -> pollService.createPoll(
-                            token,
-                            UsersInput(userId, text, mentions ?: emptyList())
-                        )
+                        text.trim().startsWith("/poll") ->
+                            pollService.createPoll(token, UsersInput(userId, text, mentions ?: emptyList()))
+                        text.trim().startsWith("/stats") ->
+                            pollService.sendStatsForLatest(token)
                         else -> logger.info { "Ignoring the message, unrecognized command." }
                     }
                 }

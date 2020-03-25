@@ -54,6 +54,7 @@ dependencies {
     implementation("org.jetbrains.exposed", "exposed-core", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-dao", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-jdbc", exposedVersion)
+    implementation("org.jetbrains.exposed", "exposed-java-time", exposedVersion)
     implementation("pw.forst", "exposed-upsert", "1.0")
 
     // database migrations from the code

@@ -7,10 +7,12 @@ import com.wire.bots.polls.dto.Question
 import com.wire.bots.polls.dto.common.Mention
 import mu.KLogging
 import org.jetbrains.exposed.sql.JoinType
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import pw.forst.exposed.insertOrUpdate
 
@@ -116,4 +118,18 @@ class PollRepository {
             }
             .mapToSet { it[Votes.userId] }
     }
+
+    /**
+     * Returns set of user ids that voted in the poll with given pollId.
+     */
+    suspend fun getNewestPoll() = newSuspendedTransaction {
+        Polls.slice(Polls.id)
+            .selectAll()
+            .orderBy(Polls.created to SortOrder.DESC)
+            .limit(1)
+            .singleOrNull()
+            ?.get(Polls.id)
+    }
+
+
 }

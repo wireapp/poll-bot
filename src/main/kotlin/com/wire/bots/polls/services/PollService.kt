@@ -117,4 +117,15 @@ class PollService(
         val stats = statsFormattingService.formatStats(pollId) ?: return
         GlobalScope.launch { proxySenderService.send(token, stats) }
     }
+
+    /**
+     * Sends stats for latest poll.
+     */
+    suspend fun sendStatsForLatest(token: String) {
+        val latest = repository.getNewestPoll().whenNull {
+            logger.warn { "No polls found!" }
+        } ?: return
+
+        sendStats(token, latest)
+    }
 }
