@@ -1,4 +1,4 @@
-name: Docker image build
+name: Gradle Test and Docker build
 
 on: [push, pull_request]
 
