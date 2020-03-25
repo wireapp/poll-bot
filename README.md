@@ -1,4 +1,5 @@
 # Wire Poll Bot
+![Gradle Test and Docker build](https://github.com/wireapp/poll-bot/workflows/Gradle%20Test%20and%20Docker%20build/badge.svg)
 ![Publish Docker Image](https://github.com/wireapp/poll-bot/workflows/Publish%20Docker%20Image/badge.svg)
 
 [Wire](https://wire.com/) bot for the polls.
@@ -85,7 +86,6 @@ POSTGRES_DB=
 DB_USER=
 DB_PASSWORD=
 DB_URL=
-SERVICE_CODE=
 SERVICE_TOKEN=
 APP_KEY=
 USE_WEB_SOCKETS=
