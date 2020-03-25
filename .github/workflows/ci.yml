@@ -6,7 +6,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
+
       - name: Setup JDK
         uses: actions/setup-java@v1
         with:
@@ -15,12 +16,14 @@ jobs:
       - name: Execute test with gradle
         run: ./gradlew test
 
-      - uses: actions/checkout@master
-      - name: Build docker image
+      - name: Clean after build
+        run: ./gradlew clean
+
+      - name: Build docker image, push if the branch is master
         uses: docker/build-push-action@v1
         with:
           repository: lukaswire/polls
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           tag_with_ref: true
-          push: false
+          push: ${{ startsWith(github.ref, 'refs/heads/master') }}

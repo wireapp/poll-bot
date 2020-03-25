@@ -44,7 +44,7 @@ class PollService(
 
         // send response with async way
         GlobalScope.launch {
-            val response = proxySenderService.send(
+            proxySenderService.send(
                 token,
                 message = newPoll(
                     id = pollId.toString(),
@@ -52,8 +52,11 @@ class PollService(
                     buttons = poll.options,
                     mentions = shiftMentions(usersInput)
                 )
-            )
-            logger.info { "Poll successfully created with id: ${response.messageId}" }
+            ).whenNull {
+                logger.error { "It was not possible to send the poll to the Roman!" }
+            }?.also { (messageId) ->
+                logger.info { "Poll successfully created with id: $messageId" }
+            }
         }
 
         return pollId
@@ -90,17 +93,19 @@ class PollService(
         logger.info { "Vote registered." }
 
         GlobalScope.launch {
-            val response = proxySenderService.send(
+            proxySenderService.send(
                 token = token,
                 message = confirmVote(
                     pollId = pollAction.pollId,
                     offset = pollAction.optionId,
                     userId = pollAction.userId
                 )
-            )
-            logger.info { "Proxy received confirmation for vote under id: ${response.messageId}" }
-
-            sendStatsIfAllVoted(token, pollAction.pollId)
+            ).whenNull {
+                logger.error { "It was not possible to send response to vote." }
+            }?.also { (messageId) ->
+                logger.info { "Proxy received confirmation for vote under id: $messageId" }
+                sendStatsIfAllVoted(token, pollAction.pollId)
+            }
         }
     }
 

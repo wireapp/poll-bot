@@ -4,12 +4,17 @@ import com.wire.bots.polls.dto.bot.BotMessage
 import com.wire.bots.polls.dto.roman.Response
 import com.wire.bots.polls.utils.createJson
 import io.ktor.client.HttpClient
+import io.ktor.client.call.receive
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.url
+import io.ktor.client.statement.HttpStatement
+import io.ktor.client.statement.readText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import io.ktor.http.isSuccess
 import mu.KLogging
+import java.nio.charset.Charset
 
 /**
  * Service responsible for sending requests to the proxy service Roman.
@@ -25,18 +30,28 @@ class ProxySenderService(private val client: HttpClient, config: ProxyConfigurat
     /**
      * Send given message with provided token.
      */
-    suspend fun send(token: String, message: BotMessage): Response {
+    suspend fun send(token: String, message: BotMessage): Response? {
         logger.debug { "Sending\n:${createJson(message)}" }
 
-        val response = client.post<Response>(body = message) {
+        return client.post<HttpStatement>(body = message) {
             url(conversationEndpoint)
             contentType(ContentType.Application.Json)
             header("Authorization", "Bearer $token")
+        }.execute {
+            logger.debug { "Message sent." }
+            when {
+                it.status.isSuccess() -> {
+                    it.receive<Response>().also {
+                        logger.info { "Message sent successfully: message id: ${it.messageId}" }
+                    }
+                }
+                else -> {
+                    val body = it.readText(Charset.defaultCharset())
+                    logger.error { "Error in communication with proxy. Status: ${it.status}, body: $body." }
+                    null
+                }
+            }
         }
-
-        logger.debug { "Message sent, response: $response" }
-
-        return response
     }
 }
 

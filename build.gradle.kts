@@ -25,7 +25,7 @@ dependencies {
     implementation("ai.blindspot.ktoolz", "ktoolz", "1.0.3")
 
     // Ktor server dependencies
-    val ktorVersion = "1.3.1"
+    val ktorVersion = "1.3.2"
     implementation("io.ktor", "ktor-server-core", ktorVersion)
     implementation("io.ktor", "ktor-server-netty", ktorVersion)
     implementation("io.ktor", "ktor-jackson", ktorVersion)
@@ -36,6 +36,7 @@ dependencies {
     implementation("io.ktor", "ktor-client-jackson", ktorVersion)
     implementation("io.ktor", "ktor-client-websockets", ktorVersion)
     implementation("io.ktor", "ktor-client-cio", ktorVersion)
+    implementation("io.ktor", "ktor-client-logging-jvm", ktorVersion)
 
     // logging
     implementation("io.github.microutils", "kotlin-logging", "1.7.8")
