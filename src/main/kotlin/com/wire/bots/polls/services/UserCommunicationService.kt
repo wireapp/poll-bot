@@ -1,6 +1,7 @@
 package com.wire.bots.polls.services
 
 import com.wire.bots.polls.dto.bot.fallBackMessage
+import com.wire.bots.polls.dto.bot.goodBotMessage
 import com.wire.bots.polls.dto.bot.greeting
 import com.wire.bots.polls.dto.roman.Message
 import mu.KLogging
@@ -26,12 +27,25 @@ class UserCommunicationService(private val proxySenderService: ProxySenderServic
         )
     }
 
+    /**
+     * Sends message with help.
+     */
     suspend fun reactionToWrongCommand(token: String) {
         proxySenderService.send(
             token,
             message = fallBackMessage(
                 text = "I couldn't recognize your command. $usage"
             )
+        )
+    }
+
+    /**
+     * Sends good bot message.
+     */
+    suspend fun goodBot(token: String) {
+        proxySenderService.send(
+            token,
+            message = goodBotMessage()
         )
     }
 

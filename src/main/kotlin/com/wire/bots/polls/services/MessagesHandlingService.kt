@@ -77,8 +77,11 @@ class MessagesHandlingService(
                         // poll request
                         text.trim().startsWith("/poll") ->
                             pollService.createPoll(token, UsersInput(userId, text, mentions ?: emptyList()))
+                        // stats request
                         text.trim().startsWith("/stats") ->
                             pollService.sendStatsForLatest(token)
+                        // easter egg, good bot is good
+                        text == "good bot" -> userCommunicationService.goodBot(token)
                         else -> logger.info { "Ignoring the message, unrecognized command." }
                     }
                 }
