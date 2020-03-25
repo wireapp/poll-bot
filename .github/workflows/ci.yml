@@ -1,7 +1,4 @@
-name: Publish Docker Image
-on:
-  release:
-    types: published
+on: [push]
 
 jobs:
   build:
@@ -13,4 +10,4 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: lukaswire/polls
         tag_with_ref: true
-        push: ${{ startsWith(github.ref, 'refs/tags/') }}
+        push: false
