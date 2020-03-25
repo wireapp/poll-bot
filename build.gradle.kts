@@ -50,7 +50,7 @@ dependencies {
     // database
     implementation("org.postgresql", "postgresql", "42.2.2")
 
-    val exposedVersion = "0.21.1"
+    val exposedVersion = "0.22.1"
     implementation("org.jetbrains.exposed", "exposed-core", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-dao", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-jdbc", exposedVersion)

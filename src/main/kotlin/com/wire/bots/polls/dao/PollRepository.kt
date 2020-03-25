@@ -3,14 +3,16 @@ package com.wire.bots.polls.dao
 import ai.blindspot.ktoolz.extensions.mapToSet
 import com.wire.bots.polls.dto.PollAction
 import com.wire.bots.polls.dto.PollDto
+import com.wire.bots.polls.dto.Question
+import com.wire.bots.polls.dto.common.Mention
 import mu.KLogging
 import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import pw.forst.exposed.insertOrUpdate
-import java.util.UUID
 
 /**
  * Simple repository for handling database transactions on one place.
@@ -23,23 +25,54 @@ class PollRepository {
      * Saves given poll to database and returns its id (same as the [pollId] parameter,
      * but this design supports fluent style in the services.
      */
-    suspend fun savePoll(poll: PollDto, pollId: UUID, userId: String) = newSuspendedTransaction {
+    suspend fun savePoll(poll: PollDto, pollId: String, userId: String) = newSuspendedTransaction {
         Polls.insert {
-            it[id] = pollId.toString()
+            it[id] = pollId
             it[ownerId] = userId
             it[isActive] = true
-            it[body] = poll.question
+            it[body] = poll.question.body
         }
 
-        poll.options.forEachIndexed { index, option ->
-            PollOptions.insert {
-                it[this.pollId] = pollId.toString()
-                it[optionOrder] = index
-                it[optionContent] = option
-            }
+        Mentions.batchInsert(poll.question.mentions) {
+            this[Mentions.pollId] = pollId
+            this[Mentions.userId] = it.userId
+            this[Mentions.offset] = it.offset
+            this[Mentions.length] = it.length
         }
 
+        PollOptions.batchInsert(
+            poll.options.mapIndexed { index, option -> index to option }
+        ) {
+            val (index, option) = it
+            this[PollOptions.pollId] = pollId
+            this[PollOptions.optionOrder] = index
+            this[PollOptions.optionContent] = option
+        }
         pollId
+    }
+
+    /**
+     * Returns question for given poll Id. If the poll does not exist, null is returned.
+     */
+    suspend fun getPollQuestion(pollId: String) = newSuspendedTransaction {
+        (Polls leftJoin Mentions)
+            .select { Polls.id eq pollId }
+            .groupBy(
+                { it[Polls.body] },
+                {
+                    if (it.getOrNull(Mentions.userId) != null) {
+                        Mention(
+                            userId = it[Mentions.userId],
+                            offset = it[Mentions.offset],
+                            length = it[Mentions.length]
+                        )
+                    } else {
+                        null
+                    }
+                }
+            ).map { (pollBody, mentions) ->
+                Question(body = pollBody, mentions = mentions.filterNotNull())
+            }.singleOrNull()
     }
 
     /**
@@ -57,21 +90,19 @@ class PollRepository {
     /**
      * Retrieves stats for given pollId.
      *
-     * Offset/option id/button as keys and user ids as values.
+     * Offset/option/button content as keys and count of the votes as values.
      */
     suspend fun stats(pollId: String) = newSuspendedTransaction {
         PollOptions.join(Votes, JoinType.LEFT,
-            additionalConstraint = {
-                (Votes.pollId eq PollOptions.pollId) and (Votes.pollOption eq PollOptions.optionOrder)
-            }
-        ).slice(PollOptions.optionOrder, Votes.userId)
-            .select {
-                PollOptions.pollId eq pollId
-            }
-            .groupBy({ it[PollOptions.optionOrder] }, { it.getOrNull(Votes.userId) }) // left join so userId can be null
-            .mapValues { (_, votingUsers) ->
-                votingUsers.filterNotNull()
-            }
+                additionalConstraint = {
+                    (Votes.pollId eq PollOptions.pollId) and (Votes.pollOption eq PollOptions.optionOrder)
+                }
+            ).slice(PollOptions.optionOrder, PollOptions.optionContent, Votes.userId)
+            .select { PollOptions.pollId eq pollId }
+            // left join so userId can be null
+            .groupBy({ it[PollOptions.optionOrder] to it[PollOptions.optionContent] }, { it.getOrNull(Votes.userId) })
+            .mapKeys { (key, _) -> key.second }
+            .mapValues { (_, votingUsers) -> votingUsers.count { !it.isNullOrBlank() } }
     }
 
     /**

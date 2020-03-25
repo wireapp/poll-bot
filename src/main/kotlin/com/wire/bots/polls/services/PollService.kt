@@ -9,7 +9,6 @@ import com.wire.bots.polls.dto.UsersInput
 import com.wire.bots.polls.dto.bot.confirmVote
 import com.wire.bots.polls.dto.bot.newPoll
 import com.wire.bots.polls.dto.bot.statsMessage
-import com.wire.bots.polls.dto.common.Mention
 import com.wire.bots.polls.parser.PollFactory
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -32,14 +31,14 @@ class PollService(
     /**
      * Create poll.
      */
-    suspend fun createPoll(token: String, usersInput: UsersInput): UUID? {
+    suspend fun createPoll(token: String, usersInput: UsersInput): String? {
         val poll = factory.forUserInput(usersInput)
             .whenNull {
                 logger.warn { "It was not possible to create poll." }
                 pollNotParsedFallback(token, usersInput)
             } ?: return null
 
-        val pollId = repository.savePoll(poll, pollId = UUID.randomUUID(), userId = usersInput.userId)
+        val pollId = repository.savePoll(poll, pollId = UUID.randomUUID().toString(), userId = usersInput.userId)
         logger.info { "Poll successfully created with id: $pollId" }
 
         // send response with async way
@@ -47,10 +46,10 @@ class PollService(
             proxySenderService.send(
                 token,
                 message = newPoll(
-                    id = pollId.toString(),
-                    body = poll.question,
+                    id = pollId,
+                    body = poll.question.body,
                     buttons = poll.options,
-                    mentions = shiftMentions(usersInput)
+                    mentions = poll.question.mentions
                 )
             ).whenNull {
                 logger.error { "It was not possible to send the poll to the Roman!" }
@@ -62,17 +61,6 @@ class PollService(
         return pollId
     }
 
-    private fun shiftMentions(usersInput: UsersInput): List<Mention> {
-        val questionBeginningIdx = usersInput.input.indexOfFirst { it == '"' } + 1
-        val emptyCharsInQuestion = usersInput.input.substringAfter('"')
-            .takeWhile { it == ' ' }
-            .count()
-
-        val offsetChange = questionBeginningIdx + emptyCharsInQuestion
-        return usersInput.mentions.map { mention ->
-            mention.copy(offset = mention.offset - offsetChange)
-        }
-    }
 
     private suspend fun pollNotParsedFallback(token: String, usersInput: UsersInput) {
         usersInput.input.startsWith("/poll").whenTrue {
@@ -134,8 +122,8 @@ class PollService(
             return
         }
 
-        val text = result.map { (optionId, votingUsers) ->
-            "$optionId - ${votingUsers.size} ${if (votingUsers.size == 1) "vote" else "votes"}"
+        val text = result.map { (option, votingUsers) ->
+            "$option - $votingUsers ${if (votingUsers == 1) "vote" else "votes"}"
         }.joinToString(newLine)
 
         GlobalScope.launch {
