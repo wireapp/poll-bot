@@ -19,7 +19,7 @@ fun Routing.registerRoutes() {
     val version by k.instance<String>("version")
 
     get("/") {
-        call.respond("This is the Wire Poll Bot.")
+        call.respond("This is the Wire Poll Bot running version \"$version\".")
     }
 
     get("/version") {

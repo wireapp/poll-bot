@@ -64,3 +64,13 @@ fun goodBotMessage(text: String, mentions: List<Mention> = emptyList()): BotMess
         mentions = mentions
     )
 )
+
+/**
+ * Creates version message.
+ */
+fun versionMessage(text: String, mentions: List<Mention> = emptyList()): BotMessage = TextMessage(
+    text = Text(
+        data = text,
+        mentions = mentions
+    )
+)

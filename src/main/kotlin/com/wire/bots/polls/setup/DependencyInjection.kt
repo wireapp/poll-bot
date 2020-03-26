@@ -72,7 +72,7 @@ fun MainBuilder.configureContainer() {
 
     bind<PollService>() with singleton { PollService(instance(), instance(), instance(), instance(), instance(), instance()) }
 
-    bind<UserCommunicationService>() with singleton { UserCommunicationService(instance()) }
+    bind<UserCommunicationService>() with singleton { UserCommunicationService(instance(), instance("version")) }
 
     bind<ConversationService>() with singleton { ConversationService(instance(), instance()) }
 

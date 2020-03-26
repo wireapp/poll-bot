@@ -28,6 +28,7 @@ private fun getEnvOrLogDefault(env: String, defaultValue: String) = getEnv(env).
 } ?: defaultValue
 
 
+@Suppress("SameParameterValue") // we don't care...
 private fun loadVersion(defaultVersion: String): String = runCatching {
     getEnv("RELEASE_FILE_PATH")
         ?.let { File(it).readText().trim() }
