@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - release_version=docker-compose
     image: lukaswire/polls
     container_name: poll-bot
     env_file: .env

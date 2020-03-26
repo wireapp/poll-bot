@@ -19,12 +19,20 @@ import org.kodein.di.Kodein.MainBuilder
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
+import java.io.File
 
 private val logger = KLogging().logger("EnvironmentLoaderLogger")
 
 private fun getEnvOrLogDefault(env: String, defaultValue: String) = getEnv(env).whenNull {
     logger.warn { "Env variable $env not set! Using default value - $defaultValue" }
 } ?: defaultValue
+
+
+private fun loadVersion(defaultVersion: String): String = runCatching {
+    getEnv("RELEASE_FILE_PATH")
+        ?.let { File(it).readText().trim() }
+        ?: defaultVersion
+}.getOrNull() ?: defaultVersion
 
 /**
  * Loads the DI container with configuration from the system environment.
@@ -48,6 +56,10 @@ fun MainBuilder.bindConfiguration() {
 
     bind<String>("app-key-websocket") with singleton {
         getEnvOrLogDefault(APP_KEY, "")
+    }
+
+    bind<String>("version") with singleton {
+        loadVersion("development")
     }
 
     bind<Boolean>("use-websocket") with singleton {

@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.3.70"
+    kotlin("jvm") version "1.3.71"
     application
     distribution
     id("net.nemerosa.versioning") version "2.8.2"

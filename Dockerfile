@@ -31,6 +31,12 @@ COPY --from=build /src/build/distributions/polls*.tar $APP_ROOT/
 RUN mkdir $APP_ROOT/run
 RUN tar -xvf polls*.tar --strip-components=1 -C $APP_ROOT/run
 
+# create version file
+ARG release_version=development
+ENV RELEASE_FILE_PATH=$APP_ROOT/run/release.txt
+RUN echo $release_version > $APP_ROOT/run/release.txt
+
+
 EXPOSE 8080
 
 ENTRYPOINT ["/bin/sh", "-c", "/app/run/bin/polls"]
