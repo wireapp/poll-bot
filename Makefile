@@ -15,3 +15,6 @@ docker-build:
 
 publish: docker-build
 	docker push lukaswire/polls:latest
+
+kube-deploy:
+	kubectl delete pod -l name=poll -n staging
