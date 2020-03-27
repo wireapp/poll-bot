@@ -15,17 +15,18 @@ class MessagesHandlingService(
     suspend fun handle(message: Message) {
         logger.debug { "Handling message." }
 
-        when (message.type) {
-            "conversation.bot_request" -> logger.info { "Bot was added to conversation." }
+        val handled = when (message.type) {
+            "conversation.bot_request" -> false.also { logger.info { "Bot was added to conversation." } }
             else -> {
                 logger.debug { "Handling type: ${message.type}" }
                 when {
                     message.token != null -> tokenAwareHandle(message.token, message)
-                    else -> logger.warn { "Proxy didn't send token along side the message with type ${message.type}. Message: $message" }
+                    else -> false.also { logger.warn { "Proxy didn't send token along side the message with type ${message.type}. Message:$message" } }
                 }
             }
         }
 
+        logger.debug { if (handled) "Bot reacted to the message" else "Bot didn't react to the message." }
         logger.debug { "Message handled." }
     }
 
