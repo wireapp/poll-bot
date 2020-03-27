@@ -17,49 +17,67 @@ class MessagesHandlingService(
 
         when (message.type) {
             "conversation.bot_request" -> logger.info { "Bot was added to conversation." }
-            else -> tokenAwareHandle(
-                requireNotNull(message.token) { "The reply from bot is expected, message must contain token." },
-                message
-            )
+            else -> {
+                logger.debug { "Handling type: ${message.type}" }
+                when {
+                    message.token != null -> tokenAwareHandle(message.token, message)
+                    else -> logger.warn { "Proxy didn't send token along side the message with type ${message.type}. Message: $message" }
+                }
+            }
         }
 
         logger.debug { "Message handled." }
     }
 
-    private suspend fun tokenAwareHandle(token: String, message: Message) {
-        when (message.type) {
-            "conversation.init" -> {
-                logger.debug { "Init message received." }
-                userCommunicationService.sayHello(message)
-            }
-            "conversation.new_text" -> {
-                logger.debug { "New text message received." }
-                handleText(token, message)
-            }
-            "conversation.new_image" -> logger.debug { "New image posted to conversation, ignoring." }
-            "conversation.reaction" -> {
-                logger.debug { "Reaction message" }
-                pollService.sendStats(
-                    token = token,
-                    pollId = requireNotNull(message.refMessageId) { "Reaction must contain refMessageId" }
-                )
-            }
-            "conversation.poll.action" -> {
-                val poll = requireNotNull(message.poll) { "Reaction to a poll, poll object must be set!" }
-                pollService.pollAction(
-                    token,
-                    PollAction(
-                        pollId = poll.id,
-                        optionId = requireNotNull(poll.offset) { "Offset/Option id must be set!" },
-                        userId = requireNotNull(message.userId) { "UserId of user who sent the message must be set." }
+    private suspend fun tokenAwareHandle(token: String, message: Message): Boolean {
+        logger.debug { "Message contains token." }
+        return runCatching {
+            when (message.type) {
+                "conversation.init" -> {
+                    logger.debug { "Init message received." }
+                    userCommunicationService.sayHello(message)
+                    true
+                }
+                "conversation.new_text" -> {
+                    logger.debug { "New text message received." }
+                    handleText(token, message)
+                }
+                "conversation.new_image" -> true.also { logger.debug { "New image posted to conversation, ignoring." } }
+                "conversation.reaction" -> {
+                    logger.debug { "Reaction message" }
+                    pollService.sendStats(
+                        token = token,
+                        pollId = requireNotNull(message.refMessageId) { "Reaction must contain refMessageId" }
                     )
-                )
+                    true
+                }
+                "conversation.poll.action" -> {
+                    val poll = requireNotNull(message.poll) { "Reaction to a poll, poll object must be set!" }
+                    pollService.pollAction(
+                        token,
+                        PollAction(
+                            pollId = poll.id,
+                            optionId = requireNotNull(poll.offset) { "Offset/Option id must be set!" },
+                            userId = requireNotNull(message.userId) { "UserId of user who sent the message must be set." }
+                        )
+                    )
+                    true
+                }
+                else -> false.also { logger.warn { "Unknown message type of ${message.type}. Ignoring." } }
             }
-            else -> logger.warn { "Unknown message type of ${message.type}. Ignoring." }
-        }
+        }.onFailure {
+            logger.error(it) { "Exception during handling the message: $message with token $token." }
+        }.getOrNull() ?: false
     }
 
-    private suspend fun handleText(token: String, message: Message) {
+    private suspend fun handleText(token: String, message: Message): Boolean {
+        var handled = true
+
+        fun ignore(reason: () -> String) {
+            logger.info(reason)
+            handled = false
+        }
+
         with(message) {
             when {
                 userId == null -> throw IllegalArgumentException("UserId must be set for text messages.")
@@ -69,7 +87,7 @@ class MessagesHandlingService(
                     text.trim().startsWith("/stats") -> pollService.sendStats(token, refMessageId)
                     // integer vote where the text contains offset
                     text.trim().toIntOrNull() != null -> vote(token, userId, refMessageId, text)
-                    else -> logger.info { "Ignoring the message as it is reply unrelated to the bot" }
+                    else -> ignore { "Ignoring the message as it is reply unrelated to the bot" }
                 }
                 // text message with just text
                 text != null -> {
@@ -83,12 +101,13 @@ class MessagesHandlingService(
                         text.trim().startsWith("/version") -> userCommunicationService.sendVersion(token)
                         // easter egg, good bot is good
                         text == "good bot" -> userCommunicationService.goodBot(token)
-                        else -> logger.info { "Ignoring the message, unrecognized command." }
+                        else -> ignore { "Ignoring the message, unrecognized command." }
                     }
                 }
-                else -> logger.info { "Ignoring message as it does not have correct fields set." }
+                else -> ignore { "Ignoring message as it does not have correct fields set." }
             }
         }
+        return handled
     }
 
     private suspend fun vote(token: String, userId: String, refMessageId: String, text: String) = pollService.pollAction(
