@@ -104,7 +104,7 @@ class PollService(
 
         if (votedSize == conversationMembersCount) {
             logger.info { "All users voted, sending statistics to the conversation." }
-            sendStats(token, pollId)
+            sendStats(token, pollId, conversationMembersCount)
         } else {
             logger.info { "Users voted: $votedSize, members of conversation: $conversationMembersCount" }
         }
@@ -113,8 +113,13 @@ class PollService(
     /**
      * Sends statistics about the poll to the proxy.
      */
-    suspend fun sendStats(token: String, pollId: String) {
-        val stats = statsFormattingService.formatStats(pollId) ?: return
+    suspend fun sendStats(token: String, pollId: String, conversationMembers: Int? = null) {
+        val conversationMembersCount = conversationMembers ?: conversationService.getNumberOfConversationMembers(token)
+            .whenNull { logger.error { "It was not possible to determine number of conversation members!" } }
+        // TODO instead of logging error send pure stats
+        ?: return
+
+        val stats = statsFormattingService.formatStats(pollId, conversationMembersCount) ?: return
         GlobalScope.launch { proxySenderService.send(token, stats) }
     }
 

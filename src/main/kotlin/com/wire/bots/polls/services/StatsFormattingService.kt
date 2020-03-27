@@ -17,7 +17,7 @@ class StatsFormattingService(
     /**
      * Prepares message with statistics about the poll to the proxy.
      */
-    suspend fun formatStats(pollId: String): BotMessage? {
+    suspend fun formatStats(pollId: String, conversationMembers: Int): BotMessage? {
         val pollQuestion = repository.getPollQuestion(pollId).whenNull {
             logger.warn { "No poll $pollId exists." }
         } ?: return null
@@ -29,21 +29,21 @@ class StatsFormattingService(
         }
 
         val title = prepareTitle(pollQuestion.body)
-        val options = formatVotes(stats)
+        val options = formatVotes(stats, conversationMembers)
         return statsMessage(
             text = "$title$newLine$options",
             mentions = pollQuestion.mentions.map { it.copy(offset = it.offset + titlePrefix.length) }
         )
     }
 
-    private fun formatVotes(stats: Map<String, Int>): String {
+    private fun formatVotes(stats: Map<Pair<Int, String>, Int>, conversationMembers: Int): String {
         // we can use assert as the result size is checked
         val maxVotes = stats.values.max()!!
         return stats
             .map { (option, votingUsers) ->
-                VotingOption(if (votingUsers == maxVotes) "**" else "*", option, votingUsers)
+                VotingOption(if (votingUsers == maxVotes) "**" else "*", option.second, votingUsers)
             }.let { votes ->
-                votes.joinToString(newLine) { it.toString(maxVotes) }
+                votes.joinToString(newLine) { it.toString(conversationMembers) }
             }
     }
 
@@ -57,8 +57,8 @@ class StatsFormattingService(
 private data class VotingOption(val style: String, val option: String, val votingUsers: Int) {
 
     private companion object {
-        const val notVote = "▁"
-        const val vote = "█"
+        const val notVote = "⬜"
+        const val vote = "⬛"
     }
 
     fun toString(max: Int): String {

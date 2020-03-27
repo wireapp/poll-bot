@@ -103,7 +103,6 @@ class PollRepository {
             .select { PollOptions.pollId eq pollId }
             // left join so userId can be null
             .groupBy({ it[PollOptions.optionOrder] to it[PollOptions.optionContent] }, { it.getOrNull(Votes.userId) })
-            .mapKeys { (key, _) -> key.second }
             .mapValues { (_, votingUsers) -> votingUsers.count { !it.isNullOrBlank() } }
     }
 
