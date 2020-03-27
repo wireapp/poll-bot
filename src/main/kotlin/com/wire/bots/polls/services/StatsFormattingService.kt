@@ -57,8 +57,8 @@ class StatsFormattingService(
 private data class VotingOption(val style: String, val option: String, val votingUsers: Int) {
 
     private companion object {
-        const val notVote = "\uD83D\uDD34"
-        const val vote = "\uD83D\uDD35"
+        const val notVote = "▁"
+        const val vote = "█"
     }
 
     fun toString(max: Int): String {
