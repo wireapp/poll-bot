@@ -115,9 +115,7 @@ class PollService(
      */
     suspend fun sendStats(token: String, pollId: String, conversationMembers: Int? = null) {
         val conversationMembersCount = conversationMembers ?: conversationService.getNumberOfConversationMembers(token)
-            .whenNull { logger.error { "It was not possible to determine number of conversation members!" } }
-        // TODO instead of logging error send pure stats
-        ?: return
+            .whenNull { logger.warn { "It was not possible to determine number of conversation members!" } }
 
         val stats = statsFormattingService.formatStats(pollId, conversationMembersCount) ?: return
         GlobalScope.launch { proxySenderService.send(token, stats) }

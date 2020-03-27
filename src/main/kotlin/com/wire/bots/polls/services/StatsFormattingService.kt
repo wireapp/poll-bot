@@ -16,8 +16,9 @@ class StatsFormattingService(
 
     /**
      * Prepares message with statistics about the poll to the proxy.
+     * When conversationMembers is null, stats are formatted according to the max votes per option.
      */
-    suspend fun formatStats(pollId: String, conversationMembers: Int): BotMessage? {
+    suspend fun formatStats(pollId: String, conversationMembers: Int?): BotMessage? {
         val pollQuestion = repository.getPollQuestion(pollId).whenNull {
             logger.warn { "No poll $pollId exists." }
         } ?: return null
@@ -36,14 +37,14 @@ class StatsFormattingService(
         )
     }
 
-    private fun formatVotes(stats: Map<Pair<Int, String>, Int>, conversationMembers: Int): String {
+    private fun formatVotes(stats: Map<Pair<Int, String>, Int>, conversationMembers: Int?): String {
         // we can use assert as the result size is checked
         val maxVotes = stats.values.max()!!
         return stats
             .map { (option, votingUsers) ->
                 VotingOption(if (votingUsers == maxVotes) "**" else "*", option.second, votingUsers)
             }.let { votes ->
-                votes.joinToString(newLine) { it.toString(conversationMembers) }
+                votes.joinToString(newLine) { it.toString(conversationMembers ?: maxVotes) }
             }
     }
 
