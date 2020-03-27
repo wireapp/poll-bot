@@ -18,3 +18,9 @@ publish: docker-build
 
 kube-deploy:
 	kubectl delete pod -l name=poll -n staging
+
+kube-logs:
+	kubectl logs --follow -l name=poll -n staging
+
+kube-describe:
+	kubectl describe  pods -l name=poll -n staging

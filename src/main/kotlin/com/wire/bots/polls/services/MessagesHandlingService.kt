@@ -17,6 +17,7 @@ class MessagesHandlingService(
 
         val handled = when (message.type) {
             "conversation.bot_request" -> false.also { logger.info { "Bot was added to conversation." } }
+            "conversation.bot_removed" -> false.also { logger.info { "Bot was removed from the conversation." } }
             else -> {
                 logger.debug { "Handling type: ${message.type}" }
                 when {
