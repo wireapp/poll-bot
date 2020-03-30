@@ -37,7 +37,7 @@ class MessagesHandlingService(
             when (message.type) {
                 "conversation.init" -> {
                     logger.debug { "Init message received." }
-                    userCommunicationService.sayHello(message)
+                    userCommunicationService.sayHello(token)
                     true
                 }
                 "conversation.new_text" -> {
@@ -101,6 +101,8 @@ class MessagesHandlingService(
                         text.trim().startsWith("/stats") -> pollService.sendStatsForLatest(token, botId)
                         // send version when asked
                         text.trim().startsWith("/version") -> userCommunicationService.sendVersion(token)
+                        // send version when asked
+                        text.trim().startsWith("/help") -> userCommunicationService.sendHelp(token)
                         // easter egg, good bot is good
                         text == "good bot" -> userCommunicationService.goodBot(token)
                         else -> ignore { "Ignoring the message, unrecognized command." }

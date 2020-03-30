@@ -1,9 +1,16 @@
 # Wire Poll Bot
+[![GitHub version](https://badge.fury.io/gh/wireapp%2Fpoll-bot.svg)](https://badge.fury.io/gh/wireapp%2Fpoll-bot)
 ![CI/CD](https://github.com/wireapp/poll-bot/workflows/CI/CD/badge.svg)
 ![Release Pipeline](https://github.com/wireapp/poll-bot/workflows/Release%20Pipeline/badge.svg)
-[![GitHub version](https://badge.fury.io/gh/wireapp%2Fpoll-bot.svg)](https://badge.fury.io/gh/wireapp%2Fpoll-bot)
 
 [Wire](https://wire.com/) bot for the polls.
+Service code to enable Poll bot in your team:
+```bash
+3131a0af-89d4-4569-b36d-50bcced4b1fb:163a422b-c314-4e34-95af-10b6b36cde18
+```
+
+## Commands
+
 
 ## Dev Stack
 * HTTP Server - [Ktor](https://ktor.io/)

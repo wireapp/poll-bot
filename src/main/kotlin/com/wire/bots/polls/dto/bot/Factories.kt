@@ -3,15 +3,6 @@ package com.wire.bots.polls.dto.bot
 import com.wire.bots.polls.dto.common.Mention
 import com.wire.bots.polls.dto.common.Text
 
-/**
- * Creates message which greets the users in the conversation.
- */
-fun greeting(text: String, mentions: List<Mention> = emptyList()): BotMessage = Greeting(
-    text = Text(
-        data = text,
-        mentions = mentions
-    )
-)
 
 /**
  * Creates message for poll.
@@ -35,40 +26,42 @@ fun confirmVote(pollId: String, userId: String, offset: Int): BotMessage = PollV
     )
 )
 
+
+/**
+ * Creates message which greets the users in the conversation.
+ */
+fun greeting(text: String, mentions: List<Mention> = emptyList()): BotMessage = text(text, mentions)
+
+
 /**
  * Creates stats (result of the poll) message.
  */
-fun statsMessage(text: String, mentions: List<Mention> = emptyList()): BotMessage = Stats(
-    text = Text(
-        data = text,
-        mentions = mentions
-    )
-)
+fun statsMessage(text: String, mentions: List<Mention> = emptyList()): BotMessage = text(text, mentions)
 
 /**
  * Creates message notifying user about wrongly used command.
  */
-fun fallBackMessage(text: String, mentions: List<Mention> = emptyList()): BotMessage = FallbackMessage(
-    text = Text(
-        data = text,
-        mentions = mentions
-    )
-)
+fun fallBackMessage(text: String, mentions: List<Mention> = emptyList()): BotMessage = text(text, mentions)
 
 /**
  * Creates good bot message.
  */
-fun goodBotMessage(text: String, mentions: List<Mention> = emptyList()): BotMessage = TextMessage(
-    text = Text(
-        data = text,
-        mentions = mentions
-    )
-)
+fun goodBotMessage(text: String, mentions: List<Mention> = emptyList()): BotMessage = text(text, mentions)
 
 /**
  * Creates version message.
  */
-fun versionMessage(text: String, mentions: List<Mention> = emptyList()): BotMessage = TextMessage(
+fun versionMessage(text: String, mentions: List<Mention> = emptyList()): BotMessage = text(text, mentions)
+
+/**
+ * Creates message with help.
+ */
+fun helpMessage(text: String, mentions: List<Mention> = emptyList()): BotMessage = text(text, mentions)
+
+/**
+ * Creates text message.
+ */
+private fun text(text: String, mentions: List<Mention>): BotMessage = TextMessage(
     text = Text(
         data = text,
         mentions = mentions
