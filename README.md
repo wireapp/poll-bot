@@ -10,6 +10,10 @@ Service code to enable Poll bot in your team:
 ```
 
 ## Commands
+Basic usage 
+* `/poll "Question" "Option 1" "Option 2"` will create poll
+* `/stats` will send result of the last poll in the conversation
+* `/help` to show help
 
 
 ## Dev Stack
@@ -19,17 +23,23 @@ Service code to enable Poll bot in your team:
 * Build system - [Gradle](https://gradle.org/)
 * Communication with [Wire](https://wire.com/) - [Roman](https://github.com/dkovacevic/roman)
 
+Bot can connect to web socket stream or can use webhook from Roman.
+
 ## Usage
 * To run the application simply execute `make run` or `./gradlew run`.
-* To run the application inside the docker run `make docker-build && make docker-run`
+* To run the application inside the docker compose environment run `make up`
 
 For more details see [Makefile](Makefile).
 
-## Docker Hub
-Poll Bot has docker image available on [Docker Hub](https://hub.docker.com/r/lukaswire/polls).
+
+## Docker Images
+Poll bot has public [docker image](https://hub.docker.com/r/lukaswire/polls).
 ```bash
-docker pull lukaswire/polls:<version>
+lukaswire/polls
 ```
+Tag `latest` is current master branch - each commit is build and tagged as `latest`.
+[Releases](https://github.com/wireapp/poll-bot/releases) have then images with corresponding tag.
+
 
 ## Bot configuration
 Configuration is currently being loaded from the environment variables.

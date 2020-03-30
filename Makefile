@@ -4,7 +4,7 @@ run:
 db:
 	docker-compose up -d db
 
-compose:
+up:
 	docker-compose up -d db && docker-compose up bot
 
 docker-run:
