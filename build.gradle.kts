@@ -78,4 +78,16 @@ tasks {
         from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
         from(sourceSets.main.get().output)
     }
+
+    register("resolveDependencies") {
+        doLast {
+            project.allprojects.forEach { subProject ->
+                with(subProject) {
+                    buildscript.configurations.forEach { if (it.isCanBeResolved) it.resolve() }
+                    configurations.compileClasspath.get().resolve()
+                    configurations.testCompileClasspath.get().resolve()
+                }
+            }
+        }
+    }
 }
