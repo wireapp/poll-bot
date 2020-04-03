@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm") version "1.3.71"
     application
     distribution
-    id("net.nemerosa.versioning") version "2.8.2"
+    id("net.nemerosa.versioning") version "2.12.1"
 }
 
 group = "com.wire.bots.polls"
@@ -39,11 +39,11 @@ dependencies {
     implementation("io.ktor", "ktor-client-logging-jvm", ktorVersion)
 
     // logging
-    implementation("io.github.microutils", "kotlin-logging", "1.7.8")
+    implementation("io.github.microutils", "kotlin-logging", "1.7.9")
     implementation("ch.qos.logback", "logback-classic", "1.2.3")
 
     // DI
-    val kodeinVersion = "6.5.0"
+    val kodeinVersion = "6.5.4"
     implementation("org.kodein.di", "kodein-di-generic-jvm", kodeinVersion)
     implementation("org.kodein.di", "kodein-di-framework-ktor-server-jvm", kodeinVersion)
 
@@ -58,7 +58,7 @@ dependencies {
     implementation("pw.forst", "exposed-upsert", "1.0")
 
     // database migrations from the code
-    implementation("org.flywaydb", "flyway-core", "6.2.4")
+    implementation("org.flywaydb", "flyway-core", "6.3.2")
 }
 
 tasks {
