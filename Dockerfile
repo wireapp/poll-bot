@@ -13,6 +13,7 @@ RUN chmod +x gradlew
 COPY gradle $PROJECT_ROOT/gradle
 # Download gradle
 RUN ./gradlew --version
+# TODO download dependencies
 
 # Copy project and build
 COPY . $PROJECT_ROOT
@@ -34,9 +35,7 @@ RUN tar -xvf polls*.tar --strip-components=1 -C $APP_ROOT/run
 # create version file
 ARG release_version=development
 ENV RELEASE_FILE_PATH=$APP_ROOT/run/release.txt
-RUN echo $release_version > $APP_ROOT/run/release.txt
-
+RUN echo $release_version > $RELEASE_FILE_PATH
 
 EXPOSE 8080
-
 ENTRYPOINT ["/bin/sh", "-c", "/app/run/bin/polls"]
