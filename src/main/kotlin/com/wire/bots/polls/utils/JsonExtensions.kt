@@ -1,3 +1,5 @@
+@file:Suppress("unused") // might be handy in the future
+
 package com.wire.bots.polls.utils
 
 import ai.blindspot.ktoolz.extensions.newLine

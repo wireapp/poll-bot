@@ -35,7 +35,7 @@ open class WebSocketJsonReceiver<T : Any>(
                 logger.info { "Received text:\n$text" }
 
                 @Suppress("BlockingMethodInNonBlockingContext") // because sadly jackson does not have async read
-                jacksonMapper().readValue<T>(text, clazz.java)
+                jacksonMapper().readValue(text, clazz.java)
                     .whenNull { logger.error { "It was not possible to parse incoming message!" } }
                     ?.let { onJsonReceived(it) }
             }

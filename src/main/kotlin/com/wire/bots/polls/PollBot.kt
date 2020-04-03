@@ -7,6 +7,6 @@ import io.ktor.server.netty.Netty
 import io.ktor.util.KtorExperimentalAPI
 
 @KtorExperimentalAPI
-fun main(args: Array<String>) {
+fun main() {
     embeddedServer(Netty, 8080, module = Application::init).start()
 }

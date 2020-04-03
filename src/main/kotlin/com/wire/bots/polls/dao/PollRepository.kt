@@ -96,10 +96,10 @@ class PollRepository {
      */
     suspend fun stats(pollId: String) = newSuspendedTransaction {
         PollOptions.join(Votes, JoinType.LEFT,
-                additionalConstraint = {
-                    (Votes.pollId eq PollOptions.pollId) and (Votes.pollOption eq PollOptions.optionOrder)
-                }
-            ).slice(PollOptions.optionOrder, PollOptions.optionContent, Votes.userId)
+            additionalConstraint = {
+                (Votes.pollId eq PollOptions.pollId) and (Votes.pollOption eq PollOptions.optionOrder)
+            }
+        ).slice(PollOptions.optionOrder, PollOptions.optionContent, Votes.userId)
             .select { PollOptions.pollId eq pollId }
             // left join so userId can be null
             .groupBy({ it[PollOptions.optionOrder] to it[PollOptions.optionContent] }, { it.getOrNull(Votes.userId) })

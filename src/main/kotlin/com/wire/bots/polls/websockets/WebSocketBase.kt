@@ -10,7 +10,7 @@ import mu.KLogging
 /**
  * Base class for web socket connections.
  */
-abstract class WebSocketBase(protected val client: HttpClient, protected val config: WebSocketConfig) {
+abstract class WebSocketBase(private val client: HttpClient, private val config: WebSocketConfig) {
 
     private companion object : KLogging()
 
