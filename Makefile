@@ -24,3 +24,6 @@ kube-logs:
 
 kube-describe:
 	kubectl describe  pods -l name=poll -n staging
+
+kube-prod-logs:
+	kubectl logs --follow -l name=poll -n prod
