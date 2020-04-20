@@ -1,0 +1,54 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - test
+
+jobs:
+  deploy:
+    name: Deploy to K8S
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: zinfra/rubicon
+          token: ${{ secrets.RUBICON_GIT_TOKEN }}
+
+      name: test
+      run: |-
+        ls
+        cat staging/services/poll/poll.yaml || true
+        ls rubicon || true
+        cat rubicon/staging/services/poll/poll.yaml || true
+        find . -iname poll.yaml
+
+        # Setup gcloud CLI
+        - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+          with:
+            version: '286.0.0'
+            service_account_email: ${{ secrets.GKE_SA_EMAIL }}
+            service_account_key: ${{ secrets.GKE_SA_KEY }}
+            project_id: ${{ secrets.GKE_PROJECT }}
+
+        # Configure Docker to use the gcloud command-line tool as a credential
+        # helper for authentication
+        - name: Configure Docker Google cloud
+          run: |-
+            ls
+            gcloud --quiet auth configure-docker
+
+        # Get the GKE credentials so we can deploy to the cluster
+        - name: Obtain k8s credentials
+          env:
+            GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
+            GKE_ZONE: ${{ secrets.GKE_ZONE }}
+          run: |-
+            ls
+            gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+
+        # K8s is set up, deploy the app
+        - name: Deploy
+          run: |-
+            ls
