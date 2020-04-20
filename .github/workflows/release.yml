@@ -29,6 +29,61 @@ jobs:
           # push only if this is tagged release
           push: ${{ startsWith(github.ref, 'refs/tags/') }}
 
+      - name: Checkout Rubicon
+        uses: actions/checkout@v2
+        with:
+          repository: zinfra/rubicon
+          ref: develop
+          path: rubicon
+          token: ${{ secrets.RUBICON_GIT_TOKEN }}
+
+      - name: Change version
+        env:
+          RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
+        run: |-
+          ls
+          cd rubicon/prod/services/poll || cd prod/services/poll
+          sed -i".bak" "s/image: lukaswire\/polls.*/image: lukaswire\/polls:$RELEASE_VERSION/g" poll.yaml
+          rm poll.yaml.bak
+
+      # Setup gcloud CLI
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '286.0.0'
+          service_account_email: ${{ secrets.GKE_SA_EMAIL }}
+          service_account_key: ${{ secrets.GKE_SA_KEY }}
+          project_id: ${{ secrets.GKE_PROJECT }}
+
+      # Configure Docker to use the gcloud command-line tool as a credential
+      # helper for authentication
+      - name: Configure Docker Google cloud
+        run: |-
+          gcloud --quiet auth configure-docker
+
+      # Get the GKE credentials so we can deploy to the cluster
+      - name: Obtain k8s credentials
+        env:
+          GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
+          GKE_ZONE: ${{ secrets.GKE_ZONE }}
+        run: |-
+          gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+
+      # K8s is set up, deploy the app
+      - name: Deploy
+        run: |-
+          kubectl apply -f poll.yaml
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v2
+        env:
+          RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
+        with:
+          branch: poll-bot-release
+          token: ${{ secrets.RUBICON_GIT_TOKEN }}
+          path: rubicon
+          title: "Poll bot release $RELEASE_VERSION"
+          commit-message: "Poll bot release $RELEASE_VERSION"
+
       # Send webhook to Wire using Slack Bot
       - name: Webhook to Wire
         uses: 8398a7/action-slack@v2
