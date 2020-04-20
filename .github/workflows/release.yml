@@ -8,8 +8,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - name: Set envs
+      - uses: actions/checkout@v2
+
+      - name: Set Release Version
         # use latest tag as release version
         run: echo ::set-env name=RELEASE_VERSION::${GITHUB_REF:10}
 
@@ -41,7 +42,7 @@ jobs:
           token: ${{ secrets.RUBICON_GIT_TOKEN }}
 
       # Update version to the one that was just built
-      - name: Change version
+      - name: Change Version in Rubicon
         env:
           RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
         run: |-
@@ -50,7 +51,8 @@ jobs:
           rm poll.yaml.bak
 
       # Setup gcloud CLI
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      - name: Setup Google Cloud CLI
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: '286.0.0'
           service_account_email: ${{ secrets.GKE_SA_EMAIL }}
@@ -71,12 +73,12 @@ jobs:
           gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
 
       # K8s is set up, deploy the app
-      - name: Deploy
+      - name: Deploy the Service
         run: |-
           kubectl apply -f rubicon/prod/services/poll/poll.yaml
 
       # Commit all data to Rubicon and open PR
-      - name: Create Pull Request
+      - name: Create Rubicon Pull Request
         uses: peter-evans/create-pull-request@v2
         env:
           RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
@@ -85,8 +87,10 @@ jobs:
           branch: poll-bot-release
           token: ${{ secrets.RUBICON_GIT_TOKEN }}
           title: "Poll Bot Release"
-          commit-message: "Poll Bot version bump"
-          body: "Poll Bot Release"
+          commit-message: "Poll bot version bump"
+          body: |
+            This is automatic version bump.
+            Made by [Poll Bot pipeline](https://github.com/wireapp/poll-bot/blob/master/.github/workflows/release.yml).
 
       # Send webhook to Wire using Slack Bot
       - name: Webhook to Wire
