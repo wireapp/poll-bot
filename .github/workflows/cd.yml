@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Set envs
+        # use latest tag as release version
+        run: echo ::set-env name=RELEASE_VERSION::${GITHUB_REF:10}
 
       - name: Build docker image, push
         uses: docker/build-push-action@v1
@@ -76,7 +79,7 @@ jobs:
       - name: Deploy
         run: |-
           kubectl delete pod -l name=poll -n staging
-          kubectl describe pod -l name=poll -n staging | grep  "Image ID:" | awk '{ print $3  }'
+          kubectl describe pod -l name=poll -n staging
 
       # Send webhook to Wire using Slack Bot
       - name: Webhook to Wire
