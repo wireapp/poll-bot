@@ -1,0 +1,89 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build docker image, push
+        uses: docker/build-push-action@v1
+        with:
+          # login to repo
+          repository: lukaswire/polls
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          # pass release_version
+          build_args: release_version=${{ env.RELEASE_VERSION }}
+          # tag the image with latest git tag
+          tag_with_ref: true
+          # add labels based on the build - see https://github.com/opencontainers/image-spec/blob/master/annotations.md
+          add_git_labels: true
+          # push only if this is master
+          push: ${{ startsWith(github.ref, 'refs/heads/master') }}
+
+      # Send webhook to Wire using Slack Bot
+      - name: Webhook to Wire
+        uses: 8398a7/action-slack@v2
+        with:
+          status: ${{ job.status }}
+          author_name: Poll Bot CI pipeline
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.WEBHOOK_CI }}
+        # Send message only if previous step failed
+        if: failure()
+
+
+  deploy:
+    name: Deploy to K8S
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: zinfra/rubicon
+          token: ${{ secrets.RUBICON_GIT_TOKEN }}
+
+      # Setup gcloud CLI
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '286.0.0'
+          service_account_email: ${{ secrets.GKE_SA_EMAIL }}
+          service_account_key: ${{ secrets.GKE_SA_KEY }}
+          project_id: ${{ secrets.GKE_PROJECT }}
+
+      # Configure Docker to use the gcloud command-line tool as a credential
+      # helper for authentication
+      - name: Configure Docker Google cloud
+        run: |-
+          gcloud --quiet auth configure-docker
+
+      # Get the GKE credentials so we can deploy to the cluster
+      - name: Obtain k8s credentials
+        env:
+          GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
+          GKE_ZONE: ${{ secrets.GKE_ZONE }}
+        run: |-
+          gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+
+      # K8s is set up, deploy the app
+      - name: Deploy
+        run: |-
+          kubectl apply -f staging/services/poll/poll.yaml
+          kubectl describe pod -l name=poll | grep  "Image ID:" | awk '{ print $3  }'
+
+      # Send webhook to Wire using Slack Bot
+      - name: Webhook to Wire
+        uses: 8398a7/action-slack@v2
+        with:
+          status: ${{ job.status }}
+          author_name: Poll Bot Deployment to Kubernetes
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.WEBHOOK_CI }}
+        # Send message only if previous step failed
+        if: failure()
