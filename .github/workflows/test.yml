@@ -15,13 +15,13 @@ jobs:
           repository: zinfra/rubicon
           token: ${{ secrets.RUBICON_GIT_TOKEN }}
 
-      name: test
-      run: |-
-        ls
-        cat staging/services/poll/poll.yaml || true
-        ls rubicon || true
-        cat rubicon/staging/services/poll/poll.yaml || true
-        find . -iname poll.yaml
+      - name: test
+        run: |-
+          ls
+          cat staging/services/poll/poll.yaml || true
+          ls rubicon || true
+          cat rubicon/staging/services/poll/poll.yaml || true
+          find . -iname poll.yaml
 
       # Setup gcloud CLI
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
