@@ -41,8 +41,7 @@ jobs:
         env:
           RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
         run: |-
-          ls
-          cd rubicon/prod/services/poll || cd prod/services/poll
+          cd rubicon/prod/services/poll
           sed -i".bak" "s/image: lukaswire\/polls.*/image: lukaswire\/polls:$RELEASE_VERSION/g" poll.yaml
           rm poll.yaml.bak
 
@@ -71,7 +70,7 @@ jobs:
       # K8s is set up, deploy the app
       - name: Deploy
         run: |-
-          kubectl apply -f poll.yaml
+          kubectl apply -f rubicon/prod/services/poll/poll.yaml
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v2
