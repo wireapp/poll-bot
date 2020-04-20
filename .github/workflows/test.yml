@@ -13,6 +13,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: zinfra/rubicon
+          ref: develop
           token: ${{ secrets.RUBICON_GIT_TOKEN }}
 
       - name: test
