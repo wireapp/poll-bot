@@ -1,4 +1,4 @@
-name: CD
+name: Test pipeline
 
 on:
   push:
@@ -8,7 +8,6 @@ on:
 jobs:
   deploy:
     name: Deploy to K8S
-    needs: publish
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
