@@ -5,7 +5,8 @@ on:
     types: published
 
 jobs:
-  build:
+  deploy:
+    name: Build and deploy service
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
