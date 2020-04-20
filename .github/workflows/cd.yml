@@ -75,8 +75,8 @@ jobs:
       # K8s is set up, deploy the app
       - name: Deploy
         run: |-
-          kubectl apply -f staging/services/poll/poll.yaml
-          kubectl describe pod -l name=poll | grep  "Image ID:" | awk '{ print $3  }'
+          kubectl delete pod -l name=poll -n staging
+          kubectl describe pod -l name=poll -n staging | grep  "Image ID:" | awk '{ print $3  }'
 
       # Send webhook to Wire using Slack Bot
       - name: Webhook to Wire
