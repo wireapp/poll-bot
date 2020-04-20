@@ -14,11 +14,11 @@ COPY gradle $PROJECT_ROOT/gradle
 # Download gradle
 RUN ./gradlew --version
 # download and cache dependencies
-RUN ./gradlew resolveDependencies
+RUN ./gradlew resolveDependencies --no-daemon
 
 # Copy project and build
 COPY . $PROJECT_ROOT
-RUN ./gradlew distTar
+RUN ./gradlew distTar --no-daemon
 
 # Runtime
 FROM adoptopenjdk/openjdk11:jre-11.0.6_10-alpine
