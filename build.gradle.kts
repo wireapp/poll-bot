@@ -22,7 +22,7 @@ dependencies {
     // stdlib
     implementation(kotlin("stdlib-jdk8"))
     // extension functions
-    implementation("ai.blindspot.ktoolz", "ktoolz", "1.0.3")
+    implementation("ai.blindspot.ktoolz", "ktoolz", "1.0.6")
 
     // Ktor server dependencies
     val ktorVersion = "1.3.2"
