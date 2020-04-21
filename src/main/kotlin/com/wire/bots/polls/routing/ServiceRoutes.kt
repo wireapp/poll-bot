@@ -53,7 +53,7 @@ fun Routing.serviceRoutes(k: LazyKodein) {
     /**
      * Prometheus endpoint.
      */
-    get("/prometheus") {
+    get("/metrics") {
         call.respondTextWriter(status = HttpStatusCode.OK) {
             @Suppress("BlockingMethodInNonBlockingContext") // sadly this is synchronous API
             registry.scrape(this)
