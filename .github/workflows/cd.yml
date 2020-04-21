@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - stagging
+      - staging
 
 jobs:
   publish:
