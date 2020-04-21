@@ -23,9 +23,9 @@ fun createHttpClient(meterRegistry: MeterRegistry) =
             serializer = JacksonSerializer()
         }
 
-//        install(ResponseObserver) {
-//            onResponse {
-//                httpClientLogger.trace { "Response received" }
+        install(ResponseObserver) {
+            onResponse {
+                httpClientLogger.trace { "Response received" }
 //                runCatching {
 //                    httpClientLogger.trace { "Sending to registry" }
 //                    meterRegistry.httpCall(it)
@@ -34,8 +34,8 @@ fun createHttpClient(meterRegistry: MeterRegistry) =
 //                }.onFailure {
 //                    httpClientLogger.error(it) { "Problem while storing data in registry." }
 //                }
-//            }
-//        }
+            }
+        }
 
         install(Logging) {
             logger = Logger.TRACE
