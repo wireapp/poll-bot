@@ -1,10 +1,11 @@
+@file:Suppress("EXPERIMENTAL_API_USAGE")
+
 package com.wire.bots.polls.setup
 
 import com.wire.bots.polls.utils.createLogger
 import com.wire.bots.polls.utils.httpCall
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.apache.Apache
-import io.ktor.client.features.HttpTimeout
+import io.ktor.client.engine.cio.CIO
 import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.logging.LogLevel
@@ -19,12 +20,7 @@ private val httpClientLogger = createLogger("ObserverLogger")
  * Prepares HTTP Client.
  */
 fun createHttpClient(meterRegistry: MeterRegistry) =
-    HttpClient(Apache) {
-        install(HttpTimeout) {
-            // timeout config for 30 seconds
-            requestTimeoutMillis = 30000
-        }
-
+    HttpClient(CIO) {
         install(JsonFeature) {
             serializer = JacksonSerializer()
         }
