@@ -13,7 +13,7 @@ import io.ktor.client.features.observer.ResponseObserver
 import io.micrometer.core.instrument.MeterRegistry
 
 /**
- * Prepares HTTP Client with given keystore.
+ * Prepares HTTP Client.
  */
 fun createHttpClient(meterRegistry: MeterRegistry) =
     HttpClient(Apache) {
