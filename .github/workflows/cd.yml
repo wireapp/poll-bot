@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - stagging
 
 jobs:
   publish:
@@ -26,11 +27,11 @@ jobs:
           # pass release_version
           build_args: release_version=${{ env.RELEASE_VERSION }}
           # tag the image with latest git tag
-          tag_with_ref: true
+          tags: [latest]
           # add labels based on the build - see https://github.com/opencontainers/image-spec/blob/master/annotations.md
           add_git_labels: true
-          # push only if this is master
-          push: ${{ startsWith(github.ref, 'refs/heads/master') }}
+          # push
+          push: true
 
       # Send webhook to Wire using Slack Bot
       - name: Webhook to Wire
