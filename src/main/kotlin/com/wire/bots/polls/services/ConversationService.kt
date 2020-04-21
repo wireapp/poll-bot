@@ -21,12 +21,19 @@ class ConversationService(private val client: HttpClient, config: ProxyConfigura
     /**
      * Returns the number of members of conversation.
      */
-    suspend fun getNumberOfConversationMembers(token: String): Int? {
-        val conversationInformation = client.get<ConversationInformation> {
-            url(endpoint)
-            header("Authorization", "Bearer $token")
-        }
-
-        return conversationInformation.members?.filter { it.service == null }?.size
-    }
+    suspend fun getNumberOfConversationMembers(token: String): Int? =
+        runCatching {
+            client.get<ConversationInformation> {
+                url(endpoint)
+                header("Authorization", "Bearer $token")
+            }
+        }.onFailure {
+            logger.error(it) { "It was not possible to fetch conversation information!" }
+        }.onSuccess {
+            logger.debug { "Successfully got conversation information." }
+            logger.trace { it }
+        }.getOrNull()
+            ?.members
+            ?.filter { it.service == null }
+            ?.size
 }

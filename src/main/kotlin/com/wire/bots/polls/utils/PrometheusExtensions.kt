@@ -27,10 +27,10 @@ fun MeterRegistry.httpCall(response: HttpResponse) {
 
     val duration = endTime - startTime
     val tags = mapOf(
-        "code" to response.status.value.toString(),
-        "url" to response.request.url.toString()
+        "method" to response.request.method.value,
+        "url" to response.request.url.toString(),
+        "response_code" to response.status.value.toString()
     ).toTags()
-
     timer("http_calls", tags).record(duration, TimeUnit.MILLISECONDS)
 }
 

@@ -3,7 +3,6 @@ package com.wire.bots.polls.services
 import ai.blindspot.ktoolz.extensions.createJson
 import com.wire.bots.polls.dto.bot.BotMessage
 import com.wire.bots.polls.dto.roman.Response
-import com.wire.bots.polls.setup.errors.RomanUnavailableException
 import com.wire.bots.polls.utils.appendPath
 import io.ktor.client.HttpClient
 import io.ktor.client.call.receive
@@ -49,7 +48,8 @@ class ProxySenderService(private val client: HttpClient, config: ProxyConfigurat
                 }
                 else -> {
                     val body = it.readText(Charset.defaultCharset())
-                    throw RomanUnavailableException(it.status, body)
+                    logger.error { "Error in communication with proxy. Status: ${it.status}, body: $body." }
+                    null
                 }
             }
         }
