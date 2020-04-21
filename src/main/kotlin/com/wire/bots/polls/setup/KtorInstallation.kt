@@ -96,6 +96,11 @@ fun Application.installFrameworks(k: LazyKodein) {
         logger = createLogger("HttpCallLogger")
     }
 
+    configurePrometheus(k)
+    registerExceptionHandlers(k)
+}
+
+fun Application.configurePrometheus(k: LazyKodein) {
     val prometheusRegistry by k.instance<PrometheusMeterRegistry>()
     install(MicrometerMetrics) {
         registry = prometheusRegistry
@@ -103,6 +108,4 @@ fun Application.installFrameworks(k: LazyKodein) {
             .percentilesHistogram(true)
             .build()
     }
-
-    registerExceptionHandlers(k)
 }

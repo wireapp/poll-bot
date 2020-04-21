@@ -31,6 +31,7 @@ fun MeterRegistry.httpCall(response: HttpResponse) {
         "url" to response.request.url.toString(),
         "response_code" to response.status.value.toString()
     ).toTags()
+
     timer("http_calls", tags).record(duration, TimeUnit.MILLISECONDS)
 }
 

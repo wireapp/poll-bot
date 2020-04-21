@@ -12,6 +12,8 @@ import io.ktor.client.features.logging.Logging
 import io.ktor.client.features.observer.ResponseObserver
 import io.micrometer.core.instrument.MeterRegistry
 
+private val httpClientLogger = createLogger("ObserverLogger")
+
 /**
  * Prepares HTTP Client.
  */
@@ -23,7 +25,15 @@ fun createHttpClient(meterRegistry: MeterRegistry) =
 
         install(ResponseObserver) {
             onResponse {
-                meterRegistry.httpCall(it)
+                httpClientLogger.trace { "Response received" }
+                runCatching {
+                    httpClientLogger.trace { "Sending to registry" }
+                    meterRegistry.httpCall(it)
+                }.onSuccess {
+                    httpClientLogger.trace { "Registered" }
+                }.onFailure {
+                    httpClientLogger.error(it) { "Problem while storing data in registry." }
+                }
             }
         }
 
