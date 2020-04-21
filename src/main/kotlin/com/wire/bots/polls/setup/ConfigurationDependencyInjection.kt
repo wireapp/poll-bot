@@ -4,24 +4,18 @@ import ai.blindspot.ktoolz.extensions.getEnv
 import ai.blindspot.ktoolz.extensions.whenNull
 import com.wire.bots.polls.dto.conf.DatabaseConfiguration
 import com.wire.bots.polls.services.ProxyConfiguration
-import com.wire.bots.polls.setup.EnvConfigVariables.APP_KEY
 import com.wire.bots.polls.setup.EnvConfigVariables.DB_PASSWORD
 import com.wire.bots.polls.setup.EnvConfigVariables.DB_URL
 import com.wire.bots.polls.setup.EnvConfigVariables.DB_USER
 import com.wire.bots.polls.setup.EnvConfigVariables.PROXY_DOMAIN
-import com.wire.bots.polls.setup.EnvConfigVariables.PROXY_WS_HOST
-import com.wire.bots.polls.setup.EnvConfigVariables.PROXY_WS_PATH
 import com.wire.bots.polls.setup.EnvConfigVariables.SERVICE_TOKEN
-import com.wire.bots.polls.setup.EnvConfigVariables.USE_WEB_SOCKETS
-import com.wire.bots.polls.websockets.WebSocketConfig
-import mu.KLogging
+import com.wire.bots.polls.utils.createLogger
 import org.kodein.di.Kodein.MainBuilder
 import org.kodein.di.generic.bind
-import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 import java.io.File
 
-private val logger = KLogging().logger("EnvironmentLoaderLogger")
+private val logger = createLogger("EnvironmentLoaderLogger")
 
 private fun getEnvOrLogDefault(env: String, defaultValue: String) = getEnv(env).whenNull {
     logger.warn { "Env variable $env not set! Using default value - $defaultValue" }
@@ -55,25 +49,8 @@ fun MainBuilder.bindConfiguration() {
         getEnvOrLogDefault(SERVICE_TOKEN, "local-token")
     }
 
-    bind<String>("app-key-websocket") with singleton {
-        getEnvOrLogDefault(APP_KEY, "")
-    }
-
     bind<String>("version") with singleton {
         loadVersion("development")
-    }
-
-    bind<Boolean>("use-websocket") with singleton {
-        getEnvOrLogDefault(USE_WEB_SOCKETS, "false").toBoolean()
-    }
-
-    bind<WebSocketConfig>() with singleton {
-        val appKey = instance<String>("app-key-websocket")
-
-        val host = getEnvOrLogDefault(PROXY_WS_HOST, "proxy.services.zinfra.io")
-        val path = getEnvOrLogDefault(PROXY_WS_PATH, "/await")
-
-        WebSocketConfig(host = host, path = "$path/$appKey")
     }
 
     bind<ProxyConfiguration>() with singleton {

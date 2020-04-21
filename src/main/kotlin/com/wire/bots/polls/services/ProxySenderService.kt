@@ -1,8 +1,9 @@
 package com.wire.bots.polls.services
 
+import ai.blindspot.ktoolz.extensions.createJson
 import com.wire.bots.polls.dto.bot.BotMessage
 import com.wire.bots.polls.dto.roman.Response
-import com.wire.bots.polls.utils.createJson
+import com.wire.bots.polls.utils.appendPath
 import io.ktor.client.HttpClient
 import io.ktor.client.call.receive
 import io.ktor.client.request.header
@@ -25,7 +26,7 @@ class ProxySenderService(private val client: HttpClient, config: ProxyConfigurat
         const val conversationPath = "/conversation"
     }
 
-    private val conversationEndpoint = config.baseUrl + conversationPath
+    private val conversationEndpoint = config.baseUrl appendPath conversationPath
 
     /**
      * Send given message with provided token.
