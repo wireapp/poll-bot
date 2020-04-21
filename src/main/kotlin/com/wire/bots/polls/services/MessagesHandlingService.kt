@@ -69,14 +69,14 @@ class MessagesHandlingService(
             }
         }.onFailure {
             logger.error(it) { "Exception during handling the message: $message with token $token." }
-        }.getOrNull() ?: false
+        }.getOrThrow()
     }
 
     private suspend fun handleText(token: String, message: Message): Boolean {
         var handled = true
 
         fun ignore(reason: () -> String) {
-            logger.info(reason)
+            logger.debug(reason)
             handled = false
         }
 

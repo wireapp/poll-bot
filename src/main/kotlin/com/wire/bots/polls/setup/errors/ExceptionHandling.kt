@@ -1,4 +1,4 @@
-package com.wire.bots.polls.setup
+package com.wire.bots.polls.setup.errors
 
 import com.wire.bots.polls.utils.countException
 import com.wire.bots.polls.utils.createLogger
@@ -25,6 +25,12 @@ fun Application.registerExceptionHandlers(k: LazyKodein) {
         exception<Exception> { cause ->
             logger.error(cause) { "Exception occurred in the application: ${cause.message}" }
             call.errorResponse(HttpStatusCode.InternalServerError, cause.message)
+            registry.countException(cause)
+        }
+
+        exception<RomanUnavailableException> { cause ->
+            logger.error { "Error in communication with Roman. Status: ${cause.status}, body: ${cause.body}." }
+            call.errorResponse(HttpStatusCode.ServiceUnavailable, cause.message)
             registry.countException(cause)
         }
     }

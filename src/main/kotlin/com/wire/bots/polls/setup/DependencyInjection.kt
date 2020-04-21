@@ -11,11 +11,11 @@ import com.wire.bots.polls.services.PollService
 import com.wire.bots.polls.services.ProxySenderService
 import com.wire.bots.polls.services.StatsFormattingService
 import com.wire.bots.polls.services.UserCommunicationService
+import com.wire.bots.polls.utils.createLogger
 import io.ktor.client.HttpClient
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import mu.KLogger
-import mu.KLogging
 import org.kodein.di.Kodein.MainBuilder
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
@@ -62,6 +62,6 @@ fun MainBuilder.configureContainer() {
 
     bind<StatsFormattingService>() with singleton { StatsFormattingService(instance()) }
 
-    bind<KLogger>("routing-logger") with singleton { KLogging().logger("Routing") }
-    bind<KLogger>("install-logger") with singleton { KLogging().logger("KtorStartup") }
+    bind<KLogger>("routing-logger") with singleton { createLogger("Routing") }
+    bind<KLogger>("install-logger") with singleton { createLogger("KtorStartup") }
 }

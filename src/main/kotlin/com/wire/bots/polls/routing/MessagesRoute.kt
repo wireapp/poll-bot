@@ -30,14 +30,15 @@ fun Routing.messages(k: LazyKodein) {
             // bot responds either with 200 or with 400
             runCatching {
                 routingLogger.debug { "Parsing an message." }
-                val message = call.receive<Message>()
-                routingLogger.debug { "Message parsed." }
-                handler.handle(message)
-                routingLogger.debug { "Responding OK" }
-                call.respond(HttpStatusCode.OK)
+                call.receive<Message>()
             }.onFailure {
                 routingLogger.error(it) { "Exception occurred during the request handling!" }
                 call.respond(HttpStatusCode.BadRequest, "Bot did not understand the message.")
+            }.onSuccess {
+                routingLogger.debug { "Message parsed." }
+                handler.handle(it)
+                routingLogger.debug { "Responding OK" }
+                call.respond(HttpStatusCode.OK)
             }
         } else {
             routingLogger.warn { "Token is invalid." }
