@@ -14,6 +14,7 @@ class MessagesHandlingService(
 
     suspend fun handle(message: Message) {
         logger.debug { "Handling message." }
+        logger.trace { message }
 
         val handled = when (message.type) {
             "conversation.bot_request" -> false.also { logger.info { "Bot was added to conversation." } }
