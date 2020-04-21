@@ -29,7 +29,7 @@ fun Application.registerExceptionHandlers(k: LazyKodein) {
         }
 
         exception<RomanUnavailableException> { cause ->
-            logger.error { "Error in communication with Roman. Status: ${cause.status}, body: ${cause.body}." }
+            logger.error(cause) { "Error in communication with Roman. Status: ${cause.status}, body: ${cause.body}." }
             call.errorResponse(HttpStatusCode.ServiceUnavailable, cause.message)
             registry.countException(cause)
         }

@@ -12,5 +12,5 @@
     <logger name="org.eclipse.jetty" level="INFO"/>
     <logger name="io.netty" level="INFO"/>
 
-    <logger name="com.wire" level="INFO"/>
+    <logger name="com.wire" level="TRACE"/>
 </configuration>
