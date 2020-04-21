@@ -27,11 +27,11 @@ ENV APP_ROOT /app
 WORKDIR $APP_ROOT
 
 # Obtain built from the base
-COPY --from=build /src/build/distributions/polls*.tar $APP_ROOT/
+COPY --from=build /src/build/distributions/app.tar $APP_ROOT/
 
 # Extract executables
 RUN mkdir $APP_ROOT/run
-RUN tar -xvf polls*.tar --strip-components=1 -C $APP_ROOT/run
+RUN tar -xvf app.tar --strip-components=1 -C $APP_ROOT/run
 
 # create version file
 ARG release_version=development

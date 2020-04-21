@@ -34,9 +34,12 @@ dependencies {
     // Ktor client dependencies
     implementation("io.ktor", "ktor-client-json", ktorVersion)
     implementation("io.ktor", "ktor-client-jackson", ktorVersion)
-    implementation("io.ktor", "ktor-client-websockets", ktorVersion)
-    implementation("io.ktor", "ktor-client-cio", ktorVersion)
+    implementation("io.ktor", "ktor-client-apache", ktorVersion)
     implementation("io.ktor", "ktor-client-logging-jvm", ktorVersion)
+
+    // Prometheus metrics
+    implementation("io.ktor", "ktor-metrics-micrometer", ktorVersion)
+    implementation("io.micrometer", "micrometer-registry-prometheus", "1.4.1")
 
     // logging
     implementation("io.github.microutils", "kotlin-logging", "1.7.9")
@@ -67,6 +70,14 @@ tasks {
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
+    }
+
+    distTar {
+        archiveFileName.set("app.tar")
+    }
+
+    withType<Test> {
+        useJUnitPlatform()
     }
 
     register<Jar>("fatJar") {
