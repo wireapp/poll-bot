@@ -26,14 +26,14 @@ fun createHttpClient(meterRegistry: MeterRegistry) =
         install(ResponseObserver) {
             onResponse {
                 httpClientLogger.trace { "Response received" }
-                runCatching {
-                    httpClientLogger.trace { "Sending to registry" }
-                    meterRegistry.httpCall(it)
-                }.onSuccess {
-                    httpClientLogger.trace { "Registered" }
-                }.onFailure {
-                    httpClientLogger.error(it) { "Problem while storing data in registry." }
-                }
+//                runCatching {
+//                    httpClientLogger.trace { "Sending to registry" }
+//                    meterRegistry.httpCall(it)
+//                }.onSuccess {
+//                    httpClientLogger.trace { "Registered" }
+//                }.onFailure {
+//                    httpClientLogger.error(it) { "Problem while storing data in registry." }
+//                }
             }
         }
 
