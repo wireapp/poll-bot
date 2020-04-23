@@ -6,7 +6,7 @@ on:
 
 env:
   DOCKER_IMAGE: lukaswire/polls
-  RUBICON_SERVICE: poll
+  SERVICE_NAME: poll
 
 jobs:
   deploy:
@@ -50,7 +50,7 @@ jobs:
       - name: Change Version in Rubicon
         env:
           IMAGE: ${{ env.DOCKER_IMAGE }}
-          SERVICE: ${{ env.RUBICON_SERVICE }}
+          SERVICE: ${{ env.SERVICE_NAME }}
           VERSION: ${{ env.RELEASE_VERSION }}
         run: |-
           # go to directory with configuration
@@ -94,10 +94,10 @@ jobs:
         uses: peter-evans/create-pull-request@v2
         with:
           path: rubicon
-          branch: ${{ env.RUBICON_SERVICE }}-release
+          branch: ${{ env.SERVICE_NAME }}-release
           token: ${{ secrets.RUBICON_GIT_TOKEN }}
-          title: ${{ env.RUBICON_SERVICE }} release ${{ env.RELEASE_VERSION }}
-          commit-message: ${{ env.RUBICON_SERVICE }} version bump to ${{ env.RELEASE_VERSION }}
+          title: ${{ env.SERVICE_NAME }} release ${{ env.RELEASE_VERSION }}
+          commit-message: ${{ env.SERVICE_NAME }} version bump to ${{ env.RELEASE_VERSION }}
           body: |
             This is automatic version bump from the pipeline.
 
@@ -106,7 +106,7 @@ jobs:
         uses: 8398a7/action-slack@v2
         with:
           status: ${{ job.status }}
-          author_name: ${{ env.RUBICON_SERVICE }} release pipeline
+          author_name: ${{ env.SERVICE_NAME }} release pipeline
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.WEBHOOK_RELEASE }}
         # Notify every release

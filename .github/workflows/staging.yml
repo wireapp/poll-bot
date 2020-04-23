@@ -7,7 +7,7 @@ on:
 
 env:
   DOCKER_IMAGE: lukaswire/polls
-  RUBICON_SERVICE: poll
+  SERVICE_NAME: poll
 
 jobs:
   publish:
@@ -61,7 +61,7 @@ jobs:
       # K8s is set up, deploy the app
       - name: Deploy the Service
         env:
-          SERVICE: ${{ env.RUBICON_SERVICE }}
+          SERVICE: ${{ env.SERVICE_NAME }}
         run: |-
           kubectl delete pod -l name=$SERVICE -n staging
           kubectl describe pod -l name=$SERVICE -n staging
@@ -71,7 +71,7 @@ jobs:
         uses: 8398a7/action-slack@v2
         with:
           status: ${{ job.status }}
-          author_name: ${{ env.RUBICON_SERVICE }} staging pipeline
+          author_name: ${{ env.SERVICE_NAME }} staging pipeline
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.WEBHOOK_CI }}
         # Send message only if previous step failed
