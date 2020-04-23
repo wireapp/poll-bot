@@ -35,7 +35,6 @@ dependencies {
     implementation("io.ktor", "ktor-client-json", ktorVersion)
     implementation("io.ktor", "ktor-client-jackson", ktorVersion)
     implementation("io.ktor", "ktor-client-apache", ktorVersion)
-    implementation("io.ktor", "ktor-client-okhttp", ktorVersion)
     implementation("io.ktor", "ktor-client-logging-jvm", ktorVersion)
 
     // Prometheus metrics
