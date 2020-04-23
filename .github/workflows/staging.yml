@@ -1,10 +1,13 @@
-name: CD
+name: Staging Deployment
 
 on:
   push:
     branches:
-      - master
       - staging
+
+env:
+  DOCKER_IMAGE: lukaswire/polls
+  RUBICON_SERVICE: poll
 
 jobs:
   publish:
@@ -21,40 +24,17 @@ jobs:
         uses: docker/build-push-action@v1
         with:
           # login to repo
-          repository: lukaswire/polls
+          repository: ${{ env.DOCKER_IMAGE }}
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           # pass release_version
           build_args: release_version=${{ env.RELEASE_VERSION }}
-          # tag the image with latest git tag
+          # tag the image with name of the branch - staging
           tag_with_ref: true
           # add labels based on the build - see https://github.com/opencontainers/image-spec/blob/master/annotations.md
           add_git_labels: true
           # push
           push: true
-
-      # Send webhook to Wire using Slack Bot
-      - name: Webhook to Wire
-        uses: 8398a7/action-slack@v2
-        with:
-          status: ${{ job.status }}
-          author_name: Poll Bot CD pipeline
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.WEBHOOK_CI }}
-        # Send message only if previous step failed
-        if: failure()
-
-
-  deploy:
-    name: Deploy to K8S
-    needs: publish
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          repository: zinfra/rubicon
-          ref: develop
-          token: ${{ secrets.RUBICON_GIT_TOKEN }}
 
       # Setup gcloud CLI
       - name: Setup Google Cloud CLI
@@ -80,17 +60,20 @@ jobs:
 
       # K8s is set up, deploy the app
       - name: Deploy the Service
+        env:
+          SERVICE: ${{ env.RUBICON_SERVICE }}
         run: |-
-          kubectl delete pod -l name=poll -n staging
-          kubectl describe pod -l name=poll -n staging
+          kubectl delete pod -l name=$SERVICE -n staging
+          kubectl describe pod -l name=$SERVICE -n staging
 
       # Send webhook to Wire using Slack Bot
       - name: Webhook to Wire
         uses: 8398a7/action-slack@v2
         with:
           status: ${{ job.status }}
-          author_name: Poll Bot Deployment to Staging
+          author_name: ${{ env.RUBICON_SERVICE }} staging pipeline
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.WEBHOOK_CI }}
         # Send message only if previous step failed
         if: always()
+
