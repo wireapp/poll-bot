@@ -3,6 +3,7 @@ package com.wire.bots.polls.services
 import com.wire.bots.polls.dto.PollAction
 import com.wire.bots.polls.dto.UsersInput
 import com.wire.bots.polls.dto.roman.Message
+import io.ktor.features.BadRequestException
 import mu.KLogging
 
 class MessagesHandlingService(
@@ -83,7 +84,7 @@ class MessagesHandlingService(
 
         with(message) {
             when {
-                userId == null -> throw IllegalArgumentException("UserId must be set for text messages.")
+                userId == null -> throw BadRequestException("UserId must be set for text messages.")
                 // it is a reply on something
                 refMessageId != null && text != null -> when {
                     // request for stats

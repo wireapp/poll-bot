@@ -94,7 +94,7 @@ fun Application.installFrameworks(k: LazyKodein) {
     install(DefaultHeaders)
     install(CallLogging) {
         level = Level.TRACE
-        logger = createLogger("HttpCallLogger")
+        logger = createLogger("EndpointLogger")
 
         filter { call -> call.request.path().startsWith("/messages") }
     }
@@ -103,6 +103,9 @@ fun Application.installFrameworks(k: LazyKodein) {
     registerExceptionHandlers(k)
 }
 
+/**
+ * Install prometheus.
+ */
 fun Application.configurePrometheus(k: LazyKodein) {
     val prometheusRegistry by k.instance<PrometheusMeterRegistry>()
     install(MicrometerMetrics) {
