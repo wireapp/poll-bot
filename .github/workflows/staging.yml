@@ -11,7 +11,7 @@ env:
 
 jobs:
   publish:
-    name: Build and publish docker image
+    name: Deploy to staging
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
