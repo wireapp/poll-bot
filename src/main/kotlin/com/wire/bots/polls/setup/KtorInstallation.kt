@@ -13,6 +13,7 @@ import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
 import io.ktor.jackson.jackson
 import io.ktor.metrics.micrometer.MicrometerMetrics
+import io.ktor.request.path
 import io.ktor.routing.routing
 import io.micrometer.core.instrument.distribution.DistributionStatisticConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
@@ -94,6 +95,8 @@ fun Application.installFrameworks(k: LazyKodein) {
     install(CallLogging) {
         level = Level.TRACE
         logger = createLogger("HttpCallLogger")
+
+        filter { call -> call.request.path().startsWith("/messages") }
     }
 
     configurePrometheus(k)

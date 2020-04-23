@@ -1,10 +1,8 @@
 package com.wire.bots.polls.setup
 
 import com.wire.bots.polls.utils.createLogger
-import com.wire.bots.polls.utils.httpCall
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.apache.Apache
-import io.ktor.client.engine.jetty.Jetty
+import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.logging.LogLevel
@@ -19,7 +17,7 @@ private val httpClientLogger = createLogger("ObserverLogger")
  * Prepares HTTP Client.
  */
 fun createHttpClient(meterRegistry: MeterRegistry) =
-    HttpClient(Jetty) {
+    HttpClient(OkHttp) {
         install(JsonFeature) {
             serializer = JacksonSerializer()
         }
