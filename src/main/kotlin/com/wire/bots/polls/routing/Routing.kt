@@ -1,31 +1,17 @@
 package com.wire.bots.polls.routing
 
-import ai.blindspot.ktoolz.extensions.newLine
-import io.ktor.application.call
-import io.ktor.content.TextContent
-import io.ktor.http.ContentType
-import io.ktor.response.respond
+import com.wire.bots.polls.utils.createLogger
 import io.ktor.routing.Routing
-import io.ktor.routing.get
-import org.kodein.di.generic.instance
 import org.kodein.di.ktor.kodein
+
+internal val routingLogger by lazy { createLogger("RoutingLogger") }
 
 /**
  * Register routes to the KTor.
  */
 fun Routing.registerRoutes() {
-
     val k by kodein()
-    val version by k.instance<String>("version")
 
-    get("/") {
-        call.respond("This is the Wire Poll Bot running version \"$version\".")
-    }
-
-    get("/version") {
-        call.respond(TextContent("{\"version\": \"$version\"}$newLine", ContentType.Application.Json))
-    }
-
-    healthStatus()
-    messages()
+    serviceRoutes(k)
+    messages(k)
 }

@@ -114,10 +114,14 @@ class PollService(
      * Sends statistics about the poll to the proxy.
      */
     suspend fun sendStats(token: String, pollId: String, conversationMembers: Int? = null) {
+        logger.debug { "Sending stats for poll $pollId" }
         val conversationMembersCount = conversationMembers ?: conversationService.getNumberOfConversationMembers(token)
             .whenNull { logger.warn { "It was not possible to determine number of conversation members!" } }
 
-        val stats = statsFormattingService.formatStats(pollId, conversationMembersCount) ?: return
+        logger.debug { "Conversation members: $conversationMembersCount" }
+        val stats = statsFormattingService.formatStats(pollId, conversationMembersCount)
+            .whenNull { logger.warn { "It was not possible to format stats for poll $pollId" } } ?: return
+
         GlobalScope.launch { proxySenderService.send(token, stats) }
     }
 
@@ -125,6 +129,8 @@ class PollService(
      * Sends stats for latest poll.
      */
     suspend fun sendStatsForLatest(token: String, botId: String) {
+        logger.debug { "Sending latest stats for bot $botId" }
+
         val latest = repository.getLatestForBot(botId).whenNull {
             logger.info { "No polls found for bot $botId" }
         } ?: return

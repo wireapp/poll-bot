@@ -4,22 +4,31 @@ on:
   release:
     types: published
 
+env:
+  DOCKER_IMAGE: wire-bot/poll
+  SERVICE_NAME: poll
+
 jobs:
-  build:
+  deploy:
+    name: Build and deploy service
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - name: Set envs
+      - uses: actions/checkout@v2
+
+      - name: Set Release Version
         # use latest tag as release version
         run: echo ::set-env name=RELEASE_VERSION::${GITHUB_REF:10}
 
       - name: Build and publish docker image
         uses: docker/build-push-action@v1
         with:
-          # login to repo
-          repository: lukaswire/polls
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          # set docker image
+          repository: ${{ env.DOCKER_IMAGE }}
+          # use GCR repository
+          registry: eu.gcr.io
+          # see https://github.com/marketplace/actions/docker-build-push#google-container-registry-gcr
+          username: _json_key
+          password: ${{ secrets.GCR_ACCESS_JSON }}
           # pass release_version
           build_args: release_version=${{ env.RELEASE_VERSION }}
           # tag the image with latest git tag
@@ -41,59 +50,69 @@ jobs:
           token: ${{ secrets.RUBICON_GIT_TOKEN }}
 
       # Update version to the one that was just built
-      - name: Change version
+      - name: Change Version in Rubicon
         env:
-          RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
-        run: |-
-          cd rubicon/prod/services/poll
-          sed -i".bak" "s/image: lukaswire\/polls.*/image: lukaswire\/polls:$RELEASE_VERSION/g" poll.yaml
-          rm poll.yaml.bak
+          IMAGE: ${{ env.DOCKER_IMAGE }}
+          SERVICE: ${{ env.SERVICE_NAME }}
+          VERSION: ${{ env.RELEASE_VERSION }}
+        run: |
+          # go to directory with configuration
+          cd "rubicon/prod/services/$SERVICE"
+          # escape literals for the sed and set output with GCR
+          export SED_PREPARED=$(echo $IMAGE  | awk '{ gsub("/", "\\/", $1); print "eu.gcr.io\\/"$1 }')
+          # update final yaml
+          sed -i".bak" "s/image: $SED_PREPARED.*/image: $SED_PREPARED:$VERSION/g" "$SERVICE.yaml"
+          # delete bakup file
+          rm "$SERVICE.yaml.bak"
 
       # Setup gcloud CLI
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      - name: Setup Google Cloud CLI
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: '286.0.0'
-          service_account_email: ${{ secrets.GKE_SA_EMAIL }}
+          service_account_email: kubernetes-deployment-agent@wire-bot.iam.gserviceaccount.com
           service_account_key: ${{ secrets.GKE_SA_KEY }}
-          project_id: ${{ secrets.GKE_PROJECT }}
+          project_id: wire-bot
 
       # Configure Docker to use the gcloud command-line tool
       - name: Configure Docker Google cloud
-        run: |-
+        run: |
           gcloud --quiet auth configure-docker
 
       # Get the GKE credentials so we can deploy to the cluster
       - name: Obtain k8s credentials
         env:
-          GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
-          GKE_ZONE: ${{ secrets.GKE_ZONE }}
-        run: |-
+          GKE_CLUSTER: anayotto
+          GKE_ZONE: europe-west1-c
+        run: |
           gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
 
       # K8s is set up, deploy the app
-      - name: Deploy
-        run: |-
-          kubectl apply -f rubicon/prod/services/poll/poll.yaml
+      - name: Deploy the Service
+        env:
+          SERVICE: ${{ env.SERVICE_NAME }}
+        run: |
+          kubectl apply -f "rubicon/prod/services/$SERVICE/$SERVICE.yaml"
 
       # Commit all data to Rubicon and open PR
-      - name: Create Pull Request
+      - name: Create Rubicon Pull Request
         uses: peter-evans/create-pull-request@v2
-        env:
-          RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
         with:
           path: rubicon
-          branch: poll-bot-release
+          branch: ${{ env.SERVICE_NAME }}-release
           token: ${{ secrets.RUBICON_GIT_TOKEN }}
-          title: "Poll Bot Release"
-          commit-message: "Poll Bot version bump"
-          body: "Poll Bot Release"
+          labels: version-bump, automerge
+          title: ${{ env.SERVICE_NAME }} release ${{ env.RELEASE_VERSION }}
+          commit-message: ${{ env.SERVICE_NAME }} version bump to ${{ env.RELEASE_VERSION }}
+          body: |
+            This is automatic version bump from the pipeline.
 
       # Send webhook to Wire using Slack Bot
       - name: Webhook to Wire
         uses: 8398a7/action-slack@v2
         with:
           status: ${{ job.status }}
-          author_name: Poll Bot Release Pipeline
+          author_name: ${{ env.SERVICE_NAME }} release pipeline
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.WEBHOOK_RELEASE }}
         # Notify every release

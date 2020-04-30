@@ -9,39 +9,39 @@ import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Routing
 import io.ktor.routing.post
-import mu.KLogger
+import org.kodein.di.LazyKodein
 import org.kodein.di.generic.instance
-import org.kodein.di.ktor.kodein
 
 /**
  * Messages API.
  */
-fun Routing.messages() {
-    val k by kodein()
-
-    val logger by k.instance<KLogger>("routing-logger")
+fun Routing.messages(k: LazyKodein) {
     val handler by k.instance<MessagesHandlingService>()
     val authService by k.instance<AuthService>()
 
+    /**
+     * API for receiving messages from Roman.
+     */
     post("/messages") {
-        logger.debug { "POST /messages" }
+        routingLogger.debug { "POST /messages" }
         // verify whether request contain correct auth header
         if (authService.isTokenValid { call.request.headers }) {
-            logger.info { "Token is valid." }
+            routingLogger.debug { "Token is valid." }
             // bot responds either with 200 or with 400
             runCatching {
-                logger.info { "Parsing an message." }
-                val message = call.receive<Message>()
-                logger.info { "Message parsed." }
-                handler.handle(message)
-                logger.info { "Responding OK" }
-                call.respond(HttpStatusCode.OK)
+                routingLogger.debug { "Parsing an message." }
+                call.receive<Message>()
             }.onFailure {
-                logger.error(it) { "Exception occurred during the request handling!" }
+                routingLogger.error(it) { "Exception occurred during the request handling!" }
                 call.respond(HttpStatusCode.BadRequest, "Bot did not understand the message.")
+            }.onSuccess {
+                routingLogger.debug { "Message parsed." }
+                handler.handle(it)
+                routingLogger.debug { "Responding OK" }
+                call.respond(HttpStatusCode.OK)
             }
         } else {
-            logger.info { "Token is invalid." }
+            routingLogger.warn { "Token is invalid." }
             call.respond(HttpStatusCode.Unauthorized, "Please provide Authorization header.")
         }
     }

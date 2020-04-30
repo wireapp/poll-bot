@@ -3,6 +3,7 @@ package com.wire.bots.polls.services
 import com.wire.bots.polls.dto.PollAction
 import com.wire.bots.polls.dto.UsersInput
 import com.wire.bots.polls.dto.roman.Message
+import io.ktor.features.BadRequestException
 import mu.KLogging
 
 class MessagesHandlingService(
@@ -14,10 +15,11 @@ class MessagesHandlingService(
 
     suspend fun handle(message: Message) {
         logger.debug { "Handling message." }
+        logger.trace { "Message: $message" }
 
         val handled = when (message.type) {
-            "conversation.bot_request" -> false.also { logger.info { "Bot was added to conversation." } }
-            "conversation.bot_removed" -> false.also { logger.info { "Bot was removed from the conversation." } }
+            "conversation.bot_request" -> false.also { logger.debug { "Bot was added to conversation." } }
+            "conversation.bot_removed" -> false.also { logger.debug { "Bot was removed from the conversation." } }
             else -> {
                 logger.debug { "Handling type: ${message.type}" }
                 when {
@@ -69,20 +71,20 @@ class MessagesHandlingService(
             }
         }.onFailure {
             logger.error(it) { "Exception during handling the message: $message with token $token." }
-        }.getOrNull() ?: false
+        }.getOrThrow()
     }
 
     private suspend fun handleText(token: String, message: Message): Boolean {
         var handled = true
 
         fun ignore(reason: () -> String) {
-            logger.info(reason)
+            logger.debug(reason)
             handled = false
         }
 
         with(message) {
             when {
-                userId == null -> throw IllegalArgumentException("UserId must be set for text messages.")
+                userId == null -> throw BadRequestException("UserId must be set for text messages.")
                 // it is a reply on something
                 refMessageId != null && text != null -> when {
                     // request for stats

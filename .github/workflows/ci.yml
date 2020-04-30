@@ -1,6 +1,12 @@
 name: CI
 
-on: [pull_request]
+on:
+  push:
+    branches-ignore:
+      - master
+      - staging
+
+  pull_request:
 
 jobs:
   check:
@@ -36,12 +42,8 @@ jobs:
         uses: docker/build-push-action@v1
         with:
           # login to repo
-          repository: lukaswire/polls
-          # tag the image with latest git tag
-          tag_with_ref: true
-          # add labels based on the build - see https://github.com/opencontainers/image-spec/blob/master/annotations.md
-          add_git_labels: true
-          # push only if this is master
+          repository: wire/ci-test-image
+          # do not push image
           push: false
 
       # Send webhook to Wire using Slack Bot
@@ -49,7 +51,7 @@ jobs:
         uses: 8398a7/action-slack@v2
         with:
           status: ${{ job.status }}
-          author_name: Poll Bot Docker CI pipeline
+          author_name: Docker CI pipeline
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.WEBHOOK_CI }}
         # Send message only if previous step failed
