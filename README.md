@@ -1,7 +1,9 @@
 # Wire Poll Bot
 [![GitHub version](https://badge.fury.io/gh/wireapp%2Fpoll-bot.svg)](https://badge.fury.io/gh/wireapp%2Fpoll-bot)
 ![CI](https://github.com/wireapp/poll-bot/workflows/CI/badge.svg)
-![CD](https://github.com/wireapp/poll-bot/workflows/CD/badge.svg)
+![Test pipeline](https://github.com/wireapp/poll-bot/workflows/Test%20pipeline/badge.svg)
+![Docker Latest build](https://github.com/wireapp/poll-bot/workflows/Docker%20Latest%20build/badge.svg)
+![Staging Deployment](https://github.com/wireapp/poll-bot/workflows/Staging%20Deployment/badge.svg)
 ![Release Pipeline](https://github.com/wireapp/poll-bot/workflows/Release%20Pipeline/badge.svg)
 
 [Wire](https://wire.com/) bot for the polls.
