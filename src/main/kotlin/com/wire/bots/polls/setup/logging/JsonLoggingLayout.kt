@@ -1,12 +1,16 @@
 package com.wire.bots.polls.setup.logging
 
 
+import ai.blindspot.ktoolz.extensions.createJson
 import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.classic.spi.IThrowableProxy
+import ch.qos.logback.classic.spi.ThrowableProxyUtil
 import ch.qos.logback.core.CoreConstants
 import ch.qos.logback.core.LayoutBase
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+
 
 /**
  * Layout logging into jsons.
@@ -35,11 +39,26 @@ class JsonLoggingLayout : LayoutBase<ILoggingEvent>() {
             appendJson("logger", event.loggerName)
             appendJson("message", event.formattedMessage)
             appendJson("level", event.level.levelStr)
-            appendJson("thread_name", event.threadName, "")
+            appendJson("thread_name", event.threadName)
+
+            appendException(event.throwableProxy)
+
             append("}")
             append(CoreConstants.LINE_SEPARATOR)
             toString()
         }
+
+    private fun StringBuffer.appendException(proxy: IThrowableProxy?) {
+        if (proxy == null) return
+        val json = createJson(
+            mapOf(
+                "message" to proxy.message,
+                "class" to proxy.className,
+                "stacktrace" to ThrowableProxyUtil.asString(proxy)
+            )
+        )
+        append("\"exception\":$json")
+    }
 
     private fun StringBuffer.appendJson(key: String, value: String, ending: String = ","): StringBuffer =
         append("\"$key\":\"$value\"$ending")
