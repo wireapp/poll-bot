@@ -22,7 +22,7 @@ class JsonLoggingLayout : LayoutBase<ILoggingEvent>() {
     override fun doLayout(event: ILoggingEvent): String =
         with(StringBuffer(256)) {
             append("{")
-            appendJson("@timestamp", getTime())
+            appendJson("@timestamp", formatTime(event))
 
             event.mdcPropertyMap[INFRA_REQUEST]?.let {
                 appendJson("infra_request", it)
@@ -44,5 +44,6 @@ class JsonLoggingLayout : LayoutBase<ILoggingEvent>() {
     private fun StringBuffer.appendJson(key: String, value: String, ending: String = ","): StringBuffer =
         append("\"$key\":\"$value\"$ending")
 
-    private fun getTime(): String = dateTimeFormatter.format(Instant.now())
+    private fun formatTime(event: ILoggingEvent): String =
+        dateTimeFormatter.format(Instant.ofEpochMilli(event.timeStamp))
 }
