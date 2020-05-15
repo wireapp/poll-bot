@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter
 /**
  * Layout logging into jsons.
  */
-class ProductionLayout : LayoutBase<ILoggingEvent>() {
+class JsonLoggingLayout : LayoutBase<ILoggingEvent>() {
 
     private companion object {
         val dateTimeFormatter: DateTimeFormatter =
