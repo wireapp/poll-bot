@@ -38,5 +38,7 @@ ARG release_version=development
 ENV RELEASE_FILE_PATH=$APP_ROOT/run/release.txt
 RUN echo $release_version > $RELEASE_FILE_PATH
 
+# enable json logging
+ENV JSON_LOGGING=true
 EXPOSE 8080
 ENTRYPOINT ["/bin/sh", "-c", "/app/run/bin/polls"]
