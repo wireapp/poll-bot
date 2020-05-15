@@ -27,29 +27,30 @@ class JsonLoggingLayout : LayoutBase<ILoggingEvent>() {
         with(StringBuffer(256)) {
             append("{")
             appendJson("@timestamp", formatTime(event))
+            appendJson("message", event.formattedMessage)
+            appendJson("logger", event.loggerName)
+            appendJson("level", event.level.levelStr)
 
+            // include nginx request id if exists
             event.mdcPropertyMap[INFRA_REQUEST]?.let {
                 appendJson("infra_request", it)
             }
-
+            // include app unique request id if exists
             event.mdcPropertyMap[APP_REQUEST]?.let {
                 appendJson("app_request", it)
             }
+            // if this was an exception, include necessary data
+            if (event.throwableProxy != null) {
+                appendException(event.throwableProxy)
+            }
+            // json termination
+            appendJson("thread_name", event.threadName, ending = "}")
 
-            appendJson("logger", event.loggerName)
-            appendJson("message", event.formattedMessage)
-            appendJson("level", event.level.levelStr)
-            appendJson("thread_name", event.threadName)
-
-            appendException(event.throwableProxy)
-
-            append("}")
             append(CoreConstants.LINE_SEPARATOR)
             toString()
         }
 
-    private fun StringBuffer.appendException(proxy: IThrowableProxy?) {
-        if (proxy == null) return
+    private fun StringBuffer.appendException(proxy: IThrowableProxy) {
         val json = createJson(
             mapOf(
                 "message" to proxy.message,
@@ -57,7 +58,7 @@ class JsonLoggingLayout : LayoutBase<ILoggingEvent>() {
                 "stacktrace" to ThrowableProxyUtil.asString(proxy)
             )
         )
-        append("\"exception\":$json")
+        append("\"exception\":$json,")
     }
 
     private fun StringBuffer.appendJson(key: String, value: String, ending: String = ","): StringBuffer =
