@@ -26,6 +26,9 @@ FROM adoptopenjdk/openjdk11:jre-11.0.6_10-alpine
 ENV APP_ROOT /app
 WORKDIR $APP_ROOT
 
+# copy wait for script for running in kubernetes
+COPY wait-for.sh ./wait-for.sh
+
 # Obtain built from the base
 COPY --from=build /src/build/distributions/app.tar $APP_ROOT/
 
