@@ -23,46 +23,36 @@ class JsonLoggingLayout : LayoutBase<ILoggingEvent>() {
                 .withZone(ZoneOffset.UTC)
     }
 
-    override fun doLayout(event: ILoggingEvent): String =
-        with(StringBuffer(256)) {
-            append("{")
-            appendJson("@timestamp", formatTime(event))
-            appendJson("message", event.formattedMessage)
-            appendJson("logger", event.loggerName)
-            appendJson("level", event.level.levelStr)
+    override fun doLayout(event: ILoggingEvent): String {
+        val finalMap: MutableMap<String, Any> = mutableMapOf(
+            "@timestamp" to formatTime(event),
+            "message" to event.formattedMessage,
+            "logger" to event.loggerName,
+            "level" to event.level.levelStr,
+            "thread_name" to event.threadName
+        )
 
-            // include nginx request id if exists
-            event.mdcPropertyMap[INFRA_REQUEST]?.let {
-                appendJson("infra_request", it)
-            }
-            // include app unique request id if exists
-            event.mdcPropertyMap[APP_REQUEST]?.let {
-                appendJson("app_request", it)
-            }
-            // if this was an exception, include necessary data
-            if (event.throwableProxy != null) {
-                appendException(event.throwableProxy)
-            }
-            // json termination
-            appendJson("thread_name", event.threadName, ending = "}")
-
-            append(CoreConstants.LINE_SEPARATOR)
-            toString()
+        // include nginx request id if exists
+        event.mdcPropertyMap[INFRA_REQUEST]?.let {
+            finalMap["infra_request"] = it
+        }
+        // include app unique request id if exists
+        event.mdcPropertyMap[APP_REQUEST]?.let {
+            finalMap["app_request"] = it
+        }
+        // if this was an exception, include necessary data
+        if (event.throwableProxy != null) {
+            finalMap["exception"] = exception(event.throwableProxy)
         }
 
-    private fun StringBuffer.appendException(proxy: IThrowableProxy) {
-        val json = createJson(
-            mapOf(
-                "message" to proxy.message,
-                "class" to proxy.className,
-                "stacktrace" to ThrowableProxyUtil.asString(proxy)
-            )
-        )
-        append("\"exception\":$json,")
+        return createJson(finalMap) + CoreConstants.LINE_SEPARATOR
     }
 
-    private fun StringBuffer.appendJson(key: String, value: String, ending: String = ","): StringBuffer =
-        append("\"$key\":\"$value\"$ending")
+    private fun exception(proxy: IThrowableProxy) = mapOf(
+        "message" to proxy.message,
+        "class" to proxy.className,
+        "stacktrace" to ThrowableProxyUtil.asString(proxy)
+    )
 
     private fun formatTime(event: ILoggingEvent): String =
         dateTimeFormatter.format(Instant.ofEpochMilli(event.timeStamp))
