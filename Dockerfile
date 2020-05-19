@@ -22,7 +22,7 @@ RUN ./gradlew --version
 RUN ./gradlew resolveDependencies --no-daemon
 
 # Copy project and build
-COPY src $PROJECT_ROOT
+COPY . $PROJECT_ROOT
 RUN ./gradlew distTar --no-daemon
 
 # Runtime
