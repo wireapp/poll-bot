@@ -5,15 +5,20 @@ import com.wire.bots.polls.dao.DatabaseSetup
 import com.wire.bots.polls.dto.conf.DatabaseConfiguration
 import com.wire.bots.polls.routing.registerRoutes
 import com.wire.bots.polls.setup.errors.registerExceptionHandlers
+import com.wire.bots.polls.setup.logging.APP_REQUEST
+import com.wire.bots.polls.setup.logging.INFRA_REQUEST
 import com.wire.bots.polls.utils.createLogger
 import io.ktor.application.Application
 import io.ktor.application.install
+import io.ktor.features.CallId
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
+import io.ktor.features.callId
 import io.ktor.jackson.jackson
 import io.ktor.metrics.micrometer.MicrometerMetrics
-import io.ktor.request.path
+import io.ktor.request.header
+import io.ktor.request.uri
 import io.ktor.routing.routing
 import io.micrometer.core.instrument.distribution.DistributionStatisticConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
@@ -23,6 +28,7 @@ import org.kodein.di.generic.instance
 import org.kodein.di.ktor.kodein
 import org.slf4j.event.Level
 import java.text.DateFormat
+import java.util.UUID
 
 
 private val installationLogger = createLogger("ApplicationSetup")
@@ -92,21 +98,35 @@ fun Application.installFrameworks(k: LazyKodein) {
     }
 
     install(DefaultHeaders)
-    install(CallLogging) {
-        level = Level.TRACE
-        logger = createLogger("EndpointLogger")
 
-        filter { call -> call.request.path().startsWith("/messages") }
+    install(CallLogging) {
+        // insert nginx id to MDC
+        mdc(INFRA_REQUEST) {
+            it.request.header("X-Request-Id")
+        }
+
+        // use generated call id and insert it to MDC
+        mdc(APP_REQUEST) {
+            it.callId
+        }
+
+        // enable logging just for /messages
+        // this filter does not influence MDC
+        filter {
+            it.request.uri == "/messages"
+        }
+        level = Level.DEBUG
+        logger = createLogger("HttpCallLogger")
     }
 
-    configurePrometheus(k)
-    registerExceptionHandlers(k)
-}
+    install(CallId) {
+        generate {
+            UUID.randomUUID().toString()
+        }
+    }
 
-/**
- * Install prometheus.
- */
-fun Application.configurePrometheus(k: LazyKodein) {
+    registerExceptionHandlers(k)
+
     val prometheusRegistry by k.instance<PrometheusMeterRegistry>()
     install(MicrometerMetrics) {
         registry = prometheusRegistry

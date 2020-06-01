@@ -3,6 +3,8 @@ package com.wire.bots.polls.routing
 import com.wire.bots.polls.dto.roman.Message
 import com.wire.bots.polls.services.AuthService
 import com.wire.bots.polls.services.MessagesHandlingService
+import com.wire.bots.polls.setup.logging.USER_ID
+import com.wire.bots.polls.utils.mdc
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
@@ -36,6 +38,9 @@ fun Routing.messages(k: LazyKodein) {
                 call.respond(HttpStatusCode.BadRequest, "Bot did not understand the message.")
             }.onSuccess {
                 routingLogger.debug { "Message parsed." }
+                // includes user id to current MDC
+                mdc(USER_ID) { it.userId }
+
                 handler.handle(it)
                 routingLogger.debug { "Responding OK" }
                 call.respond(HttpStatusCode.OK)

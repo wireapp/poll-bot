@@ -32,7 +32,7 @@ class ProxySenderService(private val client: HttpClient, config: ProxyConfigurat
      * Send given message with provided token.
      */
     suspend fun send(token: String, message: BotMessage): Response? {
-        logger.debug { "Sending\n:${createJson(message)}" }
+        logger.debug { "Sending: ${createJson(message)}" }
 
         return client.post<HttpStatement>(body = message) {
             url(conversationEndpoint)
