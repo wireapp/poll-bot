@@ -1,16 +1,14 @@
 package com.wire.bots.polls.services
 
-import ai.blindspot.ktoolz.extensions.whenNull
-import ai.blindspot.ktoolz.extensions.whenTrue
 import com.wire.bots.polls.dao.PollRepository
 import com.wire.bots.polls.dto.PollAction
 import com.wire.bots.polls.dto.UsersInput
 import com.wire.bots.polls.dto.bot.confirmVote
 import com.wire.bots.polls.dto.bot.newPoll
 import com.wire.bots.polls.parser.PollFactory
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import mu.KLogging
+import pw.forst.tools.katlib.whenNull
+import pw.forst.tools.katlib.whenTrue
 import java.util.UUID
 
 /**
@@ -40,21 +38,18 @@ class PollService(
         val pollId = repository.savePoll(poll, pollId = UUID.randomUUID().toString(), userId = usersInput.userId, botSelfId = botId)
         logger.info { "Poll successfully created with id: $pollId" }
 
-        // send response with async way
-        GlobalScope.launch {
-            proxySenderService.send(
-                token,
-                message = newPoll(
-                    id = pollId,
-                    body = poll.question.body,
-                    buttons = poll.options,
-                    mentions = poll.question.mentions
-                )
-            ).whenNull {
-                logger.error { "It was not possible to send the poll to the Roman!" }
-            }?.also { (messageId) ->
-                logger.info { "Poll successfully created with id: $messageId" }
-            }
+        proxySenderService.send(
+            token,
+            message = newPoll(
+                id = pollId,
+                body = poll.question.body,
+                buttons = poll.options,
+                mentions = poll.question.mentions
+            )
+        ).whenNull {
+            logger.error { "It was not possible to send the poll to the Roman!" }
+        }?.also { (messageId) ->
+            logger.info { "Poll successfully created with id: $messageId" }
         }
 
         return pollId
@@ -63,10 +58,8 @@ class PollService(
 
     private suspend fun pollNotParsedFallback(token: String, usersInput: UsersInput) {
         usersInput.input.startsWith("/poll").whenTrue {
-            GlobalScope.launch {
-                logger.info { "Command started with /poll, sending usage to user." }
-                userCommunicationService.reactionToWrongCommand(token)
-            }
+            logger.info { "Command started with /poll, sending usage to user." }
+            userCommunicationService.reactionToWrongCommand(token)
         }
 
     }
@@ -79,20 +72,18 @@ class PollService(
         repository.vote(pollAction)
         logger.info { "Vote registered." }
 
-        GlobalScope.launch {
-            proxySenderService.send(
-                token = token,
-                message = confirmVote(
-                    pollId = pollAction.pollId,
-                    offset = pollAction.optionId,
-                    userId = pollAction.userId
-                )
-            ).whenNull {
-                logger.error { "It was not possible to send response to vote." }
-            }?.also { (messageId) ->
-                logger.info { "Proxy received confirmation for vote under id: $messageId" }
-                sendStatsIfAllVoted(token, pollAction.pollId)
-            }
+        proxySenderService.send(
+            token = token,
+            message = confirmVote(
+                pollId = pollAction.pollId,
+                offset = pollAction.optionId,
+                userId = pollAction.userId
+            )
+        ).whenNull {
+            logger.error { "It was not possible to send response to vote." }
+        }?.also { (messageId) ->
+            logger.info { "Proxy received confirmation for vote under id: $messageId" }
+            sendStatsIfAllVoted(token, pollAction.pollId)
         }
     }
 
@@ -122,7 +113,7 @@ class PollService(
         val stats = statsFormattingService.formatStats(pollId, conversationMembersCount)
             .whenNull { logger.warn { "It was not possible to format stats for poll $pollId" } } ?: return
 
-        GlobalScope.launch { proxySenderService.send(token, stats) }
+        proxySenderService.send(token, stats)
     }
 
     /**

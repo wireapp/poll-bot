@@ -1,7 +1,7 @@
 package com.wire.bots.polls.integration_tests.setup
 
-import ai.blindspot.ktoolz.extensions.getEnv
-import ai.blindspot.ktoolz.extensions.whenNull
+import pw.forst.tools.katlib.getEnv
+import pw.forst.tools.katlib.whenNull
 import com.wire.bots.polls.integration_tests.dto.BotApiConfiguration
 import com.wire.bots.polls.integration_tests.setup.EnvConfigVariables.BOT_API
 import com.wire.bots.polls.integration_tests.setup.EnvConfigVariables.SERVICE_TOKEN

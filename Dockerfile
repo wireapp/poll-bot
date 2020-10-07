@@ -33,10 +33,15 @@ COPY --from=build /src/build/distributions/app.tar $APP_ROOT/
 RUN mkdir $APP_ROOT/run
 RUN tar -xvf app.tar --strip-components=1 -C $APP_ROOT/run
 
+# ------------------- Wire common -----------------
 # create version file
 ARG release_version=development
 ENV RELEASE_FILE_PATH=$APP_ROOT/run/release.txt
 RUN echo $release_version > $RELEASE_FILE_PATH
+# enable json logging
+# TODO enable this once we fully migrate to JSON logging everywhere
+# ENV JSON_LOGGING=true
+# /------------------ Wire common -----------------
 
 EXPOSE 8080
 ENTRYPOINT ["/bin/sh", "-c", "/app/run/bin/polls"]

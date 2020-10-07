@@ -1,16 +1,33 @@
 <configuration>
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="local" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{dd/MM/yyyy HH:mm:ss} [%level] %logger{36} - %msg%n</pattern>
+            <pattern>%d{dd/MM/yyyy HH:mm:ss} [%level] [%X{mdc-val}] %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <root level="INFO">
-        <appender-ref ref="STDOUT"/>
-    </root>
+    <appender name="prod" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="com.wire.bots.polls.setup.logging.JsonLoggingLayout"/>
+        </encoder>
+    </appender>
+
+
+    <if condition='"${JSON_LOGGING:-false}".equalsIgnoreCase("true")'>
+        <then>
+            <root level="INFO">
+                <appender-ref ref="prod"/>
+            </root>
+        </then>
+        <else>
+            <root level="DEBUG">
+                <appender-ref ref="local"/>
+            </root>
+        </else>
+    </if>
 
     <logger name="org.eclipse.jetty" level="INFO"/>
     <logger name="io.netty" level="INFO"/>
 
-    <logger name="com.wire" level="INFO"/>
+    <logger name="com.wire" level="TRACE"/>
+
 </configuration>

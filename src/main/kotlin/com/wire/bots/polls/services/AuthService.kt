@@ -1,8 +1,8 @@
 package com.wire.bots.polls.services
 
-import ai.blindspot.ktoolz.extensions.whenNull
 import io.ktor.http.Headers
 import mu.KLogging
+import pw.forst.tools.katlib.whenNull
 
 /**
  * Authentication service.

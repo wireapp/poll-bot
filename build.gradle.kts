@@ -1,17 +1,17 @@
 plugins {
-    kotlin("jvm") version "1.3.71"
+    kotlin("jvm") version "1.4.10"
     application
     distribution
-    id("net.nemerosa.versioning") version "2.12.1"
+    id("net.nemerosa.versioning") version "2.14.0"
 }
 
 group = "com.wire.bots.polls"
 version = versioning.info?.tag ?: versioning.info?.lastTag ?: "development"
 
-val mainClass = "com.wire.bots.polls.PollBotKt"
+val mClass = "com.wire.bots.polls.PollBotKt"
 
 application {
-    mainClassName = mainClass
+    mainClass.set(mClass)
 }
 
 repositories {
@@ -22,10 +22,11 @@ dependencies {
     // stdlib
     implementation(kotlin("stdlib-jdk8"))
     // extension functions
-    implementation("ai.blindspot.ktoolz", "ktoolz", "1.0.6")
+    implementation("pw.forst.tools", "katlib", "1.1.2")
+
 
     // Ktor server dependencies
-    val ktorVersion = "1.3.2"
+    val ktorVersion = "1.4.1"
     implementation("io.ktor", "ktor-server-core", ktorVersion)
     implementation("io.ktor", "ktor-server-netty", ktorVersion)
     implementation("io.ktor", "ktor-jackson", ktorVersion)
@@ -39,21 +40,23 @@ dependencies {
 
     // Prometheus metrics
     implementation("io.ktor", "ktor-metrics-micrometer", ktorVersion)
-    implementation("io.micrometer", "micrometer-registry-prometheus", "1.4.1")
+    implementation("io.micrometer", "micrometer-registry-prometheus", "1.5.5")
 
     // logging
-    implementation("io.github.microutils", "kotlin-logging", "1.7.9")
+    implementation("io.github.microutils", "kotlin-logging", "2.0.3")
+    // if-else in logback.xml
+    implementation("org.codehaus.janino", "janino", "3.1.2")
     implementation("ch.qos.logback", "logback-classic", "1.2.3")
 
     // DI
-    val kodeinVersion = "6.5.4"
+    val kodeinVersion = "6.5.5"
     implementation("org.kodein.di", "kodein-di-generic-jvm", kodeinVersion)
     implementation("org.kodein.di", "kodein-di-framework-ktor-server-jvm", kodeinVersion)
 
     // database
     implementation("org.postgresql", "postgresql", "42.2.2")
 
-    val exposedVersion = "0.22.1"
+    val exposedVersion = "0.27.1"
     implementation("org.jetbrains.exposed", "exposed-core", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-dao", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-jdbc", exposedVersion)
@@ -61,7 +64,7 @@ dependencies {
     implementation("pw.forst", "exposed-upsert", "1.0")
 
     // database migrations from the code
-    implementation("org.flywaydb", "flyway-core", "6.3.2")
+    implementation("org.flywaydb", "flyway-core", "7.0.0")
 }
 
 tasks {
@@ -82,7 +85,7 @@ tasks {
 
     register<Jar>("fatJar") {
         manifest {
-            attributes["Main-Class"] = mainClass
+            attributes["Main-Class"] = mClass
         }
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         archiveFileName.set("polls.jar")
