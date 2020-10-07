@@ -1,6 +1,5 @@
 package com.wire.bots.polls.services
 
-import ai.blindspot.ktoolz.extensions.createJson
 import com.wire.bots.polls.dto.bot.BotMessage
 import com.wire.bots.polls.dto.roman.Response
 import com.wire.bots.polls.utils.appendPath
@@ -15,6 +14,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import mu.KLogging
+import pw.forst.tools.katlib.createJson
 import java.nio.charset.Charset
 
 /**

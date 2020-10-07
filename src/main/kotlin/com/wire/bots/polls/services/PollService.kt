@@ -1,7 +1,5 @@
 package com.wire.bots.polls.services
 
-import ai.blindspot.ktoolz.extensions.whenNull
-import ai.blindspot.ktoolz.extensions.whenTrue
 import com.wire.bots.polls.dao.PollRepository
 import com.wire.bots.polls.dto.PollAction
 import com.wire.bots.polls.dto.UsersInput
@@ -9,6 +7,8 @@ import com.wire.bots.polls.dto.bot.confirmVote
 import com.wire.bots.polls.dto.bot.newPoll
 import com.wire.bots.polls.parser.PollFactory
 import mu.KLogging
+import pw.forst.tools.katlib.whenNull
+import pw.forst.tools.katlib.whenTrue
 import java.util.UUID
 
 /**

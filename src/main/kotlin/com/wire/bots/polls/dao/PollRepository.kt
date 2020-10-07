@@ -1,6 +1,5 @@
 package com.wire.bots.polls.dao
 
-import ai.blindspot.ktoolz.extensions.mapToSet
 import com.wire.bots.polls.dto.PollAction
 import com.wire.bots.polls.dto.PollDto
 import com.wire.bots.polls.dto.Question
@@ -14,6 +13,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import pw.forst.exposed.insertOrUpdate
+import pw.forst.tools.katlib.mapToSet
 
 /**
  * Simple repository for handling database transactions on one place.

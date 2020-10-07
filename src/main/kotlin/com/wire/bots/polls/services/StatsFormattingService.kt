@@ -1,11 +1,11 @@
 package com.wire.bots.polls.services
 
-import ai.blindspot.ktoolz.extensions.newLine
-import ai.blindspot.ktoolz.extensions.whenNull
 import com.wire.bots.polls.dao.PollRepository
 import com.wire.bots.polls.dto.bot.BotMessage
 import com.wire.bots.polls.dto.bot.statsMessage
 import mu.KLogging
+import pw.forst.tools.katlib.newLine
+import pw.forst.tools.katlib.whenNull
 
 class StatsFormattingService(
     private val repository: PollRepository
@@ -39,7 +39,7 @@ class StatsFormattingService(
 
     private fun formatVotes(stats: Map<Pair<Int, String>, Int>, conversationMembers: Int?): String {
         // we can use assert as the result size is checked
-        val maxVotes = stats.values.max()!!
+        val maxVotes = requireNotNull(stats.values.maxOrNull()) { "There were no stats!" }
         return stats
             .map { (option, votingUsers) ->
                 VotingOption(if (votingUsers == maxVotes) "**" else "*", option.second, votingUsers)

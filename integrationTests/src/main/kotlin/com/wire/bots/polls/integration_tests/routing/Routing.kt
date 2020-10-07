@@ -1,6 +1,6 @@
 package com.wire.bots.polls.integration_tests.routing
 
-import ai.blindspot.ktoolz.extensions.whenNull
+import pw.forst.tools.katlib.whenNull
 import com.wire.bots.polls.integration_tests.dto.Conversation
 import com.wire.bots.polls.integration_tests.dto.ProxyResponseMessage
 import com.wire.bots.polls.integration_tests.store.tokenStorage

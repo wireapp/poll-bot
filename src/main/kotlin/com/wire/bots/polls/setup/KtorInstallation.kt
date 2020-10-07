@@ -76,13 +76,16 @@ fun connectDatabase(k: LazyKodein) {
  */
 fun migrateDatabase(dbConfig: DatabaseConfiguration) {
     installationLogger.info { "Migrating database." }
-    val migrationsCount = Flyway
+    val migrateResult = Flyway
         .configure()
         .dataSource(dbConfig.url, dbConfig.userName, dbConfig.password)
         .load()
         .migrate()
 
-    installationLogger.info { if (migrationsCount == 0) "No migrations necessary." else "Applied $migrationsCount migrations." }
+    installationLogger.info {
+        if (migrateResult.migrationsExecuted == 0) "No migrations necessary."
+        else "Applied ${migrateResult.migrationsExecuted} migrations."
+    }
 }
 
 /**

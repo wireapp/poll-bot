@@ -1,6 +1,6 @@
 package com.wire.bots.polls.integration_tests
 
-import ai.blindspot.ktoolz.extensions.newLine
+import pw.forst.tools.katlib.newLine
 import com.wire.bots.polls.integration_tests.dto.botRequest
 import com.wire.bots.polls.integration_tests.dto.init
 import com.wire.bots.polls.integration_tests.dto.reaction

@@ -10,6 +10,7 @@ import io.ktor.client.features.logging.LogLevel
 import io.ktor.client.features.logging.Logger
 import io.ktor.client.features.logging.Logging
 import io.ktor.client.features.observer.ResponseObserver
+import io.ktor.utils.io.discard
 import io.micrometer.core.instrument.MeterRegistry
 
 
@@ -23,12 +24,10 @@ fun createHttpClient(meterRegistry: MeterRegistry) =
         }
 
         // TODO check https://github.com/ktorio/ktor/issues/1813
-        @Suppress("ConstantConditionIf") // temporary disabled until https://github.com/ktorio/ktor/issues/1813 is resolved
-        if (false) {
-            install(ResponseObserver) {
-                onResponse {
-                    meterRegistry.httpCall(it)
-                }
+        install(ResponseObserver) {
+            onResponse {
+                meterRegistry.httpCall(it)
+                it.content.discard()
             }
         }
 

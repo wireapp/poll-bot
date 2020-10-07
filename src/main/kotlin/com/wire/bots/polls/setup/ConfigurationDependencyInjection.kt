@@ -1,7 +1,5 @@
 package com.wire.bots.polls.setup
 
-import ai.blindspot.ktoolz.extensions.getEnv
-import ai.blindspot.ktoolz.extensions.whenNull
 import com.wire.bots.polls.dto.conf.DatabaseConfiguration
 import com.wire.bots.polls.services.ProxyConfiguration
 import com.wire.bots.polls.setup.EnvConfigVariables.DB_PASSWORD
@@ -13,6 +11,8 @@ import com.wire.bots.polls.utils.createLogger
 import org.kodein.di.Kodein.MainBuilder
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.singleton
+import pw.forst.tools.katlib.getEnv
+import pw.forst.tools.katlib.whenNull
 import java.io.File
 
 private val logger = createLogger("EnvironmentLoaderLogger")
