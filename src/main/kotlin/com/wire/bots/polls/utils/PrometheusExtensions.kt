@@ -1,7 +1,5 @@
 package com.wire.bots.polls.utils
 
-import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.request
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
 import java.util.concurrent.TimeUnit
@@ -18,18 +16,17 @@ fun MeterRegistry.countException(exception: Throwable, additionalTags: Map<Strin
     counter("exceptions", tags).increment()
 }
 
+
 /**
  * Register http call.
+ *
  */
-fun MeterRegistry.httpCall(response: HttpResponse) {
-    val startTime = response.requestTime.timestamp
-    val endTime = response.responseTime.timestamp
-
-    val duration = endTime - startTime
+fun MeterRegistry.httpCall(requestMetric: RequestMetric) {
+    val duration = requestMetric.responseTime - requestMetric.requestTime
     val tags = mapOf(
-        "method" to response.request.method.value,
-        "url" to response.request.url.toString(),
-        "response_code" to response.status.value.toString()
+        "method" to requestMetric.method,
+        "url" to requestMetric.url,
+        "response_code" to requestMetric.responseCode.toString()
     ).toTags()
 
     timer("http_calls", tags).record(duration, TimeUnit.MILLISECONDS)

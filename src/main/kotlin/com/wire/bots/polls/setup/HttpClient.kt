@@ -1,5 +1,6 @@
 package com.wire.bots.polls.setup
 
+import com.wire.bots.polls.utils.ClientRequestMetric
 import com.wire.bots.polls.utils.createLogger
 import com.wire.bots.polls.utils.httpCall
 import io.ktor.client.HttpClient
@@ -9,7 +10,6 @@ import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.logging.LogLevel
 import io.ktor.client.features.logging.Logger
 import io.ktor.client.features.logging.Logging
-import io.ktor.client.features.observer.ResponseObserver
 import io.micrometer.core.instrument.MeterRegistry
 
 
@@ -22,14 +22,8 @@ fun createHttpClient(meterRegistry: MeterRegistry) =
             serializer = JacksonSerializer()
         }
 
-        // TODO check https://github.com/ktorio/ktor/issues/1813
-        @Suppress("ConstantConditionIf") // temporary disabled until https://github.com/ktorio/ktor/issues/1813 is resolved
-        if (false) {
-            install(ResponseObserver) {
-                onResponse {
-                    meterRegistry.httpCall(it)
-                }
-            }
+        install(ClientRequestMetric) {
+            onResponse { meterRegistry.httpCall(it) }
         }
 
         install(Logging) {
