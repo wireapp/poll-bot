@@ -51,14 +51,6 @@ jobs:
           tags: wire/ci-test-image
           push: false
 
-      - name: Build docker image
-        uses: docker/build-push-action@v1
-        with:
-          # login to repo
-          repository: wire/ci-test-image
-          # do not push image
-          push: false
-
       # Send webhook to Wire using Slack Bot
       - name: Webhook to Wire
         uses: 8398a7/action-slack@v2
