@@ -51,13 +51,13 @@ jobs:
             release_version=${{ env.RELEASE_VERSION }}
 
       # Setup gcloud CLI
-      - name: Setup Google Cloud CLI
-        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@master
         with:
-          version: '286.0.0'
           service_account_email: kubernetes-deployment-agent@wire-bot.iam.gserviceaccount.com
           service_account_key: ${{ secrets.GKE_SA_KEY }}
           project_id: wire-bot
+          export_default_credentials: true
 
       # Configure Docker to use the gcloud command-line tool
       - name: Configure Docker Google cloud
