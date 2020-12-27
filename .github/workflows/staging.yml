@@ -7,7 +7,7 @@ on:
 
 env:
   DOCKER_IMAGE: wire-bot/poll
-  SERVICE_NAME: poll
+  SERVICE_NAME: polls
 
 jobs:
   publish:
@@ -77,8 +77,8 @@ jobs:
         env:
           SERVICE: ${{ env.SERVICE_NAME }}
         run: |
-          kubectl delete pod -l name=$SERVICE -n staging
-          kubectl describe pod -l name=$SERVICE -n staging
+          kubectl delete pod -l app=$SERVICE -n staging
+          kubectl describe pod -l app=$SERVICE -n staging
 
       # Send webhook to Wire using Slack Bot
       - name: Webhook to Wire
