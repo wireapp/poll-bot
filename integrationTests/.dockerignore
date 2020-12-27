@@ -1,8 +1,0 @@
-.gradle
-.idea
-build
-.gitignore
-LICENSE
-*.md
-Dockerfile
-docker-compose.yml

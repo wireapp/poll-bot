@@ -67,7 +67,7 @@ jobs:
       # Get the GKE credentials so we can deploy to the cluster
       - name: Obtain k8s credentials
         env:
-          GKE_CLUSTER: anayotto
+          GKE_CLUSTER: dagobah
           GKE_ZONE: europe-west1-c
         run: |
           gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"

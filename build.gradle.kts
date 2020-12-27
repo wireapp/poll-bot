@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.4.10"
+    kotlin("jvm") version "1.4.21"
     application
     distribution
     id("net.nemerosa.versioning") version "2.14.0"
@@ -26,7 +26,7 @@ dependencies {
 
 
     // Ktor server dependencies
-    val ktorVersion = "1.4.1"
+    val ktorVersion = "1.5.0"
     implementation("io.ktor", "ktor-server-core", ktorVersion)
     implementation("io.ktor", "ktor-server-netty", ktorVersion)
     implementation("io.ktor", "ktor-jackson", ktorVersion)
@@ -40,10 +40,10 @@ dependencies {
 
     // Prometheus metrics
     implementation("io.ktor", "ktor-metrics-micrometer", ktorVersion)
-    implementation("io.micrometer", "micrometer-registry-prometheus", "1.5.5")
+    implementation("io.micrometer", "micrometer-registry-prometheus", "1.6.2")
 
     // logging
-    implementation("io.github.microutils", "kotlin-logging", "2.0.3")
+    implementation("io.github.microutils", "kotlin-logging", "2.0.4")
     // if-else in logback.xml
     implementation("org.codehaus.janino", "janino", "3.1.2")
     implementation("ch.qos.logback", "logback-classic", "1.2.3")
@@ -56,7 +56,7 @@ dependencies {
     // database
     implementation("org.postgresql", "postgresql", "42.2.2")
 
-    val exposedVersion = "0.27.1"
+    val exposedVersion = "0.28.1"
     implementation("org.jetbrains.exposed", "exposed-core", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-dao", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-jdbc", exposedVersion)
@@ -64,7 +64,7 @@ dependencies {
     implementation("pw.forst", "exposed-upsert", "1.0")
 
     // database migrations from the code
-    implementation("org.flywaydb", "flyway-core", "7.0.0")
+    implementation("org.flywaydb", "flyway-core", "7.3.2")
 }
 
 tasks {
