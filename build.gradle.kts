@@ -22,7 +22,7 @@ dependencies {
     // stdlib
     implementation(kotlin("stdlib-jdk8"))
     // extension functions
-    implementation("pw.forst.tools", "katlib", "1.1.2")
+    implementation("pw.forst.tools", "katlib", "1.2.1")
 
 
     // Ktor server dependencies
