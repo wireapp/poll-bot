@@ -16,12 +16,12 @@ import io.ktor.client.HttpClient
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import mu.KLogger
-import org.kodein.di.Kodein.MainBuilder
-import org.kodein.di.generic.bind
-import org.kodein.di.generic.instance
-import org.kodein.di.generic.singleton
+import org.kodein.di.DI
+import org.kodein.di.bind
+import org.kodein.di.instance
+import org.kodein.di.singleton
 
-fun MainBuilder.configureContainer() {
+fun DI.MainBuilder.configureContainer() {
 
     bind<PollValidation>() with singleton { PollValidation() }
 

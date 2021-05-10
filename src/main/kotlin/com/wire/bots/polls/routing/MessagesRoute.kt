@@ -11,13 +11,14 @@ import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Routing
 import io.ktor.routing.post
-import org.kodein.di.LazyKodein
-import org.kodein.di.generic.instance
+import org.kodein.di.instance
+import org.kodein.di.ktor.closestDI
 
 /**
  * Messages API.
  */
-fun Routing.messages(k: LazyKodein) {
+fun Routing.messages() {
+    val k = closestDI()
     val handler by k.instance<MessagesHandlingService>()
     val authService by k.instance<AuthService>()
 
