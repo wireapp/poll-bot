@@ -16,15 +16,13 @@ application {
 
 repositories {
     mavenCentral()
-    jcenter()
 }
 
 dependencies {
     // stdlib
     implementation(kotlin("stdlib-jdk8"))
     // extension functions
-    implementation("pw.forst.tools", "katlib", "1.2.1")
-
+    implementation("pw.forst", "katlib", "2.0.1")
 
     // Ktor server dependencies
     val ktorVersion = "1.5.4"
@@ -65,7 +63,7 @@ dependencies {
     implementation("org.jetbrains.exposed", "exposed-dao", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-jdbc", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-java-time", exposedVersion)
-    implementation("pw.forst", "exposed-upsert", "1.0")
+    implementation("pw.forst", "exposed-upsert", "1.1.0")
 
     // database migrations from the code
     implementation("org.flywaydb", "flyway-core", "7.8.2")

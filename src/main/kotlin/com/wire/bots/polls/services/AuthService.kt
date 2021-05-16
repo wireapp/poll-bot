@@ -2,7 +2,7 @@ package com.wire.bots.polls.services
 
 import io.ktor.http.Headers
 import mu.KLogging
-import pw.forst.tools.katlib.whenNull
+import pw.forst.katlib.whenNull
 
 /**
  * Authentication service.

@@ -3,8 +3,8 @@ package com.wire.bots.polls.parser
 import com.wire.bots.polls.dto.PollDto
 import com.wire.bots.polls.dto.UsersInput
 import mu.KLogging
-import pw.forst.tools.katlib.newLine
-import pw.forst.tools.katlib.whenNull
+import pw.forst.katlib.newLine
+import pw.forst.katlib.whenNull
 
 /**
  * Class used for creating the polls from the text. Parsing and creating the poll objects.
