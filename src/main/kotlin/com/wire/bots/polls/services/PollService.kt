@@ -7,8 +7,8 @@ import com.wire.bots.polls.dto.bot.confirmVote
 import com.wire.bots.polls.dto.bot.newPoll
 import com.wire.bots.polls.parser.PollFactory
 import mu.KLogging
-import pw.forst.tools.katlib.whenNull
-import pw.forst.tools.katlib.whenTrue
+import pw.forst.katlib.whenNull
+import pw.forst.katlib.whenTrue
 import java.util.UUID
 
 /**

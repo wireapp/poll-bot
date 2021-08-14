@@ -8,13 +8,14 @@ import io.ktor.response.respondTextWriter
 import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.micrometer.prometheus.PrometheusMeterRegistry
-import org.kodein.di.LazyKodein
-import org.kodein.di.generic.instance
+import org.kodein.di.instance
+import org.kodein.di.ktor.closestDI
 
 /**
  * Registers prometheus data.
  */
-fun Routing.serviceRoutes(k: LazyKodein) {
+fun Routing.serviceRoutes() {
+    val k = closestDI()
     val version by k.instance<String>("version")
     val registry by k.instance<PrometheusMeterRegistry>()
 

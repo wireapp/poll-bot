@@ -8,11 +8,11 @@ import com.wire.bots.polls.setup.EnvConfigVariables.DB_USER
 import com.wire.bots.polls.setup.EnvConfigVariables.PROXY_DOMAIN
 import com.wire.bots.polls.setup.EnvConfigVariables.SERVICE_TOKEN
 import com.wire.bots.polls.utils.createLogger
-import org.kodein.di.Kodein.MainBuilder
-import org.kodein.di.generic.bind
-import org.kodein.di.generic.singleton
-import pw.forst.tools.katlib.getEnv
-import pw.forst.tools.katlib.whenNull
+import org.kodein.di.DI
+import org.kodein.di.bind
+import org.kodein.di.singleton
+import pw.forst.katlib.getEnv
+import pw.forst.katlib.whenNull
 import java.io.File
 
 private val logger = createLogger("EnvironmentLoaderLogger")
@@ -33,7 +33,7 @@ private fun loadVersion(defaultVersion: String): String = runCatching {
  * Loads the DI container with configuration from the system environment.
  */
 // TODO load all config from the file and then allow the replacement with env variables
-fun MainBuilder.bindConfiguration() {
+fun DI.MainBuilder.bindConfiguration() {
 
     // The default values used in this configuration are for the local development.
 

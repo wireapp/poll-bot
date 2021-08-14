@@ -13,7 +13,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import pw.forst.exposed.insertOrUpdate
-import pw.forst.tools.katlib.mapToSet
+import pw.forst.katlib.mapToSet
 
 /**
  * Simple repository for handling database transactions on one place.

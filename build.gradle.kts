@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.4.10"
+    kotlin("jvm") version "1.5.0"
     application
     distribution
     id("net.nemerosa.versioning") version "2.14.0"
@@ -15,56 +15,58 @@ application {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
     // stdlib
     implementation(kotlin("stdlib-jdk8"))
     // extension functions
-    implementation("pw.forst.tools", "katlib", "1.1.2")
-
+    implementation("pw.forst", "katlib", "2.0.1")
 
     // Ktor server dependencies
-    val ktorVersion = "1.4.1"
+    val ktorVersion = "1.5.4"
     implementation("io.ktor", "ktor-server-core", ktorVersion)
     implementation("io.ktor", "ktor-server-netty", ktorVersion)
     implementation("io.ktor", "ktor-jackson", ktorVersion)
     implementation("io.ktor", "ktor-websockets", ktorVersion)
-
+    // explicitly set the reflect library to same version as the kotlin
+    implementation("org.jetbrains.kotlin", "kotlin-reflect", "1.5.0")
     // Ktor client dependencies
     implementation("io.ktor", "ktor-client-json", ktorVersion)
-    implementation("io.ktor", "ktor-client-jackson", ktorVersion)
+    implementation("io.ktor", "ktor-client-jackson", ktorVersion) {
+        exclude("org.jetbrains.kotlin", "kotlin-reflect")
+    }
     implementation("io.ktor", "ktor-client-apache", ktorVersion)
     implementation("io.ktor", "ktor-client-logging-jvm", ktorVersion)
 
     // Prometheus metrics
     implementation("io.ktor", "ktor-metrics-micrometer", ktorVersion)
-    implementation("io.micrometer", "micrometer-registry-prometheus", "1.5.5")
+    implementation("io.micrometer", "micrometer-registry-prometheus", "1.6.6")
 
     // logging
-    implementation("io.github.microutils", "kotlin-logging", "2.0.3")
+    implementation("io.github.microutils", "kotlin-logging", "2.0.6")
     // if-else in logback.xml
     implementation("org.codehaus.janino", "janino", "3.1.2")
     implementation("ch.qos.logback", "logback-classic", "1.2.3")
 
     // DI
-    val kodeinVersion = "6.5.5"
-    implementation("org.kodein.di", "kodein-di-generic-jvm", kodeinVersion)
+    val kodeinVersion = "7.5.0"
+    implementation("org.kodein.di", "kodein-di-jvm", kodeinVersion)
     implementation("org.kodein.di", "kodein-di-framework-ktor-server-jvm", kodeinVersion)
 
     // database
-    implementation("org.postgresql", "postgresql", "42.2.2")
+    implementation("org.postgresql", "postgresql", "42.2.20")
 
-    val exposedVersion = "0.27.1"
+    val exposedVersion = "0.31.1"
     implementation("org.jetbrains.exposed", "exposed-core", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-dao", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-jdbc", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-java-time", exposedVersion)
-    implementation("pw.forst", "exposed-upsert", "1.0")
+    implementation("pw.forst", "exposed-upsert", "1.1.0")
 
     // database migrations from the code
-    implementation("org.flywaydb", "flyway-core", "7.0.0")
+    implementation("org.flywaydb", "flyway-core", "7.8.2")
 }
 
 tasks {

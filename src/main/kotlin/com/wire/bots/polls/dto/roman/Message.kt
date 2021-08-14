@@ -39,7 +39,7 @@ data class Message(
     /**
      * Text of the message.
      */
-    val text: String?,
+    val text: Text?,
     /**
      * Id of the quoted message, when the user replies on something, this is id of something.
      */
@@ -69,12 +69,12 @@ data class Message(
      * Type of the file
      */
     val mimeType: String?,
-
-    /**
-     * Mentions in the code
-     */
-    val mentions: List<Mention>?
 ) {
+    data class Text(
+        val data: String,
+        val mentions: List<Mention>?
+    )
+
     /**
      * Poll representation for the proxy.
      */
@@ -102,34 +102,65 @@ data class Message(
 
 /* JSON from the swagger
 {
-  "botId": "string",
+  "botId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
   "type": "string",
-  "userId": "string",
-  "messageId": "string",
-  "conversationId": "string",
-  "token": "string",
-  "text": "string",
-  "image": "string",
-  "attachment": "string",
+  "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
   "handle": "string",
   "locale": "string",
+  "token": "string",
+  "messageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "refMessageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "conversation": "string",
+  "text": {
+    "data": "string",
+    "mentions": [
+      {
+        "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "offset": 0,
+        "length": 0
+      }
+    ]
+  },
+  "attachment": {
+    "data": "string",
+    "name": "string",
+    "mimeType": "string",
+    "size": 0,
+    "duration": 0,
+    "levels": [
+      "string"
+    ],
+    "height": 0,
+    "width": 0,
+    "meta": {
+      "assetId": "string",
+      "assetToken": "string",
+      "sha256": "string",
+      "otrKey": "string"
+    }
+  },
   "poll": {
-    "id": "string",
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
     "type": "string",
     "buttons": [
       "string"
     ],
     "offset": 0,
-    "userId": "string"
+    "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
   },
-  "refMessageId": "string",
-  "mimeType": "string",
-  "mentions": [
-    {
-      "userId": "string",
-      "offset": 0,
-      "length": 0
+  "call": {
+    "version": "string",
+    "type": "string",
+    "resp": true,
+    "sessid": "string",
+    "props": {
+      "additionalProp1": "string",
+      "additionalProp2": "string",
+      "additionalProp3": "string"
     }
-  ]
+  },
+  "emoji": "string"
 }
+
  */

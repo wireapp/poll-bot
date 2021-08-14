@@ -10,16 +10,16 @@ import io.ktor.features.StatusPages
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.micrometer.prometheus.PrometheusMeterRegistry
-import org.kodein.di.LazyKodein
-import org.kodein.di.generic.instance
+import org.kodein.di.instance
+import org.kodein.di.ktor.closestDI
 
 private val logger = createLogger("ExceptionHandler")
 
 /**
  * Registers exception handling.
  */
-fun Application.registerExceptionHandlers(k: LazyKodein) {
-    val registry by k.instance<PrometheusMeterRegistry>()
+fun Application.registerExceptionHandlers() {
+    val registry by closestDI().instance<PrometheusMeterRegistry>()
 
     install(StatusPages) {
         exception<Exception> { cause ->

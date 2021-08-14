@@ -88,25 +88,26 @@ class MessagesHandlingService(
                 // it is a reply on something
                 refMessageId != null && text != null -> when {
                     // request for stats
-                    text.trim().startsWith("/stats") -> pollService.sendStats(token, refMessageId)
+                    text.data.trim().startsWith("/stats") -> pollService.sendStats(token, refMessageId)
                     // integer vote where the text contains offset
-                    text.trim().toIntOrNull() != null -> vote(token, userId, refMessageId, text)
+                    text.data.trim().toIntOrNull() != null -> vote(token, userId, refMessageId, text.data)
                     else -> ignore { "Ignoring the message as it is reply unrelated to the bot" }
                 }
                 // text message with just text
                 text != null -> {
+                    val trimmed = text.data.trim()
                     when {
                         // poll request
-                        text.trim().startsWith("/poll") ->
-                            pollService.createPoll(token, UsersInput(userId, text, mentions ?: emptyList()), botId)
+                        trimmed.startsWith("/poll") ->
+                            pollService.createPoll(token, UsersInput(userId, trimmed, text.mentions ?: emptyList()), botId)
                         // stats request
-                        text.trim().startsWith("/stats") -> pollService.sendStatsForLatest(token, botId)
+                        trimmed.startsWith("/stats") -> pollService.sendStatsForLatest(token, botId)
                         // send version when asked
-                        text.trim().startsWith("/version") -> userCommunicationService.sendVersion(token)
+                        trimmed.startsWith("/version") -> userCommunicationService.sendVersion(token)
                         // send version when asked
-                        text.trim().startsWith("/help") -> userCommunicationService.sendHelp(token)
+                        trimmed.startsWith("/help") -> userCommunicationService.sendHelp(token)
                         // easter egg, good bot is good
-                        text == "good bot" -> userCommunicationService.goodBot(token)
+                        trimmed == "good bot" -> userCommunicationService.goodBot(token)
                         else -> ignore { "Ignoring the message, unrecognized command." }
                     }
                 }

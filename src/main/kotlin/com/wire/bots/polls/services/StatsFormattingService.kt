@@ -4,8 +4,8 @@ import com.wire.bots.polls.dao.PollRepository
 import com.wire.bots.polls.dto.bot.BotMessage
 import com.wire.bots.polls.dto.bot.statsMessage
 import mu.KLogging
-import pw.forst.tools.katlib.newLine
-import pw.forst.tools.katlib.whenNull
+import pw.forst.katlib.newLine
+import pw.forst.katlib.whenNull
 
 class StatsFormattingService(
     private val repository: PollRepository
