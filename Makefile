@@ -8,22 +8,10 @@ up:
 	docker-compose up -d db && docker-compose up bot
 
 docker-run:
-	docker run --rm -p 8080:8080 lukaswire/polls
+	docker run --rm -p 8080:8080 quay.io/wire/poll-bot
 
 docker-build:
-	docker build -t lukaswire/polls:latest .
+	docker build -t quay.io/wire/poll-bot:latest .
 
 publish: docker-build
-	docker push lukaswire/polls:latest
-
-kube-deploy:
-	kubectl delete pod -l name=poll -n staging
-
-kube-logs:
-	kubectl logs --follow -l name=poll -n staging
-
-kube-describe:
-	kubectl describe  pods -l name=poll -n staging
-
-kube-prod-logs:
-	kubectl logs --follow -l name=poll -n prod
+	docker push quay.io/wire/poll-bot:latest

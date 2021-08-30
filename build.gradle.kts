@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.5.0"
+    kotlin("jvm") version "1.5.30"
     application
     distribution
     id("net.nemerosa.versioning") version "2.14.0"
@@ -22,10 +22,10 @@ dependencies {
     // stdlib
     implementation(kotlin("stdlib-jdk8"))
     // extension functions
-    implementation("pw.forst", "katlib", "2.0.1")
+    implementation("pw.forst", "katlib", "2.0.3")
 
     // Ktor server dependencies
-    val ktorVersion = "1.5.4"
+    val ktorVersion = "1.6.3"
     implementation("io.ktor", "ktor-server-core", ktorVersion)
     implementation("io.ktor", "ktor-server-netty", ktorVersion)
     implementation("io.ktor", "ktor-jackson", ktorVersion)
@@ -58,7 +58,7 @@ dependencies {
     // database
     implementation("org.postgresql", "postgresql", "42.2.20")
 
-    val exposedVersion = "0.31.1"
+    val exposedVersion = "0.33.1"
     implementation("org.jetbrains.exposed", "exposed-core", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-dao", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-jdbc", exposedVersion)
@@ -70,11 +70,18 @@ dependencies {
 }
 
 tasks {
+    val jvmTarget = "1.8"
     compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = jvmTarget
+    }
+    compileJava {
+        targetCompatibility = jvmTarget
     }
     compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = jvmTarget
+    }
+    compileTestJava {
+        targetCompatibility = jvmTarget
     }
 
     distTar {

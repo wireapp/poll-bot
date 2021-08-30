@@ -28,7 +28,7 @@ object EnvConfigVariables {
     const val SERVICE_TOKEN = "SERVICE_TOKEN"
 
     /**
-     * Domain used for sending the messages from the bot to proxy eg. "https://proxy.services.zinfra.io"
+     * Domain used for sending the messages from the bot to proxy eg. "https://proxy.services.zinfra.io/api"
      */
     const val PROXY_DOMAIN = "PROXY_DOMAIN"
 }
