@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk11:alpine-jdk AS build
+FROM adoptopenjdk/openjdk11:alpine AS build
 LABEL description="Wire Poll Bot"
 LABEL project="wire-bots:polls"
 
