@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk11:jdk-11.0.6_10-alpine AS build
+FROM adoptopenjdk/openjdk11:alpine-jdk AS build
 LABEL description="Wire Poll Bot"
 LABEL project="wire-bots:polls"
 
@@ -21,7 +21,7 @@ COPY . $PROJECT_ROOT
 RUN ./gradlew distTar --no-daemon
 
 # Runtime
-FROM adoptopenjdk/openjdk11:jre-11.0.6_10-alpine
+FROM adoptopenjdk/openjdk11:alpine-jre
 
 ENV APP_ROOT /app
 WORKDIR $APP_ROOT
