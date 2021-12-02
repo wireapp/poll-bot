@@ -14,7 +14,7 @@ Service code to enable Poll bot in your team:
 ## Commands
 Basic usage 
 * `/poll "Question" "Option 1" "Option 2"` will create poll
-* `/stats` will send result of the **last** poll in the conversation
+* `/stats` will send result of the **latest** poll in the conversation
 * `/help` to show help
 * `/version` prints the current version of the poll bot
 
