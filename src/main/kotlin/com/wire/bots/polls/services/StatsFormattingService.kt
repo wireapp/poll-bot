@@ -6,12 +6,18 @@ import com.wire.bots.polls.dto.bot.statsMessage
 import mu.KLogging
 import pw.forst.katlib.newLine
 import pw.forst.katlib.whenNull
+import kotlin.math.min
 
 class StatsFormattingService(
     private val repository: PollRepository
 ) {
     private companion object : KLogging() {
         const val titlePrefix = "**Results** for poll *\""
+
+        /**
+         * Maximum number of trailing vote slots to be displayed, considered the most voted option.
+         */
+        const val MAX_VOTE_PLACEHOLDER_COUNT = 2
     }
 
     /**
@@ -37,14 +43,40 @@ class StatsFormattingService(
         )
     }
 
+    /**
+     * Formats the vote results using the most voted option to determine the output size.
+     * Will add [MAX_VOTE_PLACEHOLDER_COUNT] number of trailing placeholders to
+     * until it reaches [conversationMembers].
+     *
+     * Examples:
+     * With [MAX_VOTE_PLACEHOLDER_COUNT] = 2 and [conversationMembers] >= 5:
+     * - ⬛⬜⬜⬜⬜ A (1)
+     * - ⬛⬛⬛⬜⬜ B (3)
+     * - ⬛⬛⬜⬜⬜ C (2)
+     *
+     * With [MAX_VOTE_PLACEHOLDER_COUNT] = 2 and 4 [conversationMembers] = 4:
+     * - ⬜⬜⬜⬜ A (0)
+     * - ⬛⬛⬛⬜ B (3)
+     * - ⬛⬜⬜⬜ C (1)
+     *
+     * With [MAX_VOTE_PLACEHOLDER_COUNT] = 2 and 3 [conversationMembers] = 3:
+     * - ⬛⬛⬛ A (3)
+     * - ⬜⬜⬜ B (1)
+     */
     private fun formatVotes(stats: Map<Pair<Int, String>, Int>, conversationMembers: Int?): String {
         // we can use assert as the result size is checked
-        val maxVotes = requireNotNull(stats.values.maxOrNull()) { "There were no stats!" }
+        val mostPopularOptionVoteCount = requireNotNull(stats.values.maxOrNull()) { "There were no stats!" }
+
+        val maximumSize = min(
+            conversationMembers ?: Integer.MAX_VALUE,
+            mostPopularOptionVoteCount + MAX_VOTE_PLACEHOLDER_COUNT
+        )
+
         return stats
             .map { (option, votingUsers) ->
-                VotingOption(if (votingUsers == maxVotes) "**" else "*", option.second, votingUsers)
+                VotingOption(if (votingUsers == mostPopularOptionVoteCount) "**" else "*", option.second, votingUsers)
             }.let { votes ->
-                votes.joinToString(newLine) { it.toString(conversationMembers ?: maxVotes) }
+                votes.joinToString(newLine) { it.toString(maximumSize) }
             }
     }
 
