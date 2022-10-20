@@ -14,33 +14,37 @@ Service code to enable Poll bot in your team:
 ## Commands
 Basic usage 
 * `/poll "Question" "Option 1" "Option 2"` will create poll
-* `/stats` will send result of the last poll in the conversation
+* `/stats` will send result of the **latest** poll in the conversation
 * `/help` to show help
+* `/version` prints the current version of the poll bot
 
-
-## Dev Stack
+## Technologies used
 * HTTP Server - [Ktor](https://ktor.io/)
 * HTTP Client - [Apache](https://ktor.io/clients/http-client/engines.html) under [Ktor](https://ktor.io/)
 * Dependency Injection - [Kodein](https://github.com/Kodein-Framework/Kodein-DI)
 * Build system - [Gradle](https://gradle.org/)
 * Communication with [Wire](https://wire.com/) - [Roman](https://github.com/dkovacevic/roman)
 
-Bot can connect to web socket stream or can use webhook from Roman.
+Bot is using webhooks coming from Roman, for that, the bot needs to have public URL or IP address.
 
 ## Usage
-* To run the application simply execute `make run` or `./gradlew run`.
-* To run the application inside the docker compose environment run `make up`
+
+* The bot needs Postgres database up & running - we use one in [docker-compose.yml](docker-compose.yml), to start it up, you can use
+  command `make db`.
+* To run the application execute `make run` or `./gradlew run`.
+* To run the application inside the docker compose environment run `make up`.
 
 For more details see [Makefile](Makefile).
 
-
 ## Docker Images
-Poll bot has public [docker image](https://hub.docker.com/r/lukaswire/polls).
+
+Poll bot has public [docker image](https://quay.io/wire/poll-bot).
 ```bash
-lukaswire/polls
+quay.io/wire/poll-bot
 ```
-Tag `latest` is current master branch - each commit is build and tagged as `latest`.
-[Releases](https://github.com/wireapp/poll-bot/releases) have then images with corresponding tag.
+
+Tag `latest` is the latest release. [Releases](https://github.com/wireapp/poll-bot/releases) have then images with corresponding tag, so you
+can always roll back. Tag `staging` is build from the latest commit in `staging` branch.
 
 
 ## Bot configuration
@@ -69,12 +73,9 @@ Configuration is currently being loaded from the environment variables.
      * Token which is used for the auth of proxy.
      */
     const val SERVICE_TOKEN = "SERVICE_TOKEN"
+
     /**
-     * Key for connecting to the web socket of the proxy.
-     */
-    const val APP_KEY = "APP_KEY"
-    /**
-     * Domain used for sending the messages from the bot to proxy eg. "https://proxy.services.zinfra.io"
+     * Domain used for sending the messages from the bot to proxy eg. "https://proxy.services.zinfra.io/api"
      */
     const val PROXY_DOMAIN = "PROXY_DOMAIN"
 ```
@@ -95,6 +96,22 @@ DB_USER=
 DB_PASSWORD=
 DB_URL=
 SERVICE_TOKEN=
-APP_KEY=
 PROXY_DOMAIN=
+```
+
+Such configuration can look for example like that:
+
+```bash
+# database
+POSTGRES_USER=wire-poll-bot
+POSTGRES_PASSWORD=super-secret-wire-pwd
+POSTGRES_DB=poll-bot
+
+# application
+DB_USER=wire-poll-bot
+DB_PASSWORD=super-secret-wire-pwd
+DB_URL=jdbc:postgresql://db:5432/poll-bot
+SERVICE_TOKEN=x6jsd5vets967dsA01dz1cOl
+APP_KEY=eyJhbGciOiJIUzM4NCJ9.......
+PROXY_DOMAIN=https://proxy.services.zinfra.io/api
 ```
