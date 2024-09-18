@@ -69,11 +69,17 @@ data class Message(
      * Type of the file
      */
     val mimeType: String?,
+
 ) {
     data class Text(
         val data: String,
         val mentions: List<Mention>?
-    )
+
+    ) {
+        override fun toString(): String {
+            return "Text(mentions=$mentions)"
+        }
+    }
 
     /**
      * Poll representation for the proxy.
@@ -97,7 +103,18 @@ data class Message(
          * Id of the button when it was clicked on.
          */
         val offset: Int?
-    )
+    ) {
+        override fun toString(): String {
+            return "PollObjectMessage(id='$id', buttons=$buttons, offset=$offset)"
+        }
+    }
+
+    /**
+     * Avoid printing out the token by mistake if object is printed.
+     */
+    override fun toString(): String {
+        return "Message(botId='$botId', userId=$userId, conversationId=$conversationId, type='$type', messageId=$messageId, text=$text, refMessageId=$refMessageId, reaction=$reaction, image=$image, handle=$handle, locale=$locale, poll=$poll, mimeType=$mimeType)"
+    }
 }
 
 /* JSON from the swagger
