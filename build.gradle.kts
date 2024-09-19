@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm") version "1.5.30"
     application
     distribution
-    id("net.nemerosa.versioning") version "2.14.0"
+    id("net.nemerosa.versioning") version "3.1.0"
 }
 
 group = "com.wire.bots.polls"
