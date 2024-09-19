@@ -43,4 +43,4 @@ private val Logger.Companion.TRACE: Logger
         }
     }
 
-private val blockedWordList = listOf("Authorization", "token", "Bearer", "text")
+private val blockedWordList = listOf("Authorization", "token", "Bearer")
